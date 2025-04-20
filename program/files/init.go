@@ -58,20 +58,20 @@ func GetFilesChanged(width int) []row.Model {
 
 	stdout, err := cmd.Output()
 	if err != nil {
-		return []row.Model{row.InitialModel("a files error has occured", width)}
+		return []row.Model{row.InitialModel("a files error has occured", width, true)}
 	}
 
 	fileLogs := strings.Split(string(stdout), "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
 
 	if len(fileLogs) == 0 {
-		return []row.Model{row.InitialModel("No Changes Made", width)}
+		return []row.Model{row.InitialModel("No Changes Made", width, true)}
 	}
 
 	var rows []row.Model
 
 	for _, element := range fileLogs {
-		rows = append(rows, row.InitialModel(element, width))
+		rows = append(rows, row.InitialModel(element, width, false))
 	}
 
 	return rows

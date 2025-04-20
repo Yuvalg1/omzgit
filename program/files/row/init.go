@@ -17,7 +17,18 @@ type Model struct {
 	Width int
 }
 
-func InitialModel(fileStr string, width int) Model {
+func InitialModel(fileStr string, width int, empty bool) Model {
+	if empty {
+		return Model{
+			Active: false,
+			Staged: false,
+			Path:   fileStr,
+			status: " ",
+
+			Width: width,
+		}
+	}
+
 	return Model{
 		Active: false,
 		Staged: getAdded(fileStr),
