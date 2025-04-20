@@ -11,9 +11,7 @@ func (m Model) View() string {
 		fileStrings += m.files[i+diff].View() + "\n"
 	}
 
-	if len(fileStrings) > 0 {
-		fileStrings = fileStrings[:len(fileStrings)-1]
-	}
+	fileStrings = fileStrings[:len(fileStrings)-1]
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, fileStrings, m.Diffs[m.ActiveRow].View())
 }

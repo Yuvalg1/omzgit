@@ -41,9 +41,7 @@ func (m Model) TickCmd() tea.Cmd {
 func InitialModel(width int, height int) Model {
 	files := GetFilesChanged((width - 2) / 2)
 
-	if len(files) > 0 {
-		files[0].Active = true
-	}
+	files[0].Active = true
 
 	return Model{
 		files:     files,
@@ -65,6 +63,11 @@ func GetFilesChanged(width int) []row.Model {
 
 	fileLogs := strings.Split(string(stdout), "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
+
+	if len(fileLogs) == 0 {
+		return []row.Model{row.InitialModel("No Changes Made", width)}
+	}
+
 	var rows []row.Model
 
 	for _, element := range fileLogs {
