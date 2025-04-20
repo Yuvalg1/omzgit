@@ -1,0 +1,83 @@
+package files
+
+import (
+	"os/exec"
+	"program/consts"
+	"program/messages"
+	"program/program/files/diff"
+	"program/program/files/row"
+	"strings"
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
+
+type Model struct {
+	files     []row.Model
+	Diffs     []diff.Model
+	ActiveRow int
+
+	Height int
+	Width  int
+}
+
+func (m Model) Init() tea.Cmd {
+	return tea.Batch(m.TickCmd(), m.files[m.ActiveRow].Init())
+}
+
+func (m Model) TickCmd() tea.Cmd {
+	return func() tea.Msg {
+		time.Sleep(consts.REFRESH_INTERVAL)
+		return messages.TickMsg{}
+	}
+}
+
+func InitialModel(width int, height int) Model {
+	files := GetFilesChanged((width - 2) / 2)
+
+	if len(files) > 0 {
+		files[0].Active = true
+	}
+
+	return Model{
+		files:     files,
+		Diffs:     getDiffs(files, width/2, height),
+		ActiveRow: 0,
+
+		Width:  width,
+		Height: height,
+	}
+}
+
+func GetFilesChanged(width int) []row.Model {
+	cmd := exec.Command("git", "status", "--short", "--untracked-files=all")
+
+	stdout, err := cmd.Output()
+	if err != nil {
+		return []row.Model{row.InitialModel("a files error has occured", width)}
+	}
+
+	fileLogs := strings.Split(string(stdout), "\n")
+	fileLogs = fileLogs[:len(fileLogs)-1]
+	var rows []row.Model
+
+	for _, element := range fileLogs {
+		rows = append(rows, row.InitialModel(element, width))
+	}
+
+	return rows
+}
+
+func getDiffs(files []row.Model, width int, height int) []diff.Model {
+	var diffs []diff.Model
+
+	for _, element := range files {
+		diffs = append(diffs, diff.InitialModel(element.Path, element.Staged, width, height))
+	}
+
+	if len(diffs) > 0 {
+		diffs[0].Content = diffs[0].GetContent()
+	}
+
+	return diffs
+}
