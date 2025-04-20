@@ -22,7 +22,13 @@ type Model struct {
 }
 
 func (m Model) Init() tea.Cmd {
-	return tea.Batch(m.TickCmd(), m.files[m.ActiveRow].Init())
+	cmds := []tea.Cmd{m.TickCmd()}
+
+	if len(m.files) > 0 {
+		cmds = append(cmds, m.files[0].Init())
+	}
+
+	return tea.Batch(cmds...)
 }
 
 func (m Model) TickCmd() tea.Cmd {
