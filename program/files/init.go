@@ -21,14 +21,13 @@ type Model struct {
 	Width  int
 }
 
-func (m Model) Init() tea.Cmd {
-	cmds := []tea.Cmd{m.TickCmd()}
-
-	if len(m.files) > 0 {
-		cmds = append(cmds, m.files[0].Init())
+func (m Model) PopupCmd(path string, fn func()) tea.Cmd {
+	return func() tea.Msg {
+		return messages.PopupMsg{
+			Fn:   fn,
+			Name: path,
+		}
 	}
-
-	return tea.Batch(cmds...)
 }
 
 func (m Model) TickCmd() tea.Cmd {
@@ -51,6 +50,16 @@ func InitialModel(width int, height int) Model {
 		Width:  width,
 		Height: height,
 	}
+}
+
+func (m Model) Init() tea.Cmd {
+	cmds := []tea.Cmd{m.TickCmd()}
+
+	if len(m.files) > 0 {
+		cmds = append(cmds, m.files[0].Init())
+	}
+
+	return tea.Batch(cmds...)
 }
 
 func GetFilesChanged(width int) []row.Model {

@@ -48,7 +48,7 @@ func (m Model) PopupCmd(path string, fn func()) tea.Cmd {
 		parts := strings.Split(path, "/")
 		return messages.PopupMsg{
 			Fn:   fn,
-			Name: parts[len(parts)-1],
+			Name: "'" + parts[len(parts)-1] + "'",
 		}
 	}
 }

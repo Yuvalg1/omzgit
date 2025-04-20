@@ -85,16 +85,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			m.files = GetFilesChanged((m.Width - 2) / 2)
 			m.files[m.ActiveRow].Active = true
-
 			return m, nil
 
 		case "d":
 			res, cmd := m.files[m.ActiveRow].Update(msg)
 			m.files[m.ActiveRow] = res.(row.Model)
-
 			m.files = GetFilesChanged((m.Width - 2) / 2)
-
 			return m, cmd
+
+		case "D":
+			return m, m.PopupCmd("All Files", func() {
+				gitRestoreAll()
+			})
 
 		case "g":
 			cmds := move(m, msg, m.ActiveRow, 0)
@@ -162,7 +164,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func gitAddAll() bool {
 	cmd := exec.Command("git", "add", "--all")
-
 	_, err := cmd.Output()
 
 	return err == nil
@@ -170,10 +171,14 @@ func gitAddAll() bool {
 
 func gitResetAll() bool {
 	cmd := exec.Command("git", "reset")
-
 	_, err := cmd.Output()
 
 	return err == nil
+}
+
+func gitRestoreAll() {
+	cmd := exec.Command("git", "reset", "--hard")
+	cmd.Output()
 }
 
 func move(m Model, msg tea.Msg, curr int, next int) []tea.Cmd {

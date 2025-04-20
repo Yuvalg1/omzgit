@@ -42,7 +42,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				gitRestore(m.Path)
 			})
 
-		case "r", "D":
+		case "r":
 			if m.Staged {
 				m.Staged = !gitReset(m)
 			}
