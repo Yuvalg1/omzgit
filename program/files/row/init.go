@@ -14,7 +14,8 @@ type Model struct {
 	Staged bool
 	Active bool
 
-	Width int
+	width  int
+	height int
 }
 
 func InitialModel(fileStr string, width int, empty bool) Model {
@@ -25,7 +26,8 @@ func InitialModel(fileStr string, width int, empty bool) Model {
 			Path:   fileStr,
 			status: " ",
 
-			Width: width,
+			width:  GetWidth(width),
+			height: GetHeight(1),
 		}
 	}
 
@@ -35,12 +37,21 @@ func InitialModel(fileStr string, width int, empty bool) Model {
 		Path:   getPath(fileStr),
 		status: getStatus(fileStr),
 
-		Width: width,
+		width:  GetWidth(width),
+		height: GetHeight(1),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func GetWidth(width int) int {
+	return width / 2
+}
+
+func GetHeight(height int) int {
+	return 1
 }
 
 func (m Model) PopupCmd(path string, fn func()) tea.Cmd {

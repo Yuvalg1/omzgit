@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"program/consts"
 	"program/messages"
 	"program/program"
 	"program/program/branches"
@@ -20,10 +19,10 @@ func main() {
 	width, height, _ := term.GetSize(os.Stdout.Fd())
 
 	m := program.InitialModel(
-		map[string]tea.Model{
-			consts.BRANCHES: branches.Model{},
-			consts.COMMITS:  commits.Model{},
-			consts.FILES:    files.InitialModel(width-2, height-2),
+		[]tea.Model{
+			files.InitialModel(width, height),
+			branches.Model{},
+			commits.Model{},
 		},
 		width,
 		height,

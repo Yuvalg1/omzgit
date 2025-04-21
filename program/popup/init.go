@@ -27,3 +27,11 @@ func InitialModel(fn func(), name string, width int, height int) Model {
 func (m Model) Init() tea.Cmd {
 	return nil
 }
+
+func GetHeight(height int) int {
+	return height - 2
+}
+
+func GetWidth(width int) int {
+	return width - 2
+}

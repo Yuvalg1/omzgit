@@ -6,9 +6,9 @@ import (
 
 const PAGES = 3
 const (
-	BRANCHES = "Branches"
-	COMMITS  = "Commits"
-	FILES    = "Files"
+	FILES    = 1
+	BRANCHES = 2
+	COMMITS  = 3
 )
 
 const (

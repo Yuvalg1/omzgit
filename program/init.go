@@ -8,22 +8,26 @@ import (
 )
 
 type Model struct {
-	Tabs      map[string]tea.Model
-	ActiveTab string
+	Tabs      []tea.Model
+	ActiveTab int
 	Popup     popup.Model
+	title     string
+	pickMode  bool
 
 	Height int
 	Width  int
 }
 
-func InitialModel(tabs map[string]tea.Model, width int, height int) Model {
+func InitialModel(tabs []tea.Model, width int, height int) Model {
 	return Model{
-		ActiveTab: consts.FILES,
+		ActiveTab: consts.FILES - 1,
 		Tabs:      tabs,
 		Popup:     popup.InitialModel(func() {}, "", width, height),
+		title:     "Files Changed",
+		pickMode:  false,
 
-		Height: height,
-		Width:  width,
+		Width:  GetWidth(width),
+		Height: GetHeight(height),
 	}
 }
 
@@ -35,4 +39,12 @@ func (m Model) Init() tea.Cmd {
 	}
 
 	return tea.Batch(cmds...)
+}
+
+func GetWidth(width int) int {
+	return width
+}
+
+func GetHeight(height int) int {
+	return height
 }

@@ -22,17 +22,25 @@ type Model struct {
 
 func InitialModel(path string, staged bool, width int, height int) Model {
 	return Model{
-		Name:   name.InitialModel(path, width-1),
+		Name:   name.InitialModel(path, GetWidth(width)),
 		staged: staged,
 		path:   path,
 
-		Width:  width,
-		Height: height,
+		Width:  GetWidth(width),
+		Height: GetHeight(height),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func GetWidth(width int) int {
+	return width / 2
+}
+
+func GetHeight(height int) int {
+	return height
 }
 
 func (m Model) GetContent() []row.Model {
@@ -49,7 +57,7 @@ func (m Model) GetContent() []row.Model {
 			isDesc = false
 		}
 
-		rows = append(rows, row.InitialModel(element, isDesc, m.Width-1))
+		rows = append(rows, row.InitialModel(element, isDesc, m.Width))
 	}
 
 	return rows

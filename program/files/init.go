@@ -37,18 +37,27 @@ func (m Model) TickCmd() tea.Cmd {
 	}
 }
 
+func (m Model) TitleCmd(title string) tea.Cmd {
+	return func() tea.Msg {
+		return messages.TitleMsg{Title: title}
+	}
+}
+
 func InitialModel(width int, height int) Model {
-	files := GetFilesChanged((width - 2) / 2)
+	tWidth := GetWidth(width)
+	tHeight := GetHeight(height)
+
+	files := GetFilesChanged(tWidth)
 
 	files[0].Active = true
 
 	return Model{
 		files:     files,
-		Diffs:     getDiffs(files, width/2, height),
+		Diffs:     getDiffs(files, tWidth, tHeight),
 		ActiveRow: 0,
 
-		Width:  width,
-		Height: height,
+		Width:  tWidth,
+		Height: tHeight,
 	}
 }
 
@@ -62,12 +71,20 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
+func GetWidth(width int) int {
+	return width - 2
+}
+
+func GetHeight(height int) int {
+	return height - 2
+}
+
 func GetFilesChanged(width int) []row.Model {
 	cmd := exec.Command("git", "status", "--short", "--untracked-files=all")
 
 	stdout, err := cmd.Output()
 	if err != nil {
-		return []row.Model{row.InitialModel("a files error has occured", width, true)}
+		return []row.Model{row.InitialModel("a files error has occured", GetWidth(width), true)}
 	}
 
 	fileLogs := strings.Split(string(stdout), "\n")

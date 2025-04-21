@@ -1,6 +1,7 @@
 package program
 
 import (
+	"fmt"
 	"program/consts"
 	"program/messages"
 	"program/program/popup"
@@ -11,11 +12,11 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.TerminalMsg:
-		m.Height = msg.Height
-		m.Width = msg.Width
+		m.Width = GetWidth(msg.Width)
+		m.Height = GetHeight(msg.Height)
 
-		msg.Height = msg.Height - 2
-		msg.Width = msg.Width - 2
+		msg.Width = GetWidth(msg.Width)
+		msg.Height = GetHeight(msg.Height)
 
 		res1, cmd1 := m.Popup.Update(msg)
 		m.Popup = res1.(popup.Model)
@@ -23,6 +24,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		res2, cmd2 := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res2
 		return m, tea.Batch(cmd1, cmd2)
+
+	case messages.TitleMsg:
+		m.title = msg.Title
+		return m, nil
 
 	case messages.TickMsg, messages.DeletedMsg:
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
@@ -51,33 +56,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(cmds...)
 		}
+
+		if m.pickMode {
+			return pickTab(&m, msg)
+		}
+
 		switch keypress := msg.String(); keypress {
-
-		case "b":
-			if handledInner(m, msg) {
-				return m, nil
-			}
-
-			m.ActiveTab = consts.BRANCHES
-			return m, nil
-
-		case "c":
-			if handledInner(m, msg) {
-				return m, nil
-			}
-
-			m.ActiveTab = consts.COMMITS
+		case " ", "esc", "backspace":
+			m.pickMode = true
 			return m, nil
 
 		case "ctrl+c", "q":
 			return m, tea.Quit
-
-		case "esc":
-			m.ActiveTab = consts.FILES
-			res, cmd := m.Tabs[consts.FILES].Update(msg)
-			m.Tabs[consts.FILES] = res
-
-			return m, cmd
 
 		default:
 			res, cmd := m.Tabs[m.ActiveTab].Update(msg)
@@ -89,16 +79,40 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func handledInner(m Model, msg tea.Msg) bool {
-	if m.ActiveTab != consts.FILES {
-		m.Tabs[m.ActiveTab], _ = m.Tabs[m.ActiveTab].Update(msg)
-		return true
-	}
-	return false
+func handlePick(m *Model, key int) (tea.Model, tea.Cmd) {
+	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(fmt.Sprint(key))}
+
+	m.ActiveTab = key - 1
+	res, cmd := m.Tabs[m.ActiveTab].Update(msg)
+	m.Tabs[m.ActiveTab] = res
+	return m, cmd
 }
 
 func (m Model) DeleteCmd() tea.Cmd {
 	return func() tea.Msg {
 		return messages.DeletedMsg{}
+	}
+}
+
+func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	m.pickMode = false
+
+	switch keypress := msg.String(); keypress {
+	case "b":
+		m.title = "Branches"
+		return handlePick(m, consts.BRANCHES)
+	case "c":
+		m.title = "Commits"
+		return handlePick(m, consts.COMMITS)
+	case "f":
+		m.title = "Filed Changed"
+		return handlePick(m, consts.FILES)
+
+	case " ", "esc", "backspace":
+		m.pickMode = true
+		return m, nil
+
+	default:
+		return m, nil
 	}
 }

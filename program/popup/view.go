@@ -23,7 +23,7 @@ func (m Model) View() string {
 
 	buttonStyle := lipgloss.NewStyle().Background(lipgloss.Color("#FFFFFF")).Foreground(lipgloss.Color("#000000"))
 
-	return lipgloss.Place(m.Width-2, m.Height-2, lipgloss.Center, lipgloss.Center,
+	return lipgloss.Place(m.Width, m.Height, lipgloss.Center, lipgloss.Center,
 		containerStyle.Render(
 			titleStyle.Render("Attention!")+"\n"+
 				contentStyle.Render("Are you sure you want to discard '"+m.Name+"'?")+"\n"+
