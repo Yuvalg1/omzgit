@@ -10,7 +10,8 @@ type Model struct {
 	descriptor byte
 	text       string
 
-	Width int
+	width  int
+	height int
 }
 
 func InitialModel(text string, isDesc bool, width int) Model {
@@ -18,12 +19,21 @@ func InitialModel(text string, isDesc bool, width int) Model {
 		descriptor: getDescriptor(text, isDesc),
 		text:       text,
 
-		Width: width,
+		width:  GetWidth(width),
+		height: GetWidth(1),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func GetWidth(width int) int {
+	return width - 1
+}
+
+func GetHeight(height int) int {
+	return 2
 }
 
 func getDescriptor(text string, isDesc bool) byte {

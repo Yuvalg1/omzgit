@@ -1,6 +1,7 @@
 package files
 
 import (
+	"fmt"
 	"os/exec"
 	"program/messages"
 	"program/program/files/diff"
@@ -12,11 +13,11 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.DeletedMsg:
-		m.files = GetFilesChanged((m.Width - 2) / 2)
+		m.files = GetFilesChanged(m.Width)
 		m.files[m.ActiveRow].Active = true
 
 		for index, element := range m.files {
-			newDiff := diff.InitialModel(element.Path, element.Staged, (m.Width-2)/2, m.Height)
+			newDiff := diff.InitialModel(element.Path, element.Staged, m.Width, m.Height)
 			newDiff.Content = newDiff.GetContent()
 
 			m.Diffs[index] = newDiff
@@ -24,7 +25,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case messages.TickMsg:
-		m.files = GetFilesChanged((m.Width - 2) / 2)
+		m.files = GetFilesChanged(m.Width)
 		m.files[m.ActiveRow].Active = true
 		m.Diffs[m.ActiveRow].Content = m.Diffs[m.ActiveRow].GetContent()
 		return m, m.TickCmd()
@@ -32,10 +33,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.TerminalMsg:
 		var cmds []tea.Cmd
 
-		m.Width = msg.Width
-		m.Height = msg.Height
+		m.Width = GetWidth(msg.Width)
+		m.Height = GetHeight(msg.Height)
 
-		msg.Width = msg.Width / 2
+		msg.Width = GetWidth(msg.Width)
+		msg.Height = GetHeight(msg.Height)
 
 		for index, element := range m.Diffs {
 			res, cmd := element.Update(msg)
@@ -82,15 +84,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(cmds...)
 
-		case "esc":
-			m.files = GetFilesChanged((m.Width - 2) / 2)
+		case "1":
+			m.files = GetFilesChanged(m.Width)
 			m.files[m.ActiveRow].Active = true
 			return m, nil
 
 		case "d":
 			res, cmd := m.files[m.ActiveRow].Update(msg)
 			m.files[m.ActiveRow] = res.(row.Model)
-			m.files = GetFilesChanged((m.Width - 2) / 2)
+			m.files = GetFilesChanged(m.Width)
 			return m, cmd
 
 		case "D":
@@ -113,8 +115,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			next := (m.ActiveRow + 1 + len(m.files)) % len(m.files)
 
 			cmds := move(m, msg, curr, next)
-			m.ActiveRow = next
 
+			title := fmt.Sprintf("Files Changed: %d/%d", m.ActiveRow+1, len(m.files))
+			cmds = append(cmds, m.TitleCmd(title))
+
+			m.ActiveRow = next
 			return m, tea.Batch(cmds...)
 
 		case "k", "up":
@@ -122,8 +127,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			next := (m.ActiveRow - 1 + len(m.files)) % len(m.files)
 
 			cmds := move(m, msg, curr, next)
-			m.ActiveRow = next
 
+			title := fmt.Sprintf("Files Changed: %d/%d", m.ActiveRow+1, len(m.files))
+			cmds = append(cmds, m.TitleCmd(title))
+
+			m.ActiveRow = next
 			return m, tea.Batch(cmds...)
 
 		case "R":

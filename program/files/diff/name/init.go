@@ -9,18 +9,29 @@ import (
 type Model struct {
 	Name string
 
-	width int
+	width  int
+	height int
 }
 
 func InitialModel(path string, width int) Model {
 	parts := strings.Split(path, "/")
 
 	return Model{
-		Name:  parts[len(parts)-1],
-		width: width,
+		Name: parts[len(parts)-1],
+
+		width:  GetWidth(width),
+		height: GetHeight(1),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func GetWidth(width int) int {
+	return width - 1
+}
+
+func GetHeight(height int) int {
+	return 1
 }

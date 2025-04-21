@@ -1,6 +1,13 @@
 package files
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+)
+
+var (
+	leftText = "Files Changed "
+	style    = lipgloss.NewStyle()
+)
 
 func (m Model) View() string {
 	var fileStrings string
