@@ -1,7 +1,6 @@
 package files
 
 import (
-	"fmt"
 	"os/exec"
 	"program/messages"
 	"program/program/files/diff"
@@ -56,8 +55,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 
 	case messages.PopupMsg:
-		m = InitialModel(m.Width, m.Height)
-		return m, nil
+		m = InitialModel(m.Width+2, m.Height+2)
+		return m, m.TitleCmd("Discard Changes")
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
@@ -116,9 +115,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			cmds := move(m, msg, curr, next)
 
-			title := fmt.Sprintf("Files Changed: %d/%d", m.ActiveRow+1, len(m.files))
-			cmds = append(cmds, m.TitleCmd(title))
-
 			m.ActiveRow = next
 			return m, tea.Batch(cmds...)
 
@@ -127,9 +123,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			next := (m.ActiveRow - 1 + len(m.files)) % len(m.files)
 
 			cmds := move(m, msg, curr, next)
-
-			title := fmt.Sprintf("Files Changed: %d/%d", m.ActiveRow+1, len(m.files))
-			cmds = append(cmds, m.TitleCmd(title))
 
 			m.ActiveRow = next
 			return m, tea.Batch(cmds...)

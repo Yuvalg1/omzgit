@@ -16,6 +16,7 @@ type Model struct {
 	files     []row.Model
 	Diffs     []diff.Model
 	ActiveRow int
+	title     string
 
 	Height int
 	Width  int
@@ -55,6 +56,7 @@ func InitialModel(width int, height int) Model {
 		files:     files,
 		Diffs:     getDiffs(files, tWidth, tHeight),
 		ActiveRow: 0,
+		title:     "Files",
 
 		Width:  tWidth,
 		Height: tHeight,

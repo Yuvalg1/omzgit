@@ -21,8 +21,8 @@ func main() {
 	m := program.InitialModel(
 		[]tea.Model{
 			files.InitialModel(width, height),
-			branches.Model{},
-			commits.Model{},
+			branches.InitialModel(width, height),
+			commits.InitialModel(width, height),
 		},
 		width,
 		height,

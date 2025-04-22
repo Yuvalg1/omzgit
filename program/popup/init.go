@@ -19,8 +19,8 @@ func InitialModel(fn func(), name string, width int, height int) Model {
 		Name:    name,
 		Visible: false,
 
-		Width:  width,
-		Height: height,
+		Width:  GetWidth(width),
+		Height: GetHeight(height),
 	}
 }
 
