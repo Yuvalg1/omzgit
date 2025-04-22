@@ -22,8 +22,7 @@ func InitialModel(tabs []tea.Model, width int, height int) Model {
 	return Model{
 		ActiveTab: consts.FILES - 1,
 		Tabs:      tabs,
-		Popup:     popup.InitialModel(func() {}, "", width, height),
-		title:     "Files Changed",
+		Popup:     popup.InitialModel(func() {}, "", width, GetHeight(height)),
 		pickMode:  false,
 
 		Width:  GetWidth(width),
