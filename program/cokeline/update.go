@@ -1,4 +1,4 @@
-package name
+package cokeline
 
 import (
 	"program/messages"
@@ -8,9 +8,12 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case messages.CokeMsg:
+		m.title = msg.Title
+		return m, nil
+
 	case messages.TerminalMsg:
-		m.width = GetWidth(msg.Width)
-		m.height = GetHeight(msg.Height)
+		m.width = getWidth(msg.Width)
 		return m, nil
 
 	case tea.KeyMsg:

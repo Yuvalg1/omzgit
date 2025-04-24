@@ -1,10 +1,12 @@
 package files
 
 import (
+	"fmt"
 	"os/exec"
 	"program/messages"
 	"program/program/files/diff"
 	"program/program/files/row"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -14,13 +16,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.DeletedMsg:
 		m.files = GetFilesChanged(m.Width)
 		m.files[m.ActiveRow].Active = true
-
-		for index, element := range m.files {
-			newDiff := diff.InitialModel(element.Path, element.Staged, m.Width, m.Height)
-			newDiff.Content = newDiff.GetContent()
-
-			m.Diffs[index] = newDiff
-		}
+		m.Diffs[m.ActiveRow].Content = m.Diffs[m.ActiveRow].GetContent()
 		return m, nil
 
 	case messages.TickMsg:
@@ -32,11 +28,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.TerminalMsg:
 		var cmds []tea.Cmd
 
-		m.Width = GetWidth(msg.Width)
-		m.Height = GetHeight(msg.Height)
+		m.Width = getWidth(msg.Width)
+		m.Height = getHeight(msg.Height)
 
-		msg.Width = GetWidth(msg.Width)
-		msg.Height = GetHeight(msg.Height)
+		msg.Width = getWidth(msg.Width)
+		msg.Height = getHeight(msg.Height)
 
 		for index, element := range m.Diffs {
 			res, cmd := element.Update(msg)
@@ -55,8 +51,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 
 	case messages.PopupMsg:
-		m = InitialModel(m.Width+2, m.Height+2)
-		return m, m.TitleCmd("Discard Changes")
+		m = InitialModel(m.Width, m.Height)
+		return m, m.CokeCmd("Discard Changes")
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
@@ -116,6 +112,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds := move(m, msg, curr, next)
 
 			m.ActiveRow = next
+
+			parts := strings.Split(m.files[m.ActiveRow].Path, "/")
+			cmds = append(cmds, m.CokeCmd(fmt.Sprintf("%s > %d/%d", parts[len(parts)-1], m.ActiveRow+1, len(m.files))))
+
 			return m, tea.Batch(cmds...)
 
 		case "k", "up":
@@ -125,6 +125,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds := move(m, msg, curr, next)
 
 			m.ActiveRow = next
+
+			parts := strings.Split(m.files[m.ActiveRow].Path, "/")
+			cmds = append(cmds, m.CokeCmd(fmt.Sprintf("%s > %d/%d", parts[len(parts)-1], m.ActiveRow+1, len(m.files))))
+
 			return m, tea.Batch(cmds...)
 
 		case "R":
@@ -189,8 +193,8 @@ func move(m Model, msg tea.Msg, curr int, next int) []tea.Cmd {
 	res2, cmd2 := m.files[next].Update(msg)
 	m.files[next] = res2.(row.Model)
 
-	m.Diffs[next].Width = m.Width / 2
-	m.Diffs[next].Height = m.Height
+	m.Diffs[next].SetWidth(m.Width)
+	m.Diffs[next].SetHeight(m.Height)
 
 	res3, cmd3 := m.Diffs[next].Update(msg)
 	m.Diffs[next] = res3.(diff.Model)

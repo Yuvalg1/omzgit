@@ -1,11 +1,13 @@
 package files
 
 import (
+	"fmt"
 	"os/exec"
 	"program/consts"
 	"program/messages"
 	"program/program/files/diff"
 	"program/program/files/row"
+	"program/program/lib/button"
 	"strings"
 	"time"
 
@@ -16,7 +18,6 @@ type Model struct {
 	files     []row.Model
 	Diffs     []diff.Model
 	ActiveRow int
-	title     string
 
 	Height int
 	Width  int
@@ -38,15 +39,16 @@ func (m Model) TickCmd() tea.Cmd {
 	}
 }
 
-func (m Model) TitleCmd(title string) tea.Cmd {
+func (m Model) CokeCmd(title string) tea.Cmd {
 	return func() tea.Msg {
-		return messages.TitleMsg{Title: title}
+		splits := strings.Split(title, ">")
+		return messages.CokeMsg{Title: splits[0] + ">" + button.InitialModel(splits[1]).View()}
 	}
 }
 
 func InitialModel(width int, height int) Model {
-	tWidth := GetWidth(width)
-	tHeight := GetHeight(height)
+	tWidth := getWidth(width)
+	tHeight := getHeight(height)
 
 	files := GetFilesChanged(tWidth)
 
@@ -56,7 +58,6 @@ func InitialModel(width int, height int) Model {
 		files:     files,
 		Diffs:     getDiffs(files, tWidth, tHeight),
 		ActiveRow: 0,
-		title:     "Files",
 
 		Width:  tWidth,
 		Height: tHeight,
@@ -67,17 +68,18 @@ func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{m.TickCmd()}
 
 	if len(m.files) > 0 {
-		cmds = append(cmds, m.files[0].Init())
+		parts := strings.Split(m.files[m.ActiveRow].Path, "/")
+		cmds = append(cmds, m.CokeCmd(fmt.Sprintf("%s > %d/%d", parts[len(parts)-1], m.ActiveRow+1, len(m.files))))
 	}
 
 	return tea.Batch(cmds...)
 }
 
-func GetWidth(width int) int {
-	return width - 2
+func getWidth(width int) int {
+	return width
 }
 
-func GetHeight(height int) int {
+func getHeight(height int) int {
 	return height - 2
 }
 
@@ -86,7 +88,7 @@ func GetFilesChanged(width int) []row.Model {
 
 	stdout, err := cmd.Output()
 	if err != nil {
-		return []row.Model{row.InitialModel("a files error has occured", GetWidth(width), true)}
+		return []row.Model{row.InitialModel("a files error has occured", getWidth(width), true)}
 	}
 
 	fileLogs := strings.Split(string(stdout), "\n")

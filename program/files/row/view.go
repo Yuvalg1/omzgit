@@ -6,9 +6,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var addedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#4ADE80"))
+var addedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7FBBB3"))
 
-var resetStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#F87171"))
+var resetStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7A8478"))
 
 var deletedStyle = lipgloss.NewStyle().Strikethrough(true)
 
@@ -22,10 +22,10 @@ func (m Model) View() string {
 func getActiveStyle(width int, added bool, active bool) lipgloss.Style {
 	current := getStyle(width, added)
 	if !active {
-		return current
+		return current.Background(lipgloss.Color("#272E33"))
 	}
 
-	return current.Background(lipgloss.Color("#3B82F6"))
+	return current.Background(lipgloss.Color("#384B55"))
 }
 
 func getStyle(width int, added bool) lipgloss.Style {

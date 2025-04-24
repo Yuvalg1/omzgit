@@ -2,8 +2,6 @@ package diff
 
 import (
 	"program/messages"
-	"program/program/files/diff/name"
-	"program/program/files/diff/row"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -11,67 +9,39 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.TerminalMsg:
-		m.Width = GetWidth(msg.Width)
-		m.Height = GetHeight(msg.Height)
+		m.SetWidth(msg.Width)
+		m.SetHeight(msg.Height)
 
-		msg.Width = GetWidth(msg.Width)
-		msg.Height = GetHeight(msg.Height)
+		msg.Width = getWidth(msg.Width)
+		msg.Height = getHeight(msg.Height)
 
 		var cmds []tea.Cmd
 
-		res, cmd := m.Name.Update(msg)
-		m.Name = res.(name.Model)
-
-		cmds = append(cmds, cmd)
-
-		for index, element := range m.Content {
-			res, cmd := element.Update(msg)
-			m.Content[index] = res.(row.Model)
-			cmds = append(cmds, cmd)
-		}
-
+		m.Content = m.getDiffStaged()
 		return m, tea.Batch(cmds...)
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 
-		case "a":
+		case "a", "A":
 			if m.staged {
 				return m, nil
 			}
 
 			m.staged = true
-			m.Content = m.GetContent()
+			m.Content = m.getDiffStaged()
 			return m, nil
 
-		case "A":
-			if m.staged {
-				return m, nil
-			}
-
-			m.staged = true
-			m.Content = m.GetContent()
-			return m, nil
-
-		case "r":
+		case "r", "R":
 			if !m.staged {
 				return m, nil
 			}
 			m.staged = false
-			m.Content = m.GetContent()
+			m.Content = m.getDiffStaged()
 			return m, nil
 
-		case "R":
-			if !m.staged {
-				return m, nil
-			}
-
-			m.staged = false
-			m.Content = m.GetContent()
-			return m, nil
-
-		case "up", "down":
-			m.Content = m.GetContent()
+		case "j", "k", "up", "down":
+			m.Content = m.getDiffStaged()
 			return m, nil
 
 		default:

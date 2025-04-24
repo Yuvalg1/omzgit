@@ -26,8 +26,8 @@ func InitialModel(fileStr string, width int, empty bool) Model {
 			Path:   fileStr,
 			status: " ",
 
-			width:  GetWidth(width),
-			height: GetHeight(1),
+			width:  getWidth(width),
+			height: getHeight(1),
 		}
 	}
 
@@ -37,8 +37,8 @@ func InitialModel(fileStr string, width int, empty bool) Model {
 		Path:   getPath(fileStr),
 		status: getStatus(fileStr),
 
-		width:  GetWidth(width),
-		height: GetHeight(1),
+		width:  getWidth(width),
+		height: getHeight(1),
 	}
 }
 
@@ -46,11 +46,11 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func GetWidth(width int) int {
+func getWidth(width int) int {
 	return width / 2
 }
 
-func GetHeight(height int) int {
+func getHeight(height int) int {
 	return 1
 }
 
@@ -65,7 +65,7 @@ func (m Model) PopupCmd(path string, fn func()) tea.Cmd {
 }
 
 func getAdded(fileStr string) bool {
-	return fileStr[0] == 'A' || fileStr[0] == 'M'
+	return fileStr[0] == 'A' || fileStr[0] == 'M' || fileStr[0] == 'D' || fileStr[0] == 'R'
 }
 
 func getPath(fileStr string) string {
