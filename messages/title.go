@@ -2,10 +2,10 @@ package messages
 
 import tea "github.com/charmbracelet/bubbletea"
 
-type TitleMsg struct {
+type CokeMsg struct {
 	Title string
 }
 
-type Titler interface {
-	TitleCmd(title string) tea.Cmd
+type Cokerer interface {
+	CokeCmd(title string) tea.Cmd
 }

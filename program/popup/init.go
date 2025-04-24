@@ -19,8 +19,8 @@ func InitialModel(fn func(), name string, width int, height int) Model {
 		Name:    name,
 		Visible: false,
 
-		Width:  GetWidth(width),
-		Height: GetHeight(height),
+		Width:  getWidth(width),
+		Height: getHeight(height),
 	}
 }
 
@@ -28,10 +28,10 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func GetHeight(height int) int {
-	return height - 2
+func getHeight(height int) int {
+	return height - 5
 }
 
-func GetWidth(width int) int {
-	return width - 2
+func getWidth(width int) int {
+	return width - 5
 }

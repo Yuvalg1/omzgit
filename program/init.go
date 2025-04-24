@@ -2,31 +2,38 @@ package program
 
 import (
 	"program/consts"
+	"program/program/cokeline"
 	"program/program/popup"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	Tabs      []tea.Model
 	ActiveTab int
-	Popup     popup.Model
-	title     string
+	cokeline  cokeline.Model
+	Tabs      []tea.Model
 	pickMode  bool
+	Popup     popup.Model
 
 	Height int
 	Width  int
 }
 
-func InitialModel(tabs []tea.Model, width int, height int) Model {
+type ExtendedModel struct {
+	Tab   tea.Model
+	Title string
+}
+
+func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	return Model{
 		ActiveTab: consts.FILES - 1,
-		Tabs:      tabs,
-		Popup:     popup.InitialModel(func() {}, "", width, GetHeight(height)),
+		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
+		Tabs:      getTabs(tabs),
+		Popup:     popup.InitialModel(func() {}, "", width, getHeight(height)),
 		pickMode:  false,
 
-		Width:  GetWidth(width),
-		Height: GetHeight(height),
+		Width:  getWidth(width),
+		Height: getHeight(height),
 	}
 }
 
@@ -40,10 +47,30 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
-func GetWidth(width int) int {
+func getWidth(width int) int {
 	return width
 }
 
-func GetHeight(height int) int {
+func getHeight(height int) int {
 	return height
+}
+
+func getTabs(extended []ExtendedModel) []tea.Model {
+	var tabs []tea.Model
+
+	for _, element := range extended {
+		tabs = append(tabs, element.Tab)
+	}
+
+	return tabs
+}
+
+func getCokes(tabs []ExtendedModel) []string {
+	var cokes []string
+
+	for _, element := range tabs {
+		cokes = append(cokes, element.Title)
+	}
+
+	return cokes
 }

@@ -5,20 +5,28 @@ import (
 )
 
 type Model struct {
-	title  string
+	Title  string
 	width  int
 	height int
 }
 
-func InitialModel(width int, height int) Model {
+func InitialModel(width int, height int, title string) Model {
 	return Model{
-		title: "Branches",
+		Title: title,
 
-		width:  width,
-		height: height,
+		width:  getWidth(width),
+		height: getHeight(height),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func getWidth(width int) int {
+	return width
+}
+
+func getHeight(height int) int {
+	return height
 }

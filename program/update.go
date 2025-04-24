@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"program/consts"
 	"program/messages"
+	"program/program/cokeline"
 	"program/program/popup"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -12,22 +13,31 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.TerminalMsg:
-		m.Width = GetWidth(msg.Width)
-		m.Height = GetHeight(msg.Height)
+		m.Width = getWidth(msg.Width)
+		m.Height = getHeight(msg.Height)
 
-		msg.Width = GetWidth(msg.Width)
-		msg.Height = GetHeight(msg.Height)
+		msg.Width = getWidth(msg.Width)
+		msg.Height = getHeight(msg.Height)
 
-		res1, cmd1 := m.Popup.Update(msg)
-		m.Popup = res1.(popup.Model)
+		res1, cmd1 := m.cokeline.Update(msg)
+		m.cokeline = res1.(cokeline.Model)
 
-		res2, cmd2 := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res2
-		return m, tea.Batch(cmd1, cmd2)
+		res2, cmd2 := m.Popup.Update(msg)
+		m.Popup = res2.(popup.Model)
 
-	case messages.TitleMsg:
-		m.title = msg.Title
-		return m, nil
+		cmds := []tea.Cmd{cmd1, cmd2}
+		for index, element := range m.Tabs {
+			res, cmd := element.Update(msg)
+			m.Tabs[index] = res
+			cmds = append(cmds, cmd)
+		}
+
+		return m, tea.Batch(cmds...)
+
+	case messages.CokeMsg:
+		res, cmd := m.cokeline.Update(msg)
+		m.cokeline = res.(cokeline.Model)
+		return m, cmd
 
 	case messages.TickMsg, messages.DeletedMsg:
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
@@ -62,9 +72,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-		case " ", "esc", "backspace":
+		case "g":
 			m.pickMode = true
 			return m, nil
+
+		case "]":
+			index := (m.ActiveTab+1)%len(m.Tabs) + 1
+			return handlePick(&m, index)
+
+		case "[":
+			index := (m.ActiveTab-1+len(m.Tabs))%len(m.Tabs) + 1
+			return handlePick(&m, index)
 
 		case "ctrl+c", "q":
 			return m, tea.Quit
@@ -83,9 +101,12 @@ func handlePick(m *Model, key int) (tea.Model, tea.Cmd) {
 	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(fmt.Sprint(key))}
 
 	m.ActiveTab = key - 1
-	res, cmd := m.Tabs[m.ActiveTab].Update(msg)
-	m.Tabs[m.ActiveTab] = res
-	return m, cmd
+	m.cokeline.ActiveCoke = m.ActiveTab
+
+	res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
+	m.Tabs[m.ActiveTab] = res1
+
+	return m, cmd1
 }
 
 func (m Model) DeleteCmd() tea.Cmd {
@@ -99,18 +120,16 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	switch keypress := msg.String(); keypress {
 	case "b":
-		m.title = "Branches"
 		return handlePick(m, consts.BRANCHES)
 	case "c":
-		m.title = "Commits"
 		return handlePick(m, consts.COMMITS)
 	case "f":
-		m.title = "Filed Changed"
 		return handlePick(m, consts.FILES)
 
-	case " ", "esc", "backspace":
-		m.pickMode = true
-		return m, nil
+	case "g":
+		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
+		m.Tabs[m.ActiveTab] = res
+		return m, cmd
 
 	default:
 		return m, nil

@@ -3,31 +3,28 @@ package diff
 import (
 	"os"
 	"os/exec"
-	"program/program/files/diff/name"
-	"program/program/files/diff/row"
-	"strings"
 
+	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	Content []row.Model
-	Name    name.Model
-	staged  bool
-	path    string
+	Content  string
+	viewport textarea.Model
 
-	Height int
-	Width  int
+	staged bool
+	path   string
 }
 
 func InitialModel(path string, staged bool, width int, height int) Model {
-	return Model{
-		Name:   name.InitialModel(path, GetWidth(width)),
-		staged: staged,
-		path:   path,
+	textarea := textarea.New()
+	textarea.SetWidth(getWidth(width))
+	textarea.SetHeight(height)
 
-		Width:  GetWidth(width),
-		Height: GetHeight(height),
+	return Model{
+		viewport: textarea,
+		staged:   staged,
+		path:     path,
 	}
 }
 
@@ -35,61 +32,51 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func GetWidth(width int) int {
+func getWidth(width int) int {
 	return width / 2
 }
 
-func GetHeight(height int) int {
+func getHeight(height int) int {
 	return height
 }
 
-func (m Model) GetContent() []row.Model {
-	texts, isDesc := getTexts(m.path, m.staged)
-
-	if len(texts) > m.Height {
-		texts = texts[:m.Height]
-	}
-
-	var rows []row.Model
-
-	for _, element := range texts {
-		if strings.HasPrefix(element, "@@") {
-			isDesc = false
-		}
-
-		rows = append(rows, row.InitialModel(element, isDesc, m.Width))
-	}
-
-	return rows
+func (m *Model) SetWidth(width int) {
+	m.viewport.SetWidth(getWidth(width))
 }
 
-func getTexts(path string, staged bool) ([]string, bool) {
-	if staged {
-		cmd := exec.Command("git", "diff", "--staged", path)
+func (m Model) SetHeight(height int) {
+	m.viewport.SetHeight(getHeight(height))
+}
+
+func (m Model) GetContent() string {
+	return m.getDiffStaged()
+}
+
+func (m Model) getDiffStaged() string {
+	if m.staged {
+		cmd := exec.Command("git", "diff", "--staged", m.path)
 
 		stdout, err := cmd.Output()
 		if err != nil {
-			return []string{"a git diff error has occured"}, true
+			return "a git diff error has occured"
 		}
 
-		texts := strings.Split(string(stdout), "\n")
-
-		return texts[:len(texts)-1], true
+		return string(stdout)
 	}
 
-	file, err := os.Stat(path)
+	file, err := os.Stat(m.path)
 	if err != nil {
-		return []string{"an os error has occured"}, false
+		return "an os error has occured"
 	}
 
 	if file.Size() > 100*1000 { // bigger than 100kb
-		return []string{"file size is too big to render."}, false
+		return "file size is too big to render."
 	}
 
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(m.path)
 	if err != nil {
-		return []string{"a file reading error has occured"}, false
+		return "a file reading error has occured"
 	}
 
-	return strings.Split(string(data), "\n"), false
+	return string(data)
 }

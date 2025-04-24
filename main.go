@@ -19,10 +19,10 @@ func main() {
 	width, height, _ := term.GetSize(os.Stdout.Fd())
 
 	m := program.InitialModel(
-		[]tea.Model{
-			files.InitialModel(width, height),
-			branches.InitialModel(width, height),
-			commits.InitialModel(width, height),
+		[]program.ExtendedModel{
+			{Title: "Files", Tab: files.InitialModel(width, height)},
+			{Title: "Branches", Tab: branches.InitialModel(width, height, "Branches")},
+			{Title: "Commits", Tab: commits.InitialModel(width, height, "Commits")},
 		},
 		width,
 		height,
