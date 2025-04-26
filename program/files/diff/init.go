@@ -4,27 +4,33 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/ogios/cropviewport"
 )
 
 type Model struct {
 	Content  string
-	viewport textarea.Model
+	viewport cropviewport.CropViewportModel
 
 	staged bool
 	path   string
+
+	width  int
+	height int
 }
 
 func InitialModel(path string, staged bool, width int, height int) Model {
-	textarea := textarea.New()
-	textarea.SetWidth(getWidth(width))
-	textarea.SetHeight(height)
-
+	tWidth := getWidth(width)
+	tHeight := getHeight(height)
+	cropviewport := cropviewport.NewCropViewportModel().(*cropviewport.CropViewportModel)
+	cropviewport.SetBlock(0, 0, tWidth, tHeight)
 	return Model{
-		viewport: textarea,
+		viewport: *cropviewport,
 		staged:   staged,
 		path:     path,
+
+		width:  tWidth,
+		height: tHeight,
 	}
 }
 
@@ -33,19 +39,23 @@ func (m Model) Init() tea.Cmd {
 }
 
 func getWidth(width int) int {
-	return width / 2
+	return width/2 - 2
 }
 
 func getHeight(height int) int {
-	return height
+	return height - 2
 }
 
 func (m *Model) SetWidth(width int) {
-	m.viewport.SetWidth(getWidth(width))
+	block := m.viewport.Block
+	m.viewport.SetBlock(block[0], block[1], getWidth(width), block[3])
+	m.width = getWidth(width)
 }
 
-func (m Model) SetHeight(height int) {
-	m.viewport.SetHeight(getHeight(height))
+func (m *Model) SetHeight(height int) {
+	block := m.viewport.Block
+	m.viewport.SetBlock(block[0], block[1], block[2], getHeight(height))
+	m.height = getHeight(height)
 }
 
 func (m Model) GetContent() string {

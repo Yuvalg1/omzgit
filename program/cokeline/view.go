@@ -10,15 +10,15 @@ func (m Model) View() string {
 	style := lipgloss.NewStyle().Width(m.width).Height(1).Padding(0, 0, 1)
 
 	tabTitleStyle := lipgloss.NewStyle().
-		Background(lipgloss.Color("#A7C080")).
+		Background(lipgloss.Color("#77BDFB")).
 		Padding(0, 1).
-		Foreground(lipgloss.Color("#1E2326")).
+		Foreground(lipgloss.Color("#21262D")).
 		Bold(true)
 
 	tabTitle := tabTitleStyle.Render(m.Cokes[m.ActiveCoke])
 
-	endStyle := lipgloss.NewStyle().Width(m.width - 4 - lipgloss.Width(tabTitle) - len(m.title)).Align(lipgloss.Right)
-	endButtons := endStyle.Render(button.InitialModel("[]/h").View())
+	endStyle := lipgloss.NewStyle().Background(lipgloss.Color("#21262D")).Width(m.width - lipgloss.Width(tabTitle) - lipgloss.Width(m.title)).Align(lipgloss.Right)
+	endButtons := endStyle.Render(button.InitialModel("[]").View())
 
-	return style.Render(tabTitle + " " + m.title + endButtons)
+	return style.Render(tabTitle + m.title + endButtons)
 }

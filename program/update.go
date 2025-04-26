@@ -106,7 +106,7 @@ func handlePick(m *Model, key int) (tea.Model, tea.Cmd) {
 	res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
 	m.Tabs[m.ActiveTab] = res1
 
-	return m, cmd1
+	return m, tea.Batch(cmd1)
 }
 
 func (m Model) DeleteCmd() tea.Cmd {

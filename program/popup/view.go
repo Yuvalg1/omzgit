@@ -26,7 +26,7 @@ func (m Model) View() string {
 	return lipgloss.Place(m.Width, m.Height, lipgloss.Center, lipgloss.Center,
 		containerStyle.Render(
 			titleStyle.Render("Attention!")+"\n"+
-				contentStyle.Render("Are you sure you want to discard '"+m.Name+"'?")+"\n"+
+				contentStyle.Render("Are you sure you want to discard "+m.Name+"?")+"\n"+
 				lipgloss.PlaceHorizontal(8, lipgloss.Bottom,
 					optionStyle.Render(buttonStyle.Render("Y")+" Yes")+"  "+
 						optionStyle.Render(buttonStyle.Render("N")+" No")),

@@ -29,9 +29,9 @@ func (m Model) Init() tea.Cmd {
 }
 
 func getHeight(height int) int {
-	return height - 5
+	return height
 }
 
 func getWidth(width int) int {
-	return width - 5
+	return width
 }
