@@ -18,7 +18,14 @@ func (m Model) View() string {
 
 	fileStrings = fileStrings[:len(fileStrings)-1]
 
+	filesStyle := lipgloss.NewStyle().
+		Border(lipgloss.NormalBorder(), false, true, false, false).
+		BorderForeground(lipgloss.Color("#414B53")).
+		Background(lipgloss.Color("#21262D")).
+		Height(m.Height).
+		Width(m.Width/2 - 1)
+
 	return style.Render(
-		lipgloss.JoinHorizontal(lipgloss.Top, fileStrings, m.Diffs[m.ActiveRow].View()),
+		lipgloss.JoinHorizontal(lipgloss.Top, filesStyle.Render(fileStrings), m.Diffs[m.ActiveRow].View()),
 	)
 }

@@ -7,11 +7,11 @@ import (
 	"program/messages"
 	"program/program/files/diff"
 	"program/program/files/row"
-	"program/program/lib/button"
 	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -41,9 +41,27 @@ func (m Model) TickCmd() tea.Cmd {
 
 func (m Model) CokeCmd(title string) tea.Cmd {
 	return func() tea.Msg {
-		splits := strings.Split(title, ">")
-		return messages.CokeMsg{Title: splits[0] + ">" + button.InitialModel(splits[1]).View()}
+		restStyle := lipgloss.
+			NewStyle().
+			Background(lipgloss.Color("#21262D"))
+		if title != "" {
+			return messages.CokeMsg{Title: restStyle.Render(title)}
+		}
+
+		style := m.getCokeCmdStyle()
+		parts := strings.Split(m.files[m.ActiveRow].Path, "/")
+		path := parts[len(parts)-1]
+		return messages.CokeMsg{Title: style.Render(" "+path+" ") + restStyle.Render(fmt.Sprintf(
+			" %d/%d", m.ActiveRow+1, len(m.files)))}
 	}
+}
+
+func (m Model) getCokeCmdStyle() lipgloss.Style {
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#21262D"))
+	if m.files[m.ActiveRow].Staged {
+		return lipgloss.NewStyle().Background(lipgloss.Color("#7CE38B")).Inherit(style)
+	}
+	return lipgloss.NewStyle().Background(lipgloss.Color("#FA7970")).Inherit(style)
 }
 
 func InitialModel(width int, height int) Model {
@@ -68,8 +86,7 @@ func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{m.TickCmd()}
 
 	if len(m.files) > 0 {
-		parts := strings.Split(m.files[m.ActiveRow].Path, "/")
-		cmds = append(cmds, m.CokeCmd(fmt.Sprintf("%s > %d/%d", parts[len(parts)-1], m.ActiveRow+1, len(m.files))))
+		cmds = append(cmds, m.CokeCmd(""))
 	}
 
 	return tea.Batch(cmds...)
@@ -88,7 +105,7 @@ func GetFilesChanged(width int) []row.Model {
 
 	stdout, err := cmd.Output()
 	if err != nil {
-		return []row.Model{row.InitialModel("a files error has occured", getWidth(width), true)}
+		return []row.Model{row.InitialModel("a files error has occured", width, true)}
 	}
 
 	fileLogs := strings.Split(string(stdout), "\n")

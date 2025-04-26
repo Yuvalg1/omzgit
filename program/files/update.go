@@ -1,12 +1,10 @@
 package files
 
 import (
-	"fmt"
 	"os/exec"
 	"program/messages"
 	"program/program/files/diff"
 	"program/program/files/row"
-	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -51,8 +49,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 
 	case messages.PopupMsg:
-		m = InitialModel(m.Width, m.Height)
-		return m, m.CokeCmd("Discard Changes")
+		m = InitialModel(m.Width, m.Height+2)
+		return m, nil
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
@@ -62,6 +60,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			var cmds []tea.Cmd
+			cmds = append(cmds, m.CokeCmd(""))
 
 			for index, element := range m.files {
 				res, cmd := element.Update(msg)
@@ -96,25 +95,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "g":
-			cmds := move(m, msg, m.ActiveRow, 0)
+			curr := m.ActiveRow
 			m.ActiveRow = 0
+			cmds := move(m, msg, curr, 0)
 			return m, tea.Batch(cmds...)
 
 		case "G":
-			cmds := move(m, msg, m.ActiveRow, len(m.files)-1)
+			curr := m.ActiveRow
 			m.ActiveRow = len(m.files) - 1
+			cmds := move(m, msg, curr, len(m.files)-1)
 			return m, tea.Batch(cmds...)
 
 		case "j", "down":
 			curr := m.ActiveRow
 			next := (m.ActiveRow + 1 + len(m.files)) % len(m.files)
 
-			cmds := move(m, msg, curr, next)
-
 			m.ActiveRow = next
-
-			parts := strings.Split(m.files[m.ActiveRow].Path, "/")
-			cmds = append(cmds, m.CokeCmd(fmt.Sprintf("%s > %d/%d", parts[len(parts)-1], m.ActiveRow+1, len(m.files))))
+			cmds := move(m, msg, curr, next)
 
 			return m, tea.Batch(cmds...)
 
@@ -122,12 +119,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			curr := m.ActiveRow
 			next := (m.ActiveRow - 1 + len(m.files)) % len(m.files)
 
-			cmds := move(m, msg, curr, next)
-
 			m.ActiveRow = next
-
-			parts := strings.Split(m.files[m.ActiveRow].Path, "/")
-			cmds = append(cmds, m.CokeCmd(fmt.Sprintf("%s > %d/%d", parts[len(parts)-1], m.ActiveRow+1, len(m.files))))
+			cmds := move(m, msg, curr, next)
 
 			return m, tea.Batch(cmds...)
 
@@ -137,6 +130,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			var cmds []tea.Cmd
+			cmds = append(cmds, m.CokeCmd(""))
 
 			for index, element := range m.files {
 				res, cmd := element.Update(msg)
@@ -160,7 +154,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res2, cmd2 := m.Diffs[m.ActiveRow].Update(msg)
 			m.Diffs[m.ActiveRow] = res2.(diff.Model)
 
-			return m, tea.Batch(cmd1, cmd2)
+			return m, tea.Batch(cmd1, cmd2, m.CokeCmd(""))
 		}
 	}
 
@@ -193,11 +187,9 @@ func move(m Model, msg tea.Msg, curr int, next int) []tea.Cmd {
 	res2, cmd2 := m.files[next].Update(msg)
 	m.files[next] = res2.(row.Model)
 
-	m.Diffs[next].SetWidth(m.Width)
-	m.Diffs[next].SetHeight(m.Height)
-
 	res3, cmd3 := m.Diffs[next].Update(msg)
 	m.Diffs[next] = res3.(diff.Model)
 
-	return []tea.Cmd{cmd1, cmd2, cmd3}
+	cmd4 := m.CokeCmd("")
+	return []tea.Cmd{cmd1, cmd2, cmd3, cmd4}
 }

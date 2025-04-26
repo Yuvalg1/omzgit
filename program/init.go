@@ -29,7 +29,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 		ActiveTab: consts.FILES - 1,
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:      getTabs(tabs),
-		Popup:     popup.InitialModel(func() {}, "", width, getHeight(height)),
+		Popup:     popup.InitialModel(func() {}, "", getWidth(width), getHeight(height)),
 		pickMode:  false,
 
 		Width:  getWidth(width),
