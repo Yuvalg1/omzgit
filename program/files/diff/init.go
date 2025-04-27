@@ -68,7 +68,7 @@ func (m Model) getDiffStaged() string {
 
 		stdout, err := cmd.Output()
 		if err != nil {
-			return "a git diff error has occured"
+			return "Staged File has been deleted."
 		}
 
 		return string(stdout)
@@ -76,11 +76,11 @@ func (m Model) getDiffStaged() string {
 
 	file, err := os.Stat(m.path)
 	if err != nil {
-		return "an os error has occured"
+		return "Unstaged File has been deleted."
 	}
 
 	if file.Size() > 100*1000 { // bigger than 100kb
-		return "file size is too big to render."
+		return "File size is too big to render."
 	}
 
 	data, err := os.ReadFile(m.path)

@@ -70,7 +70,7 @@ func gitAdd(m Model) bool {
 }
 
 func gitReset(m Model) bool {
-	cmd := exec.Command("git", "reset", m.Path)
+	cmd := exec.Command("git", "reset", "--", m.Path)
 
 	_, err := cmd.Output()
 
