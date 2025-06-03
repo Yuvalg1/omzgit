@@ -2,24 +2,38 @@ package branches
 
 import (
 	"os/exec"
+	"program/lib/list"
 	"program/program/branches/branch"
+	"slices"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	Title    string
-	branches []branch.Model
+	Title string
+	list  list.Model[branch.Model]
 
 	width  int
 	height int
 }
 
 func InitialModel(width int, height int, title string) Model {
+	branches := getBranches(getWidth(width), getHeight(height))
+
+	initialActive := slices.IndexFunc(branches, func(branch branch.Model) bool { return branch.Current })
+	branches[initialActive].Active = true
+
+	initialList := list.InitialModel(getWidth(width), getHeight(height), branches, initialActive, "No Branches Found")
+	initialList.SetCreateChild(func(name string) *branch.Model {
+		created := branch.InitialModel(getWidth(width), getHeight(height), getDefaultBranch(), "", true)
+		return &created
+	})
+	initialList.SetFilterFn(func(branch branch.Model, text string) bool {
+		return strings.Contains(branch.Name, text)
+	})
 	return Model{
-		branches: getBranches(getWidth(width), getHeight(height)),
-		Title:    title,
+		list: initialList,
 
 		width:  getWidth(width),
 		height: getHeight(height),
@@ -35,7 +49,7 @@ func getWidth(width int) int {
 }
 
 func getHeight(height int) int {
-	return height
+	return height - 2
 }
 
 func getBranches(width int, height int) []branch.Model {
@@ -51,8 +65,19 @@ func getBranches(width int, height int) []branch.Model {
 
 	var models []branch.Model
 	for _, element := range branches {
-		models = append(models, branch.InitialModel(width, height, element, "0 minutes ago", "0 | 0"))
+		models = append(models, branch.InitialModel(width, height, element, getDefaultBranch(), false))
 	}
 
 	return models
+}
+
+func getDefaultBranch() string {
+	cmd := exec.Command("git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+
+	stdout, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+
+	return string(stdout)[:len(string(stdout))-1]
 }

@@ -18,7 +18,8 @@ func (m Model[T]) View() string {
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
 
-	return m.getTextInput() + "\n" + fileStrings
+	style := lipgloss.NewStyle().Width(m.width).Height(m.height)
+	return style.Render(m.getTextInput() + "\n" + fileStrings)
 }
 
 func (m Model[T]) getTextInput() string {

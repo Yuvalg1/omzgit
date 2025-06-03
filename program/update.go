@@ -1,7 +1,6 @@
 package program
 
 import (
-	"fmt"
 	"program/consts"
 	"program/messages"
 	"program/program/cokeline"
@@ -107,7 +106,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func handlePick(m *Model, key int) (tea.Model, tea.Cmd) {
-	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(fmt.Sprint(key))}
+	msg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("esc")}
 
 	m.ActiveTab = key - 1
 	m.cokeline.ActiveCoke = m.ActiveTab

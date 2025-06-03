@@ -89,7 +89,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(cmds...)
 
-		case "1", "esc":
+		case "esc":
 			m.list.TextInput.SetValue("")
 			m.list.SetContent(GetFilesChanged(m.Width))
 			res, cmd := m.list.Update(msg)
