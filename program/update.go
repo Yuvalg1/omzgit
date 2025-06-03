@@ -53,6 +53,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Tabs[m.ActiveTab] = res
 		return m, cmd
 
+	case messages.ModeMsg:
+		m.mode = msg.Mode
+		return m, nil
+
 	case tea.KeyMsg:
 		if m.Popup.Visible {
 			res, cmd := m.Popup.Update(msg)
@@ -67,14 +71,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 		}
 
-		if m.pickMode {
+		if m.mode == "search" {
+			res, cmd := m.Tabs[m.ActiveTab].Update(msg)
+			m.Tabs[m.ActiveTab] = res
+			return m, cmd
+		}
+
+		if m.mode == "goto" {
 			return pickTab(&m, msg)
 		}
 
 		switch keypress := msg.String(); keypress {
 		case "g":
-			m.pickMode = true
-			return m, nil
+			return m, m.ModeCmd("goto")
 
 		case "]":
 			index := (m.ActiveTab+1)%len(m.Tabs) + 1
@@ -116,7 +125,7 @@ func (m Model) DeleteCmd() tea.Cmd {
 }
 
 func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	m.pickMode = false
+	m.mode = ""
 
 	switch keypress := msg.String(); keypress {
 	case "b":

@@ -6,9 +6,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var addedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#7CE38B"))
-
-var resetStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FA7970"))
+const (
+	addedColor = "#7CE38B"
+	resetColor = "#FA7970"
+)
 
 var deletedStyle = lipgloss.NewStyle().Strikethrough(true)
 
@@ -16,29 +17,29 @@ func (m Model) View() string {
 	path := m.Path
 	path = consts.TrimRight(path, m.width-3)
 
-	return getActiveStyle(m.Staged, m.Active).Width(m.width - 1).Render(m.status + " " +
-		getDeletedStyle(m.Staged, m.Active, m.status).Render(path))
+	return getStyle(m.Staged, m.Active).Width(m.width - 1).Render(m.status + " " +
+		getStrikethroughStyle(m.Staged, m.Active, m.status).Render(path))
 }
 
-func getActiveStyle(added bool, active bool) lipgloss.Style {
-	current := getStyle(added)
+func getStyle(added bool, active bool) lipgloss.Style {
+	color := getColor(added)
 	if !active {
-		return current.Background(lipgloss.Color("#21262D"))
+		return lipgloss.NewStyle().Foreground(lipgloss.Color(color))
 	}
 
-	return current.Background(lipgloss.Color("#3A444B"))
+	return lipgloss.NewStyle().Background(lipgloss.Color(color)).Foreground(lipgloss.Color("#21262D"))
 }
 
-func getStyle(added bool) lipgloss.Style {
+func getColor(added bool) string {
 	if added {
-		return addedStyle
+		return addedColor
 	}
 
-	return resetStyle
+	return resetColor
 }
 
-func getDeletedStyle(added bool, active bool, status string) lipgloss.Style {
-	current := getActiveStyle(added, active)
+func getStrikethroughStyle(added bool, active bool, status string) lipgloss.Style {
+	current := getStyle(added, active)
 
 	if status == "D" {
 		return current.Strikethrough(true)

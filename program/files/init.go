@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"program/consts"
+	"program/lib/list"
 	"program/messages"
 	"program/program/files/diff"
 	"program/program/files/row"
@@ -15,9 +16,8 @@ import (
 )
 
 type Model struct {
-	files     []row.Model
-	Diffs     []diff.Model
-	ActiveRow int
+	list  list.Model[row.Model]
+	Diffs []diff.Model
 
 	Height int
 	Width  int
@@ -49,16 +49,16 @@ func (m Model) CokeCmd(title string) tea.Cmd {
 		}
 
 		style := m.getCokeCmdStyle()
-		parts := strings.Split(m.files[m.ActiveRow].Path, "/")
+		parts := m.getCurrentSplit()
 		path := parts[len(parts)-1]
 		return messages.CokeMsg{Title: style.Render(" "+path+" ") + restStyle.Render(fmt.Sprintf(
-			" %d/%d", m.ActiveRow+1, len(m.files)))}
+			" %d/%d", m.list.ActiveRow+1, len(m.list.Children)))}
 	}
 }
 
 func (m Model) getCokeCmdStyle() lipgloss.Style {
 	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#21262D"))
-	if m.files[m.ActiveRow].Staged {
+	if m.list.GetCurrent().Staged {
 		return lipgloss.NewStyle().Background(lipgloss.Color("#7CE38B")).Inherit(style)
 	}
 	return lipgloss.NewStyle().Background(lipgloss.Color("#FA7970")).Inherit(style)
@@ -72,10 +72,15 @@ func InitialModel(width int, height int) Model {
 
 	files[0].Active = true
 
+	list := list.InitialModel(width, height, files)
+
+	list.SetFilterFn(func(row row.Model, text string) bool {
+		return strings.Contains(row.Path, text)
+	})
+
 	return Model{
-		files:     files,
-		Diffs:     getDiffs(files, tWidth, tHeight),
-		ActiveRow: 0,
+		list:  list,
+		Diffs: getDiffs(files, tWidth, tHeight),
 
 		Width:  tWidth,
 		Height: tHeight,
@@ -85,7 +90,7 @@ func InitialModel(width int, height int) Model {
 func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{m.TickCmd()}
 
-	if len(m.files) > 0 {
+	if len(m.list.Children) > 0 {
 		cmds = append(cmds, m.CokeCmd(""))
 	}
 
@@ -136,4 +141,11 @@ func getDiffs(files []row.Model, width int, height int) []diff.Model {
 	}
 
 	return diffs
+}
+
+func (m Model) getCurrentSplit() []string {
+	if len(m.list.Children) == 0 {
+		return []string{""}
+	}
+	return strings.Split(m.list.GetCurrent().Path, "/")
 }

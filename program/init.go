@@ -2,6 +2,7 @@ package program
 
 import (
 	"program/consts"
+	"program/messages"
 	"program/program/cokeline"
 	"program/program/popup"
 
@@ -12,7 +13,7 @@ type Model struct {
 	ActiveTab int
 	cokeline  cokeline.Model
 	Tabs      []tea.Model
-	pickMode  bool
+	mode      string
 	Popup     popup.Model
 
 	Height int
@@ -30,7 +31,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:      getTabs(tabs),
 		Popup:     popup.InitialModel(func() {}, "", getWidth(width), getHeight(height)),
-		pickMode:  false,
+		mode:      "",
 
 		Width:  getWidth(width),
 		Height: getHeight(height),
@@ -45,6 +46,12 @@ func (m Model) Init() tea.Cmd {
 	}
 
 	return tea.Batch(cmds...)
+}
+
+func (m Model) ModeCmd(mode string) tea.Cmd {
+	return func() tea.Msg {
+		return messages.ModeMsg{Mode: mode}
+	}
 }
 
 func getWidth(width int) int {
