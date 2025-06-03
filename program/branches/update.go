@@ -37,7 +37,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "c":
-			if gitCheckout(m.list.Children[m.list.ActiveRow].Name) {
+			if gitCheckout(m.list.GetCurrent().Name) {
 				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 
 				if current != -1 {
