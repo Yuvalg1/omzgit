@@ -16,6 +16,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.SetContent(GetFilesChanged(m.Width))
 
 		current := m.list.GetCurrent()
+
+		if current == nil {
+			return m, nil
+		}
+
 		current.Active = true
 
 		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
@@ -25,6 +30,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.SetContent(GetFilesChanged(m.Width))
 
 		current := m.list.GetCurrent()
+
+		if current == nil {
+			return m, m.TickCmd()
+		}
+
 		current.Active = true
 
 		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()

@@ -114,6 +114,10 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func move[T tea.Model](m Model[T], msg tea.Msg, curr int, next int) []tea.Cmd {
+	if len(m.Children) == 0 {
+		return []tea.Cmd{}
+	}
+
 	res1, cmd1 := m.Children[curr].Update(msg)
 	m.Children[curr] = res1.(T)
 
@@ -124,7 +128,8 @@ func move[T tea.Model](m Model[T], msg tea.Msg, curr int, next int) []tea.Cmd {
 }
 
 func (m Model[T]) getFilteredChildren() []T {
-	var filteredChildren []T
+	filteredChildren := []T{}
+
 	for _, element := range m.Children {
 		if m.filterFn(element, m.TextInput.Value()) {
 			filteredChildren = append(filteredChildren, element)

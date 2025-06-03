@@ -8,12 +8,12 @@ func (m Model[T]) View() string {
 
 	children := m.getFilteredChildren()
 
-	for i := range min(len(children), m.height-1) {
-		fileStrings += children[i+diff].View() + "\n"
+	if len(children) == 0 && !m.TextInput.Focused() {
+		fileStrings = m.Children[len(m.Children)-1].View()
 	}
 
-	if len(fileStrings) == 0 {
-		fileStrings = "No Files Found\n"
+	for i := range min(len(children), m.height-1) {
+		fileStrings += children[i+diff].View() + "\n"
 	}
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
