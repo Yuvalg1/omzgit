@@ -14,31 +14,33 @@ type Model[T tea.Model] struct {
 	createChildFn func(name string) *T
 	filterFn      func(row T, text string) bool
 	TextInput     textinput.Model
+	emptyMsg      string
 
 	width  int
 	height int
 }
 
-func InitialModel[T tea.Model](width int, height int, children []T) Model[T] {
+func InitialModel[T tea.Model](width int, height int, children []T, initialActive int, emptyMsg string) Model[T] {
 	var childrenTeaModels []T
 	childrenTeaModels = append(childrenTeaModels, children...)
 
 	ti := textinput.New()
 	ti.CharLimit = 20
-	ti.Width = width
+	ti.Width = getWidth(width)
 
 	return Model[T]{
 		Children:  childrenTeaModels,
-		ActiveRow: 0,
+		ActiveRow: initialActive,
 
 		createChildFn: func(name string) *T { return nil },
 		filterFn: func(row T, text string) bool {
 			return true
 		},
 		TextInput: ti,
+		emptyMsg:  emptyMsg,
 
-		width:  width,
-		height: height,
+		width:  getWidth(width),
+		height: getHeight(height),
 	}
 }
 
@@ -65,7 +67,7 @@ func (m *Model[T]) SetContent(children []T) {
 	m.Children = m.getFilteredChildren()
 
 	if len(m.Children) == 0 {
-		m.Children = append(m.Children, *m.createChildFn("No Files Found"))
+		m.Children = append(m.Children, *m.createChildFn(m.emptyMsg))
 	}
 }
 

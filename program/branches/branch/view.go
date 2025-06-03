@@ -7,18 +7,27 @@ import (
 )
 
 func (m Model) View() string {
-	rest := " " + m.lastUpdated + " " + m.diff + " "
+	rest := " " + m.diff + " " + m.lastUpdated + " "
 
-	titleStyle := getTitleStyle(m.current, m.width-lipgloss.Width(rest))
-	title := titleStyle.Render(consts.TrimRight(m.Name, m.width-lipgloss.Width(rest)))
+	titleStyle := m.getTitleStyle()
+	title := consts.TrimRight(m.Name, m.width-lipgloss.Width(rest))
 
-	return title + rest
+	return titleStyle.Render(title + lipgloss.NewStyle().Width(m.width-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest))
 }
 
-func getTitleStyle(current bool, width int) lipgloss.Style {
-	style := lipgloss.NewStyle().Width(width)
+func getColor(current bool) lipgloss.Color {
 	if current {
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("2")).Inherit(style)
+		return lipgloss.Color("#FFFF66")
 	}
-	return style
+
+	return lipgloss.Color("#02FFE4")
+}
+
+func (m Model) getTitleStyle() lipgloss.Style {
+	color := getColor(m.Current)
+
+	if m.Active {
+		return lipgloss.NewStyle().Background(color).Foreground(lipgloss.Color("#21262D"))
+	}
+	return lipgloss.NewStyle().Foreground(color)
 }
