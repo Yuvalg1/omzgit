@@ -27,7 +27,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Staged = true
 			return m, nil
 
-		case "g", "G":
+		case "g", "G", "/", "esc":
 			m.Active = !m.Active
 			return m, nil
 

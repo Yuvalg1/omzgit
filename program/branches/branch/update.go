@@ -1,8 +1,7 @@
-package branches
+package branch
 
 import (
 	"program/messages"
-	"program/program/branches/branch"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -12,15 +11,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.TerminalMsg:
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
-
-		var cmds []tea.Cmd
-		for index, element := range m.branches {
-			res, cmd := element.Update(msg)
-			cmds = append(cmds, cmd)
-			m.branches[index] = res.(branch.Model)
-		}
-
-		return m, tea.Batch(cmds...)
+		return m, nil
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {

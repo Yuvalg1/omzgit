@@ -2,6 +2,7 @@ package files
 
 import (
 	"os/exec"
+	"program/lib/list"
 	"program/messages"
 	"program/program/files/diff"
 	"program/program/files/row"
@@ -12,15 +13,21 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.DeletedMsg:
-		m.files = GetFilesChanged(m.Width)
-		m.files[m.ActiveRow].Active = true
-		m.Diffs[m.ActiveRow].Content = m.Diffs[m.ActiveRow].GetContent()
+		m.list.SetContent(GetFilesChanged(m.Width))
+
+		current := m.list.GetCurrent()
+		current.Active = true
+
+		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
 		return m, nil
 
 	case messages.TickMsg:
-		m.files = GetFilesChanged(m.Width)
-		m.files[m.ActiveRow].Active = true
-		m.Diffs[m.ActiveRow].Content = m.Diffs[m.ActiveRow].GetContent()
+		m.list.SetContent(GetFilesChanged(m.Width))
+
+		current := m.list.GetCurrent()
+		current.Active = true
+
+		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
 		return m, m.TickCmd()
 
 	case messages.TerminalMsg:
@@ -39,12 +46,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, cmd)
 		}
 
-		for index, element := range m.files {
-			res, cmd := element.Update(msg)
-
-			m.files[index] = res.(row.Model)
-			cmds = append(cmds, cmd)
-		}
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[row.Model])
+		cmds = append(cmds, cmd)
 
 		return m, tea.Batch(cmds...)
 
@@ -62,12 +66,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			var cmds []tea.Cmd
 			cmds = append(cmds, m.CokeCmd(""))
 
-			for index, element := range m.files {
-				res, cmd := element.Update(msg)
-				m.files[index] = res.(row.Model)
-
-				cmds = append(cmds, cmd)
-			}
+			res, cmd := m.list.UpdateContent(msg)
+			m.list = res
+			cmds = append(cmds, cmd)
 
 			for index, element := range m.Diffs {
 				res, cmd := element.Update(msg)
@@ -78,51 +79,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(cmds...)
 
-		case "1":
-			m.files = GetFilesChanged(m.Width)
-			m.files[m.ActiveRow].Active = true
-			return m, nil
+		case "1", "esc":
+			m.list.TextInput.SetValue("")
+			m.list.SetContent(GetFilesChanged(m.Width))
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[row.Model])
+			return m, cmd
 
 		case "d":
-			res, cmd := m.files[m.ActiveRow].Update(msg)
-			m.files[m.ActiveRow] = res.(row.Model)
-			m.files = GetFilesChanged(m.Width)
+			res, cmd := m.list.UpdateCurrent(msg)
+			m.list = res
+
+			m.list.SetContent(GetFilesChanged(m.Width))
 			return m, cmd
 
 		case "D":
 			return m, m.PopupCmd("All Files", func() {
 				gitRestoreAll()
 			})
-
-		case "g":
-			curr := m.ActiveRow
-			m.ActiveRow = 0
-			cmds := move(m, msg, curr, 0)
-			return m, tea.Batch(cmds...)
-
-		case "G":
-			curr := m.ActiveRow
-			m.ActiveRow = len(m.files) - 1
-			cmds := move(m, msg, curr, len(m.files)-1)
-			return m, tea.Batch(cmds...)
-
-		case "j", "down":
-			curr := m.ActiveRow
-			next := (m.ActiveRow + 1 + len(m.files)) % len(m.files)
-
-			m.ActiveRow = next
-			cmds := move(m, msg, curr, next)
-
-			return m, tea.Batch(cmds...)
-
-		case "k", "up":
-			curr := m.ActiveRow
-			next := (m.ActiveRow - 1 + len(m.files)) % len(m.files)
-
-			m.ActiveRow = next
-			cmds := move(m, msg, curr, next)
-
-			return m, tea.Batch(cmds...)
 
 		case "R":
 			if !gitResetAll() {
@@ -132,11 +106,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			var cmds []tea.Cmd
 			cmds = append(cmds, m.CokeCmd(""))
 
-			for index, element := range m.files {
-				res, cmd := element.Update(msg)
-				m.files[index] = res.(row.Model)
-				cmds = append(cmds, cmd)
-			}
+			res, cmd := m.list.UpdateContent(msg)
+			m.list = res
+			cmds = append(cmds, cmd)
 
 			for index, element := range m.Diffs {
 				res, cmd := element.Update(msg)
@@ -148,11 +120,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 
 		default:
-			res1, cmd1 := m.files[m.ActiveRow].Update(msg)
-			m.files[m.ActiveRow] = res1.(row.Model)
+			res1, cmd1 := m.list.Update(msg)
+			m.list = res1.(list.Model[row.Model])
 
-			res2, cmd2 := m.Diffs[m.ActiveRow].Update(msg)
-			m.Diffs[m.ActiveRow] = res2.(diff.Model)
+			res2, cmd2 := m.Diffs[m.list.ActiveRow].Update(msg)
+			m.Diffs[m.list.ActiveRow] = res2.(diff.Model)
 
 			return m, tea.Batch(cmd1, cmd2, m.CokeCmd(""))
 		}
@@ -178,18 +150,4 @@ func gitResetAll() bool {
 func gitRestoreAll() {
 	cmd := exec.Command("git", "reset", "--hard")
 	cmd.Output()
-}
-
-func move(m Model, msg tea.Msg, curr int, next int) []tea.Cmd {
-	res1, cmd1 := m.files[curr].Update(msg)
-	m.files[curr] = res1.(row.Model)
-
-	res2, cmd2 := m.files[next].Update(msg)
-	m.files[next] = res2.(row.Model)
-
-	res3, cmd3 := m.Diffs[next].Update(msg)
-	m.Diffs[next] = res3.(diff.Model)
-
-	cmd4 := m.CokeCmd("")
-	return []tea.Cmd{cmd1, cmd2, cmd3, cmd4}
 }
