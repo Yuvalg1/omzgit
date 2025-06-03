@@ -11,8 +11,9 @@ type Model[T tea.Model] struct {
 	Children  []T
 	ActiveRow int
 
-	filterFn  func(row T, text string) bool
-	TextInput textinput.Model
+	createChildFn func(name string) *T
+	filterFn      func(row T, text string) bool
+	TextInput     textinput.Model
 
 	width  int
 	height int
@@ -30,6 +31,7 @@ func InitialModel[T tea.Model](width int, height int, children []T) Model[T] {
 		Children:  childrenTeaModels,
 		ActiveRow: 0,
 
+		createChildFn: func(name string) *T { return nil },
 		filterFn: func(row T, text string) bool {
 			return true
 		},
@@ -61,6 +63,10 @@ func getHeight(height int) int {
 func (m *Model[T]) SetContent(children []T) {
 	m.Children = children
 	m.Children = m.getFilteredChildren()
+
+	if len(m.Children) == 0 {
+		m.Children = append(m.Children, *m.createChildFn("No Files Found"))
+	}
 }
 
 func (m Model[T]) UpdateContent(msg tea.Msg) (Model[T], tea.Cmd) {
@@ -82,6 +88,10 @@ func (m Model[T]) UpdateCurrent(msg tea.Msg) (Model[T], tea.Cmd) {
 	res, cmd := m.Children[m.ActiveRow].Update(msg)
 	m.Children[m.ActiveRow] = res.(T)
 	return m, cmd
+}
+
+func (m *Model[T]) SetCreateChild(createChildFn func(name string) *T) {
+	m.createChildFn = createChildFn
 }
 
 func (m *Model[T]) SetFilterFn(fn func(row T, text string) bool) {

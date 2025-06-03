@@ -58,7 +58,7 @@ func (m Model) CokeCmd(title string) tea.Cmd {
 
 func (m Model) getCokeCmdStyle() lipgloss.Style {
 	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#21262D"))
-	if m.list.GetCurrent().Staged {
+	if len(m.list.Children) > 0 && m.list.GetCurrent().Staged {
 		return lipgloss.NewStyle().Background(lipgloss.Color("#7CE38B")).Inherit(style)
 	}
 	return lipgloss.NewStyle().Background(lipgloss.Color("#FA7970")).Inherit(style)
@@ -72,14 +72,18 @@ func InitialModel(width int, height int) Model {
 
 	files[0].Active = true
 
-	list := list.InitialModel(width, height, files)
+	initialList := list.InitialModel(width, height, files)
 
-	list.SetFilterFn(func(row row.Model, text string) bool {
+	initialList.SetCreateChild(func(name string) *row.Model {
+		created := row.InitialModel(name, getWidth(width), true)
+		return &created
+	})
+	initialList.SetFilterFn(func(row row.Model, text string) bool {
 		return strings.Contains(row.Path, text)
 	})
 
 	return Model{
-		list:  list,
+		list:  initialList,
 		Diffs: getDiffs(files, tWidth, tHeight),
 
 		Width:  tWidth,
@@ -144,8 +148,5 @@ func getDiffs(files []row.Model, width int, height int) []diff.Model {
 }
 
 func (m Model) getCurrentSplit() []string {
-	if len(m.list.Children) == 0 {
-		return []string{""}
-	}
 	return strings.Split(m.list.GetCurrent().Path, "/")
 }

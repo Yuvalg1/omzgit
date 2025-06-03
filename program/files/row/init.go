@@ -21,7 +21,7 @@ type Model struct {
 func InitialModel(fileStr string, width int, empty bool) Model {
 	if empty {
 		return Model{
-			Active: false,
+			Active: true,
 			Staged: false,
 			Path:   fileStr,
 			status: " ",
