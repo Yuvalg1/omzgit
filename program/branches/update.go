@@ -60,5 +60,5 @@ func gitCheckout(branch string) bool {
 
 	_, err := cmd.Output()
 
-	return err != nil
+	return err == nil
 }
