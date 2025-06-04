@@ -7,7 +7,7 @@ import (
 )
 
 func (m Model) View() string {
-	rest := " " + m.diff + " " + m.lastUpdated + " "
+	rest := " " + lipgloss.NewStyle().Width(8).Render(m.diff) + " " + lipgloss.NewStyle().Width(16).Render(m.lastUpdated) + " "
 
 	titleStyle := m.getTitleStyle()
 	title := consts.TrimRight(m.Name, m.width-lipgloss.Width(rest))
