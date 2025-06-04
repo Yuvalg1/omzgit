@@ -16,14 +16,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
-		var cmds []tea.Cmd
-		for index, element := range m.list.Children {
-			res, cmd := element.Update(msg)
-			cmds = append(cmds, cmd)
-			m.list.Children[index] = res.(branch.Model)
-		}
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[branch.Model])
 
-		return m, tea.Batch(cmds...)
+		return m, cmd
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
