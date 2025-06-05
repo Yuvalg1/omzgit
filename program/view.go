@@ -9,7 +9,8 @@ import (
 func (m Model) View() string {
 	popup := m.Popup.View()
 
-	if m.Popup.Visible {
+	current := m.Popup.GetCurrent()
+	if current.GetVisible() {
 		return consts.PlaceOverlay((m.Width-lipgloss.Width(popup))/2, (m.Height-1-lipgloss.Height(popup))/2, m.Popup.View(), m.Tabs[m.ActiveTab].View()+"\n"+m.cokeline.View())
 	}
 

@@ -3,6 +3,7 @@ package branches
 import (
 	"os/exec"
 	"program/lib/list"
+	"program/messages"
 	"program/program/branches/branch"
 	"slices"
 	"strings"
@@ -50,6 +51,16 @@ func getWidth(width int) int {
 
 func getHeight(height int) int {
 	return height - 2
+}
+
+func (m Model) PopupCmd(pType string, title string, fn func(string)) tea.Cmd {
+	return func() tea.Msg {
+		return messages.PopupMsg{
+			Fn:   fn,
+			Name: title,
+			Type: pType,
+		}
+	}
 }
 
 func getBranches(width int, height int) []branch.Model {

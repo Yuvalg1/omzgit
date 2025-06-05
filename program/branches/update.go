@@ -16,6 +16,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
+		msg.Width = getWidth(msg.Width)
+		msg.Height = getHeight(msg.Height)
+
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[branch.Model])
+
+		return m, cmd
+
+	case messages.PopupMsg:
 		res, cmd := m.list.Update(msg)
 		m.list = res.(list.Model[branch.Model])
 
@@ -44,6 +53,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
+		case "b":
+			return m, m.PopupCmd("input", "Enter A new Branch Name", func(name string) {
+				gitCheckoutBranch(name)
+			})
+
 		default:
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])
@@ -57,6 +71,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func gitCheckout(branch string) bool {
 	cmd := exec.Command("git", "checkout", branch)
+
+	_, err := cmd.Output()
+
+	return err == nil
+}
+
+func gitCheckoutBranch(branch string) bool {
+	cmd := exec.Command("git", "checkout", "-b", branch)
 
 	_, err := cmd.Output()
 

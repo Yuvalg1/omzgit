@@ -22,7 +22,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cokeline = res1.(cokeline.Model)
 
 		res2, cmd2 := m.Popup.Update(msg)
-		m.Popup = res2.(popup.Model)
+		m.Popup = res2.(popup.Model[popup.InnerModel])
 
 		cmds := []tea.Cmd{cmd1, cmd2}
 		for index, element := range m.Tabs {
@@ -44,22 +44,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case messages.PopupMsg:
-		m.Popup.Fn = msg.Fn
-		m.Popup.Name = msg.Name
-		m.Popup.Visible = true
+		res1, cmd1 := m.Popup.Update(msg)
+		m.Popup = res1.(popup.Model[popup.InnerModel])
 
-		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res
-		return m, cmd
+		res2, cmd2 := m.Tabs[m.ActiveTab].Update(msg)
+		m.Tabs[m.ActiveTab] = res2
+		return m, tea.Batch(cmd1, cmd2)
 
 	case messages.ModeMsg:
 		m.mode = msg.Mode
 		return m, nil
 
 	case tea.KeyMsg:
-		if m.Popup.Visible {
+		current := m.Popup.GetCurrent()
+		if current.GetVisible() {
 			res, cmd := m.Popup.Update(msg)
-			m.Popup = res.(popup.Model)
+			m.Popup = res.(popup.Model[popup.InnerModel])
 
 			cmds := []tea.Cmd{cmd}
 

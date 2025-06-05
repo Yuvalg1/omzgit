@@ -3,6 +3,8 @@ package program
 import (
 	"program/consts"
 	"program/messages"
+	"program/popups/discard"
+	"program/popups/input"
 	"program/program/cokeline"
 	"program/program/popup"
 
@@ -14,7 +16,7 @@ type Model struct {
 	cokeline  cokeline.Model
 	Tabs      []tea.Model
 	mode      string
-	Popup     popup.Model
+	Popup     popup.Model[popup.InnerModel]
 
 	Height int
 	Width  int
@@ -26,11 +28,19 @@ type ExtendedModel struct {
 }
 
 func InitialModel(tabs []ExtendedModel, width int, height int) Model {
+	initialPopups := popup.InitialModel[popup.InnerModel]("discard")
+
+	initialInput := input.InitialModel(func(name string) {}, "", getWidth(width), getHeight(height))
+	initialPopups.AddPopup("input", initialInput)
+
+	initialDiscard := discard.InitialModel(func() {}, "", getWidth(width), getHeight(height))
+	initialPopups.AddPopup("discard", initialDiscard)
+
 	return Model{
 		ActiveTab: consts.FILES - 1,
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:      getTabs(tabs),
-		Popup:     popup.InitialModel(func() {}, "", getWidth(width), getHeight(height)),
+		Popup:     initialPopups,
 		mode:      "",
 
 		Width:  getWidth(width),

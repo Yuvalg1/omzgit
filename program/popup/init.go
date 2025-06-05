@@ -4,34 +4,40 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type Model struct {
-	Fn      func()
-	Name    string
-	Visible bool
-
-	Width  int
-	Height int
+type Func[F any] struct {
+	Func F
 }
 
-func InitialModel(fn func(), name string, width int, height int) Model {
-	return Model{
-		Fn:      fn,
-		Name:    name,
-		Visible: false,
+type visible interface {
+	GetVisible() bool
+}
 
-		Width:  getWidth(width),
-		Height: getHeight(height),
+type InnerModel interface {
+	visible
+	tea.Model
+}
+
+type Model[T InnerModel] struct {
+	current string
+	Popups  map[string]T
+}
+
+func InitialModel[T InnerModel](current string) Model[InnerModel] {
+	return Model[InnerModel]{
+		current: current,
+		Popups:  map[string]InnerModel{},
 	}
 }
 
-func (m Model) Init() tea.Cmd {
+func (m Model[T]) Init() tea.Cmd {
 	return nil
 }
 
-func getHeight(height int) int {
-	return 5
+func (m *Model[T]) AddPopup(name string, popup T) {
+	m.Popups[name] = popup
 }
 
-func getWidth(width int) int {
-	return min(34, width-2)
+func (m Model[T]) GetCurrent() T {
+	current := m.Popups[m.current]
+	return current
 }
