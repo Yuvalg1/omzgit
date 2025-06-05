@@ -104,7 +104,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "D":
-			return m, m.PopupCmd("All Files", func() {
+			return m, m.PopupCmd("discard", "All Files", func() {
 				gitRestoreAll()
 			})
 

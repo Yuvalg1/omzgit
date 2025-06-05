@@ -2,11 +2,16 @@ package messages
 
 import tea "github.com/charmbracelet/bubbletea"
 
-type PopupMsg struct {
-	Fn   func()
-	Name string
+type Func struct {
+	Func any
 }
 
-type Popuper interface {
-	PopupCmd(string, func()) tea.Cmd
+type PopupMsg struct {
+	Fn   any
+	Name string
+	Type string
+}
+
+type Popuper[F any] interface {
+	PopupCmd(string, string, F) tea.Cmd
 }

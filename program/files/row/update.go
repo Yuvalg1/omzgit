@@ -40,7 +40,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "d":
-			return m, m.PopupCmd(m.Path, func() {
+			return m, m.PopupCmd("discard", m.Path, func() {
 				if m.Staged {
 					m.Staged = !gitReset(m)
 				}
