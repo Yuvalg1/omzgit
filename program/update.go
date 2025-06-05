@@ -4,7 +4,7 @@ import (
 	"program/consts"
 	"program/messages"
 	"program/program/cokeline"
-	"program/program/popup"
+	"program/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -22,7 +22,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cokeline = res1.(cokeline.Model)
 
 		res2, cmd2 := m.Popup.Update(msg)
-		m.Popup = res2.(popup.Model[popup.InnerModel])
+		m.Popup = res2.(popups.Model[popups.InnerModel])
 
 		cmds := []tea.Cmd{cmd1, cmd2}
 		for index, element := range m.Tabs {
@@ -44,12 +44,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case messages.PopupMsg:
-		res1, cmd1 := m.Popup.Update(msg)
-		m.Popup = res1.(popup.Model[popup.InnerModel])
-
-		res2, cmd2 := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res2
-		return m, tea.Batch(cmd1, cmd2)
+		res, cmd := m.Popup.Update(msg)
+		m.Popup = res.(popups.Model[popups.InnerModel])
+		return m, cmd
 
 	case messages.ModeMsg:
 		m.mode = msg.Mode
@@ -59,7 +56,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		current := m.Popup.GetCurrent()
 		if current.GetVisible() {
 			res, cmd := m.Popup.Update(msg)
-			m.Popup = res.(popup.Model[popup.InnerModel])
+			m.Popup = res.(popups.Model[popups.InnerModel])
 
 			cmds := []tea.Cmd{cmd}
 
@@ -68,12 +65,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			return m, tea.Batch(cmds...)
-		}
-
-		if m.mode == "search" {
-			res, cmd := m.Tabs[m.ActiveTab].Update(msg)
-			m.Tabs[m.ActiveTab] = res
-			return m, cmd
 		}
 
 		if m.mode == "goto" {

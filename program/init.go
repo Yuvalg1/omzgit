@@ -3,10 +3,11 @@ package program
 import (
 	"program/consts"
 	"program/messages"
+	"program/popups/alert"
 	"program/popups/discard"
 	"program/popups/input"
 	"program/program/cokeline"
-	"program/program/popup"
+	"program/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -16,7 +17,7 @@ type Model struct {
 	cokeline  cokeline.Model
 	Tabs      []tea.Model
 	mode      string
-	Popup     popup.Model[popup.InnerModel]
+	Popup     popups.Model[popups.InnerModel]
 
 	Height int
 	Width  int
@@ -28,13 +29,16 @@ type ExtendedModel struct {
 }
 
 func InitialModel(tabs []ExtendedModel, width int, height int) Model {
-	initialPopups := popup.InitialModel[popup.InnerModel]("discard")
+	initialPopups := popups.InitialModel[popups.InnerModel]("discard")
 
 	initialInput := input.InitialModel(func(name string) {}, "", getWidth(width), getHeight(height))
 	initialPopups.AddPopup("input", initialInput)
 
 	initialDiscard := discard.InitialModel(func() {}, "", getWidth(width), getHeight(height))
 	initialPopups.AddPopup("discard", initialDiscard)
+
+	initialAlert := alert.InitialModel(getWidth(width), getHeight(height))
+	initialPopups.AddPopup("alert", initialAlert)
 
 	return Model{
 		ActiveTab: consts.FILES - 1,

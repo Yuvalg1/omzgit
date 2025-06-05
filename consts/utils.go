@@ -17,3 +17,10 @@ func TrimRight(name string, width int) string {
 	trimmed = trimmed[:len(trimmed)-1]
 	return trimmed
 }
+
+func PadTitle(title string, width int) string {
+	padding := width - len(title) - 4
+	parity := len(title) % 2
+
+	return "┌" + strings.Repeat("─", padding/2) + " " + title + " " + strings.Repeat("─", padding/2+parity) + "┐" + "\n"
+}

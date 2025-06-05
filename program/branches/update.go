@@ -24,12 +24,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.PopupMsg:
-		res, cmd := m.list.Update(msg)
-		m.list = res.(list.Model[branch.Model])
-
-		return m, cmd
-
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "esc":
@@ -50,8 +44,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				m.list.Children[m.list.ActiveRow].Current = true
+				return m, nil
 			}
-			return m, nil
+			return m, m.PopupCmd("alert", "Please commit or stash your changes before switching branches", func(name string) {})
 
 		case "b":
 			return m, m.PopupCmd("input", "Enter A new Branch Name", func(name string) {

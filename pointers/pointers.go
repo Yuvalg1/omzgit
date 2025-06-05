@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	_ messages.Popuper[func(string)] = (*branches.Model)(nil)
+	_ messages.Popuper[any] = (*branches.Model)(nil)
 
 	_ messages.Cokerer         = (*files.Model)(nil)
 	_ messages.Popuper[func()] = (*files.Model)(nil)
