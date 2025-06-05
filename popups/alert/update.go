@@ -1,4 +1,4 @@
-package input
+package alert
 
 import (
 	"program/messages"
@@ -14,30 +14,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case messages.PopupMsg:
-		m.textinput.SetValue("")
-		m.CallbackFn = msg.Fn.(func(string))
-		m.Name = msg.Name
+		m.error = msg.Name
 		m.visible = true
 		return m, nil
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "esc":
-			m.visible = false
-			return m, nil
-
-		case "enter":
-			m.CallbackFn(m.textinput.Value())
-			m.visible = false
-			return m, nil
-
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
 		default:
-			res, cmd := m.textinput.Update(msg)
-			m.textinput = res
-			return m, cmd
+			m.visible = false
+			return m, nil
 		}
 	}
 

@@ -1,4 +1,4 @@
-package popup
+package popups
 
 import (
 	"program/messages"

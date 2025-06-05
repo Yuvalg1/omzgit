@@ -1,6 +1,10 @@
 package discard
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"program/consts"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 var (
 	cancelColor  = lipgloss.Color("#CCCCCC")
@@ -9,17 +13,15 @@ var (
 
 func (m Model) View() string {
 	containerStyle := lipgloss.NewStyle().
-		Width(m.Width).
+		Width(m.Width-2).
 		Height(m.Height).
-		Border(lipgloss.ThickBorder()).AlignHorizontal(lipgloss.Center)
-
-	titleStyle := lipgloss.NewStyle().
-		Width(m.Width - 2).AlignHorizontal(lipgloss.Center).Background(lipgloss.Color("#21262D"))
+		Border(lipgloss.NormalBorder(), false, true, true).
+		AlignHorizontal(lipgloss.Center)
 
 	contentStyle := lipgloss.NewStyle().Padding(1).Bold(true)
 
 	optionStyle := lipgloss.NewStyle().
-		Width((m.Width - 5) / 2).
+		Width((m.Width - 7) / 2).
 		Foreground(lipgloss.Color("#21262D")).
 		AlignHorizontal(lipgloss.Center)
 
@@ -31,8 +33,7 @@ func (m Model) View() string {
 		lipgloss.NewStyle().Foreground(discardColor).Render("Y ") +
 		yesButtonStyle.Inherit(optionStyle).Render("Discard")
 
-	return containerStyle.Render(
-		titleStyle.Render("Attention!") + "\n" +
-			contentStyle.Render("Are you sure you want to discard "+m.Name+"?") + "\n" + buttons,
+	return consts.PadTitle("Attention", m.Width) + containerStyle.Render(
+		contentStyle.Render("Are you sure you want to discard "+m.Name+"?")+"\n"+buttons,
 	)
 }

@@ -1,30 +1,21 @@
-package input
+package alert
 
 import (
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	CallbackFn func(string)
-	Name       string
-	textinput  textinput.Model
-	visible    bool
+	error   string
+	visible bool
 
 	Width  int
 	Height int
 }
 
-func InitialModel(fn func(string), name string, width int, height int) Model {
-	ti := textinput.New()
-	ti.CharLimit = 50
-	ti.Focus()
-
+func InitialModel(width int, height int) Model {
 	return Model{
-		CallbackFn: fn,
-		Name:       name,
-		textinput:  ti,
-		visible:    false,
+		error:   "",
+		visible: false,
 
 		Width:  getWidth(width),
 		Height: getHeight(height),

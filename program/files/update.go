@@ -62,12 +62,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, tea.Batch(cmds...)
 
-	case messages.PopupMsg:
-		m = InitialModel(m.Width, m.Height+2)
-		return m, nil
-
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
+		case "a", "r":
+			res, cmd := m.list.UpdateCurrent(msg)
+			m.list = res
+			return m, cmd
+
 		case "A":
 			if !gitAddAll() {
 				return m, nil
@@ -99,8 +100,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "d":
 			res, cmd := m.list.UpdateCurrent(msg)
 			m.list = res
-
-			m.list.SetContent(GetFilesChanged(m.Width))
 			return m, cmd
 
 		case "D":
