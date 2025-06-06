@@ -1,23 +1,27 @@
 package discard
 
 import (
+	"program/messages"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	CallbackFn func()
+	CallbackFn func() bool
 	Name       string
 	visible    bool
+	verb       string
 
 	Width  int
 	Height int
 }
 
-func InitialModel(fn func(), name string, width int, height int) Model {
+func InitialModel(fn func() bool, width int, height int) Model {
 	return Model{
 		CallbackFn: fn,
-		Name:       name,
+		Name:       "",
 		visible:    false,
+		verb:       "",
 
 		Width:  getWidth(width),
 		Height: getHeight(height),
@@ -26,6 +30,23 @@ func InitialModel(fn func(), name string, width int, height int) Model {
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func (m Model) PopupCmd(ptype string, placeholder string, title string, fn func() bool) tea.Cmd {
+	return func() tea.Msg {
+		return messages.PopupMsg{
+			Fn:   fn,
+			Type: ptype,
+			Name: title,
+			Verb: placeholder,
+		}
+	}
+}
+
+func (m Model) RefreshCmd() tea.Cmd {
+	return func() tea.Msg {
+		return messages.RefreshMsg{}
+	}
 }
 
 func getHeight(height int) int {

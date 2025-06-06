@@ -53,12 +53,13 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m Model) PopupCmd(pType string, title string, fn any) tea.Cmd {
+func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {
 	return func() tea.Msg {
 		return messages.PopupMsg{
 			Fn:   fn,
 			Name: title,
 			Type: pType,
+			Verb: placeholder,
 		}
 	}
 }

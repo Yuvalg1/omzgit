@@ -18,6 +18,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.CallbackFn = msg.Fn.(func(string))
 		m.Name = msg.Name
 		m.visible = true
+		m.textinput.Placeholder = msg.Verb
 		return m, nil
 
 	case tea.KeyMsg:
@@ -29,7 +30,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			m.CallbackFn(m.textinput.Value())
 			m.visible = false
-			return m, nil
+			return m, m.RefreshCmd()
 
 		case "ctrl+c", "q":
 			return m, tea.Quit

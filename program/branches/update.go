@@ -1,7 +1,7 @@
 package branches
 
 import (
-	"os/exec"
+	"program/git"
 	"program/lib/list"
 	"program/messages"
 	"program/program/branches/branch"
@@ -12,6 +12,18 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case messages.RefreshMsg:
+		m.list.SetContent(getBranches(m.width, m.height))
+
+		current := m.list.GetCurrent()
+
+		if current == nil {
+			return m, nil
+		}
+
+		current.Active = true
+		return m, nil
+
 	case messages.TerminalMsg:
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
@@ -26,17 +38,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "esc":
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(getBranches(m.width, m.height))
 
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[branch.Model])
-
-			return m, cmd
+		case "b":
+			return m, m.PopupCmd("input", "Name", "Enter A new Branch Name", func(name string) {
+				git.Exec("checkout", "-b", name)
+			})
 
 		case "c":
-			if gitCheckout(m.list.GetCurrent().Name) {
+			if git.Exec("checkout", m.list.GetCurrent().Name) {
 				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 
 				if current != -1 {
@@ -46,12 +55,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.list.Children[m.list.ActiveRow].Current = true
 				return m, nil
 			}
-			return m, m.PopupCmd("alert", "Please commit or stash your changes before switching branches", func(name string) {})
+			return m, m.PopupCmd("alert", "Alert!", "Please commit or stash your changes before switching branches", func(name string) {})
 
-		case "b":
-			return m, m.PopupCmd("input", "Enter A new Branch Name", func(name string) {
-				gitCheckoutBranch(name)
+		case "d":
+			return m, m.PopupCmd("discard", "delete", m.list.GetCurrent().Name, func() bool {
+				return git.Exec("branch", "-d", m.list.GetCurrent().Name)
 			})
+
+		case "esc":
+			m.list.TextInput.SetValue("")
+			m.list.SetContent(getBranches(m.width, m.height))
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[branch.Model])
+
+			return m, cmd
 
 		default:
 			res, cmd := m.list.Update(msg)
@@ -62,20 +80,4 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
-}
-
-func gitCheckout(branch string) bool {
-	cmd := exec.Command("git", "checkout", branch)
-
-	_, err := cmd.Output()
-
-	return err == nil
-}
-
-func gitCheckoutBranch(branch string) bool {
-	cmd := exec.Command("git", "checkout", "-b", branch)
-
-	_, err := cmd.Output()
-
-	return err == nil
 }

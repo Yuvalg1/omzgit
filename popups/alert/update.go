@@ -16,6 +16,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.PopupMsg:
 		m.error = msg.Name
 		m.visible = true
+		m.verb = msg.Verb
 		return m, nil
 
 	case tea.KeyMsg:

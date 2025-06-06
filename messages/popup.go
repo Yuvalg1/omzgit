@@ -10,8 +10,9 @@ type PopupMsg struct {
 	Fn   any
 	Name string
 	Type string
+	Verb string
 }
 
 type Popuper[F any] interface {
-	PopupCmd(string, string, F) tea.Cmd
+	PopupCmd(string, string, string, F) tea.Cmd
 }

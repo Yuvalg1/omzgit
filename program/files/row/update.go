@@ -1,7 +1,7 @@
 package row
 
 import (
-	"os/exec"
+	"program/git"
 	"program/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,7 +19,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "a":
 			if !m.Staged {
-				m.Staged = gitAdd(m)
+				m.Staged = git.Exec("add", m.Path)
 			}
 			return m, nil
 
@@ -40,16 +40,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "d":
-			return m, m.PopupCmd("discard", m.Path, func() {
+			return m, m.PopupCmd("discard", "discard", m.Path, func() bool {
 				if m.Staged {
-					m.Staged = !gitReset(m)
+					m.Staged = !git.Exec("reset", "--", m.Path)
 				}
-				gitRestore(m.Path)
+				return git.Exec("restore", m.Path)
 			})
 
 		case "r":
 			if m.Staged {
-				m.Staged = !gitReset(m)
+				m.Staged = !git.Exec("reset", "--", m.Path)
 			}
 			return m, nil
 
@@ -63,26 +63,4 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
-}
-
-func gitAdd(m Model) bool {
-	cmd := exec.Command("git", "add", m.Path)
-
-	_, err := cmd.Output()
-
-	return err == nil
-}
-
-func gitReset(m Model) bool {
-	cmd := exec.Command("git", "reset", "--", m.Path)
-
-	_, err := cmd.Output()
-
-	return err == nil
-}
-
-func gitRestore(path string) {
-	cmd := exec.Command("git", "restore", path)
-
-	cmd.Output()
 }

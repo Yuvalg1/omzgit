@@ -4,7 +4,7 @@ import "github.com/charmbracelet/lipgloss"
 
 func (m Model[T]) View() string {
 	var fileStrings string
-	diff := max(m.ActiveRow-m.height+1, 0)
+	diff := max(m.ActiveRow-m.height+2, 0)
 
 	children := m.getFilteredChildren()
 

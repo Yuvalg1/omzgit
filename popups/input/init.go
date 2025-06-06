@@ -1,6 +1,8 @@
 package input
 
 import (
+	"program/messages"
+
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -15,14 +17,14 @@ type Model struct {
 	Height int
 }
 
-func InitialModel(fn func(string), name string, width int, height int) Model {
+func InitialModel(fn func(string), width int, height int) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Focus()
 
 	return Model{
 		CallbackFn: fn,
-		Name:       name,
+		Name:       "",
 		textinput:  ti,
 		visible:    false,
 
@@ -33,6 +35,12 @@ func InitialModel(fn func(string), name string, width int, height int) Model {
 
 func (m Model) Init() tea.Cmd {
 	return nil
+}
+
+func (m Model) RefreshCmd() tea.Cmd {
+	return func() tea.Msg {
+		return messages.RefreshMsg{}
+	}
 }
 
 func getHeight(height int) int {
