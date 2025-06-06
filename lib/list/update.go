@@ -30,7 +30,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res, cmd := m.Children[m.ActiveRow].Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'g'}})
 				m.Children[m.ActiveRow] = res.(T)
 
-				return m, tea.Batch(cmd, m.ModeCmd(""))
+				return m, cmd
 
 			case "enter":
 				m.SetContent(m.Children)
@@ -39,7 +39,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res, cmd := m.Children[0].Update(msg)
 				m.Children[0] = res.(T)
 
-				return m, tea.Batch(cmd, m.ModeCmd(""))
+				return m, cmd
 			}
 
 			res, cmd := m.TextInput.Update(msg)
@@ -49,6 +49,9 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
+		case "enter":
+			return m, nil
+
 		case "esc":
 			m.TextInput.SetValue("")
 

@@ -38,7 +38,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cokeline = res.(cokeline.Model)
 		return m, cmd
 
-	case messages.TickMsg, messages.DeletedMsg:
+	case messages.TickMsg, messages.RefreshMsg:
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res
 		return m, cmd
@@ -59,10 +59,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Popup = res.(popups.Model[popups.InnerModel])
 
 			cmds := []tea.Cmd{cmd}
-
-			if msg.String() == "y" {
-				cmds = append(cmds, m.DeleteCmd())
-			}
 
 			return m, tea.Batch(cmds...)
 		}
@@ -108,9 +104,9 @@ func handlePick(m *Model, key int) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmd1)
 }
 
-func (m Model) DeleteCmd() tea.Cmd {
+func (m Model) RefreshCmd() tea.Cmd {
 	return func() tea.Msg {
-		return messages.DeletedMsg{}
+		return messages.RefreshMsg{}
 	}
 }
 

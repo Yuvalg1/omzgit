@@ -21,15 +21,12 @@ type Model[T tea.Model] struct {
 }
 
 func InitialModel[T tea.Model](width int, height int, children []T, initialActive int, emptyMsg string) Model[T] {
-	var childrenTeaModels []T
-	childrenTeaModels = append(childrenTeaModels, children...)
-
 	ti := textinput.New()
 	ti.CharLimit = 20
 	ti.Width = getWidth(width)
 
 	return Model[T]{
-		Children:  childrenTeaModels,
+		Children:  children,
 		ActiveRow: initialActive,
 
 		createChildFn: func(name string) *T { return nil },

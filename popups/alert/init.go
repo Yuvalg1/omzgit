@@ -7,6 +7,7 @@ import (
 type Model struct {
 	error   string
 	visible bool
+	verb    string
 
 	Width  int
 	Height int
@@ -16,6 +17,7 @@ func InitialModel(width int, height int) Model {
 	return Model{
 		error:   "",
 		visible: false,
+		verb:    "",
 
 		Width:  getWidth(width),
 		Height: getHeight(height),

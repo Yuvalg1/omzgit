@@ -23,12 +23,13 @@ type Model struct {
 	Width  int
 }
 
-func (m Model) PopupCmd(pType string, path string, fn func()) tea.Cmd {
+func (m Model) PopupCmd(pType string, verb string, path string, fn func()) tea.Cmd {
 	return func() tea.Msg {
 		return messages.PopupMsg{
 			Fn:   fn,
 			Name: path,
 			Type: pType,
+			Verb: verb,
 		}
 	}
 }

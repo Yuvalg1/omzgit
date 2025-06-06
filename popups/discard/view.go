@@ -4,6 +4,8 @@ import (
 	"program/consts"
 
 	"github.com/charmbracelet/lipgloss"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var (
@@ -31,9 +33,9 @@ func (m Model) View() string {
 	buttons := lipgloss.NewStyle().Foreground(cancelColor).Render("N ") +
 		noButtonStyle.Inherit(optionStyle).Render("Cancel") + "  " +
 		lipgloss.NewStyle().Foreground(discardColor).Render("Y ") +
-		yesButtonStyle.Inherit(optionStyle).Render("Discard")
+		yesButtonStyle.Inherit(optionStyle).Render(cases.Title(language.English).String(m.verb))
 
 	return consts.PadTitle("Attention", m.Width) + containerStyle.Render(
-		contentStyle.Render("Are you sure you want to discard "+m.Name+"?")+"\n"+buttons,
+		contentStyle.Render("Are you sure you want to "+m.verb+" "+m.Name+"?")+"\n"+buttons,
 	)
 }

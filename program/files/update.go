@@ -1,7 +1,7 @@
 package files
 
 import (
-	"os/exec"
+	"program/git"
 	"program/lib/list"
 	"program/messages"
 	"program/program/files/diff"
@@ -12,7 +12,7 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.DeletedMsg:
+	case messages.RefreshMsg:
 		m.list.SetContent(GetFilesChanged(m.Width))
 
 		current := m.list.GetCurrent()
@@ -70,7 +70,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "A":
-			if !gitAddAll() {
+			if !git.Exec("add", "--all") {
 				return m, nil
 			}
 
@@ -103,12 +103,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "D":
-			return m, m.PopupCmd("discard", "All Files", func() {
-				gitRestoreAll()
+			return m, m.PopupCmd("discard", "discard", "All Files", func() {
+				git.Exec("reset", "--hard")
 			})
 
 		case "R":
-			if !gitResetAll() {
+			if !git.Exec("reset") {
 				return m, nil
 			}
 
@@ -140,23 +140,4 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
-}
-
-func gitAddAll() bool {
-	cmd := exec.Command("git", "add", "--all")
-	_, err := cmd.Output()
-
-	return err == nil
-}
-
-func gitResetAll() bool {
-	cmd := exec.Command("git", "reset")
-	_, err := cmd.Output()
-
-	return err == nil
-}
-
-func gitRestoreAll() {
-	cmd := exec.Command("git", "reset", "--hard")
-	cmd.Output()
 }
