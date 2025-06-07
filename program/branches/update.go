@@ -15,6 +15,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.RefreshMsg:
 		m.list.SetContent(getBranches(m.width, m.height))
 
+		m.list.ActiveRow = slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 		current := m.list.GetCurrent()
 
 		if current == nil {
