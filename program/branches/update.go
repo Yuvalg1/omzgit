@@ -62,6 +62,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return git.Exec("branch", "-d", m.list.GetCurrent().Name)
 			})
 
+		case "D":
+			return m, m.PopupCmd("discard", "force delete", m.list.GetCurrent().Name, func() bool {
+				return git.Exec("branch", "-D", m.list.GetCurrent().Name)
+			})
+
 		case "esc":
 			m.list.TextInput.SetValue("")
 			m.list.SetContent(getBranches(m.width, m.height))
