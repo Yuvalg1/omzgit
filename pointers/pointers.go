@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	_ messages.Cokerer      = (*branches.Model)(nil)
 	_ messages.Popuper[any] = (*branches.Model)(nil)
 
 	_ messages.Popuper[func() bool] = (*discard.Model)(nil)

@@ -1,7 +1,11 @@
 package branches
 
 import (
+	"fmt"
 	"os/exec"
+	"program/default/colors"
+	"program/default/colors/bg"
+	"program/default/colors/gray"
 	"program/lib/list"
 	"program/messages"
 	"program/program/branches/branch"
@@ -9,6 +13,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -51,6 +56,29 @@ func getWidth(width int) int {
 
 func getHeight(height int) int {
 	return height - 2
+}
+
+func (m Model) CokeCmd() tea.Cmd {
+	return func() tea.Msg {
+		return messages.CokeMsg{
+			Center: lipgloss.NewStyle().
+				Background(bg.C[4]).
+				Foreground(m.getCurrentBranchColor()).
+				Padding(0, 1).
+				Render(m.list.Children[m.list.ActiveRow].Name),
+			Right: lipgloss.NewStyle().
+				Background(gray.C[2]).
+				Padding(0, 1).
+				Render(fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children))),
+		}
+	}
+}
+
+func (m Model) getCurrentBranchColor() lipgloss.Color {
+	if m.list.Children[m.list.ActiveRow].Current {
+		return lipgloss.Color(colors.Yellow)
+	}
+	return lipgloss.Color(colors.Blue)
 }
 
 func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {

@@ -1,24 +1,32 @@
 package cokeline
 
 import (
-	"program/program/lib/button"
+	"program/default/colors/bg"
+	"program/default/colors/gray"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
 func (m Model) View() string {
-	style := lipgloss.NewStyle().Width(m.width).Height(1).Padding(0, 0, 1)
+	partStyle := lipgloss.NewStyle().
+		Background(gray.C[0]).
+		Foreground(bg.C[0])
 
-	tabTitleStyle := lipgloss.NewStyle().
-		Background(lipgloss.Color("#77BDFB")).
-		Padding(0, 1).
-		Foreground(lipgloss.Color("#21262D")).
-		Bold(true)
+	tabTitle := partStyle.Render(m.Left)
 
-	tabTitle := tabTitleStyle.Render(m.Cokes[m.ActiveCoke])
+	end := lipgloss.NewStyle().
+		Align(lipgloss.Right).
+		Inherit(partStyle).
+		Render(m.Right)
 
-	endStyle := lipgloss.NewStyle().Background(lipgloss.Color("#21262D")).Width(m.width - lipgloss.Width(tabTitle) - lipgloss.Width(m.title)).Align(lipgloss.Right)
-	endButtons := endStyle.Render(button.InitialModel("[]").View())
+	title := partStyle.
+		Align(lipgloss.Center).
+		Width(m.width - lipgloss.Width(end) - lipgloss.Width(tabTitle)).
+		Render(m.Center)
 
-	return style.Render(tabTitle + m.title + endButtons)
+	return lipgloss.NewStyle().
+		Width(m.width).
+		Height(1).
+		Padding(0, 0, 1).
+		Render(tabTitle + title + end)
 }

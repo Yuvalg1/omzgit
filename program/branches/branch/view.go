@@ -2,32 +2,35 @@ package branch
 
 import (
 	"program/consts"
+	"program/default/colors"
+	"program/default/colors/bg"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
 func (m Model) View() string {
-	rest := " " + lipgloss.NewStyle().Width(8).Render(m.diff) + " " + lipgloss.NewStyle().Width(16).Render(m.lastUpdated) + " "
+	rest := m.getTitleStyle().Width(10).Padding(0, 1).Render(m.diff) +
+		m.getTitleStyle().Width(16).Render(m.lastUpdated)
 
-	titleStyle := m.getTitleStyle()
 	title := consts.TrimRight(m.Name, m.width-lipgloss.Width(rest))
 
-	return titleStyle.Render(title + lipgloss.NewStyle().Width(m.width-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest))
+	return m.getTitleStyle().Render(title) +
+		m.getTitleStyle().Width(m.width-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest)
 }
 
 func getColor(current bool) lipgloss.Color {
 	if current {
-		return lipgloss.Color("#FFFF66")
+		return colors.Yellow
 	}
 
-	return lipgloss.Color("#02FFE4")
+	return colors.Blue
 }
 
 func (m Model) getTitleStyle() lipgloss.Style {
 	color := getColor(m.Current)
 
 	if m.Active {
-		return lipgloss.NewStyle().Background(color).Foreground(lipgloss.Color("#21262D"))
+		return lipgloss.NewStyle().Foreground(color).Background(bg.C[3])
 	}
-	return lipgloss.NewStyle().Foreground(color)
+	return lipgloss.NewStyle().Foreground(color).Background(bg.C[0])
 }
