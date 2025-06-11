@@ -52,8 +52,8 @@ func (m Model) CokeCmd() tea.Cmd {
 		return messages.CokeMsg{
 			Left:   lipgloss.NewStyle().Background(colors.Blue).Padding(0, 1).Render("Files"),
 			Center: m.getCokeCmdStyle().Render(" " + path + " "),
-			Right: lipgloss.NewStyle().Background(gray.C[1]).Padding(0, 1).Render(fmt.Sprintf(
-				" %d/%d", m.list.ActiveRow+1, len(m.list.Children))),
+			Right: lipgloss.NewStyle().Background(gray.C[2]).Padding(0, 1).Render(fmt.Sprintf(
+				"%d/%d", m.list.ActiveRow+1, len(m.list.Children))),
 		}
 	}
 }
