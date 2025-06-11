@@ -67,7 +67,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "a", "r":
 			res, cmd := m.list.UpdateCurrent(msg)
 			m.list = res
-			return m, cmd
+			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "A":
 			if !git.Exec("add", "--all") {
@@ -75,7 +75,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			var cmds []tea.Cmd
-			cmds = append(cmds, m.CokeCmd(""))
+			cmds = append(cmds, m.CokeCmd())
 
 			res, cmd := m.list.UpdateContent(msg)
 			m.list = res
@@ -95,7 +95,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.SetContent(GetFilesChanged(m.Width))
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[row.Model])
-			return m, cmd
+			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "d":
 			res, cmd := m.list.UpdateCurrent(msg)
@@ -113,7 +113,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			var cmds []tea.Cmd
-			cmds = append(cmds, m.CokeCmd(""))
+			cmds = append(cmds, m.CokeCmd())
 
 			res, cmd := m.list.UpdateContent(msg)
 			m.list = res
@@ -135,7 +135,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res2, cmd2 := m.Diffs[m.list.ActiveRow].Update(msg)
 			m.Diffs[m.list.ActiveRow] = res2.(diff.Model)
 
-			return m, tea.Batch(cmd1, cmd2, m.CokeCmd(""))
+			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 		}
 	}
 

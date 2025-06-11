@@ -75,13 +75,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])
 
-			return m, cmd
+			return m, tea.Batch(cmd, m.CokeCmd())
 
 		default:
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])
 
-			return m, cmd
+			return m, tea.Batch(cmd, m.CokeCmd())
 		}
 	}
 

@@ -2,45 +2,33 @@ package row
 
 import (
 	"program/consts"
+	"program/default/colors"
+	"program/default/colors/bg"
+	"program/default/colors/gray"
+	"program/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )
-
-const (
-	addedColor = "#7CE38B"
-	resetColor = "#FA7970"
-)
-
-var deletedStyle = lipgloss.NewStyle().Strikethrough(true)
 
 func (m Model) View() string {
 	path := m.Path
 	path = consts.TrimRight(path, m.width-3)
 
-	return getStyle(m.Staged, m.Active).Width(m.width - 1).Render(m.status + " " +
-		getStrikethroughStyle(m.Staged, m.Active, m.status).Render(path))
+	return lipgloss.NewStyle().
+		Background(colors.GetColor(m.Active, bg.C[3], bg.C[0])).
+		Border(lipgloss.MarkdownBorder(), false, false, false, true).
+		BorderBackground(bg.C[0]).
+		BorderForeground(colors.GetColor(m.Active, gray.C[0], bg.C[1])).
+		Foreground(colors.GetColor(m.Staged, colors.Green, colors.Red)).
+		Width(m.width - 1).
+		Render(m.status + " " +
+			getStrikethroughStyle(m.Active, m.Staged, m.status).Render(path))
 }
 
-func getStyle(added bool, active bool) lipgloss.Style {
-	color := getColor(added)
-	if !active {
-		return lipgloss.NewStyle().Foreground(lipgloss.Color(color))
-	}
-
-	return lipgloss.NewStyle().Background(lipgloss.Color(color)).Foreground(lipgloss.Color("#21262D"))
-}
-
-func getColor(added bool) string {
-	if added {
-		return addedColor
-	}
-
-	return resetColor
-}
-
-func getStrikethroughStyle(added bool, active bool, status string) lipgloss.Style {
-	current := getStyle(added, active)
-
+func getStrikethroughStyle(active bool, staged bool, status string) lipgloss.Style {
+	current := style.Bg.
+		Background(colors.GetColor(active, bg.C[3], bg.C[0])).
+		Foreground(colors.GetColor(staged, colors.Green, colors.Red))
 	if status == "D" {
 		return current.Strikethrough(true)
 	}

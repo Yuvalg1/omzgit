@@ -1,10 +1,9 @@
 package commits
 
 import (
-	"github.com/charmbracelet/lipgloss"
+	"program/default/style"
 )
 
 func (m Model) View() string {
-	style := lipgloss.NewStyle().Width(m.width).Height(m.height)
-	return style.Render(m.Title)
+	return style.Bg.Width(m.width).Height(m.height).Render(m.Title)
 }

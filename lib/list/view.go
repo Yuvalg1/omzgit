@@ -1,6 +1,10 @@
 package list
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"program/default/style"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 func (m Model[T]) View() string {
 	var fileStrings string
@@ -18,8 +22,7 @@ func (m Model[T]) View() string {
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
 
-	style := lipgloss.NewStyle().Width(m.width).Height(m.height)
-	return style.Render(m.getTextInput() + "\n" + fileStrings)
+	return style.Bg.Width(m.width).Height(m.height).Render(m.getTextInput() + "\n" + fileStrings)
 }
 
 func (m Model[T]) getTextInput() string {
@@ -27,6 +30,5 @@ func (m Model[T]) getTextInput() string {
 		return ""
 	}
 
-	style := lipgloss.NewStyle().Width(m.width)
-	return style.Render("Search " + m.TextInput.View())
+	return lipgloss.NewStyle().Width(m.width).Render("Search " + m.TextInput.View())
 }

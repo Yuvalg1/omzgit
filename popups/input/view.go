@@ -2,6 +2,8 @@ package input
 
 import (
 	"program/consts"
+	"program/default/colors"
+	"program/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -9,8 +11,12 @@ import (
 var borderColor = lipgloss.Color("#CCCCCC")
 
 func (m Model) View() string {
-	titleStyle := lipgloss.NewStyle().Width(m.Width).Foreground(lipgloss.Color("#FFFF66"))
-	borderStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder(), false, true, true).Width(m.Width - 2).BorderForeground(lipgloss.Color("#FFFF66")).Foreground(lipgloss.Color("#02FFE4"))
+	titleStyle := style.Bg.Width(m.Width).Foreground(colors.Yellow)
+	borderStyle := style.Bg.
+		Border(lipgloss.NormalBorder(), false, true, true).
+		BorderForeground(colors.Yellow).
+		Width(m.Width - 2).
+		Foreground(colors.Blue)
 
 	return titleStyle.Render(consts.PadTitle(m.Name, m.Width) + borderStyle.Render(m.textinput.View()))
 }

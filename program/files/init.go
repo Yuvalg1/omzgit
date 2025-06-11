@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os/exec"
 	"program/consts"
+	"program/default/colors"
+	"program/default/colors/bg"
+	"program/default/colors/gray"
 	"program/lib/list"
 	"program/messages"
 	"program/program/files/diff"
@@ -41,29 +44,27 @@ func (m Model) TickCmd() tea.Cmd {
 	}
 }
 
-func (m Model) CokeCmd(title string) tea.Cmd {
+func (m Model) CokeCmd() tea.Cmd {
 	return func() tea.Msg {
-		restStyle := lipgloss.
-			NewStyle().
-			Background(lipgloss.Color("#21262D"))
-		if title != "" {
-			return messages.CokeMsg{Title: restStyle.Render(title)}
-		}
-
-		style := m.getCokeCmdStyle()
 		parts := m.getCurrentSplit()
 		path := parts[len(parts)-1]
-		return messages.CokeMsg{Title: style.Render(" "+path+" ") + restStyle.Render(fmt.Sprintf(
-			" %d/%d", m.list.ActiveRow+1, len(m.list.Children)))}
+
+		return messages.CokeMsg{
+			Left:   lipgloss.NewStyle().Background(colors.Blue).Padding(0, 1).Render("Files"),
+			Center: m.getCokeCmdStyle().Render(" " + path + " "),
+			Right: lipgloss.NewStyle().Background(gray.C[1]).Padding(0, 1).Render(fmt.Sprintf(
+				" %d/%d", m.list.ActiveRow+1, len(m.list.Children))),
+		}
 	}
 }
 
 func (m Model) getCokeCmdStyle() lipgloss.Style {
-	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#21262D"))
+	cokeStyle := lipgloss.NewStyle().Padding(0, 1).Background(bg.C[3])
+
 	if len(m.list.Children) > 0 && m.list.GetCurrent().Staged {
-		return lipgloss.NewStyle().Background(lipgloss.Color("#7CE38B")).Inherit(style)
+		return cokeStyle.Foreground(colors.Green)
 	}
-	return lipgloss.NewStyle().Background(lipgloss.Color("#FA7970")).Inherit(style)
+	return cokeStyle.Foreground(colors.Red).Inherit(cokeStyle)
 }
 
 func InitialModel(width int, height int) Model {
@@ -97,7 +98,7 @@ func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{m.TickCmd()}
 
 	if len(m.list.Children) > 0 {
-		cmds = append(cmds, m.CokeCmd(""))
+		cmds = append(cmds, m.CokeCmd())
 	}
 
 	return tea.Batch(cmds...)

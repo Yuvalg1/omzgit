@@ -1,6 +1,7 @@
 package input
 
 import (
+	"program/default/colors"
 	"program/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -21,6 +22,8 @@ func InitialModel(fn func(string), width int, height int) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Focus()
+	ti.Width = getWidth(width)
+	ti.PlaceholderStyle = ti.PlaceholderStyle.Foreground(colors.Blue)
 
 	return Model{
 		CallbackFn: fn,
