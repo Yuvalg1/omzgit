@@ -97,6 +97,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list = res.(list.Model[row.Model])
 			return m, tea.Batch(cmd, m.CokeCmd())
 
+		case "c":
+			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() {})
+
 		case "d":
 			res, cmd := m.list.UpdateCurrent(msg)
 			m.list = res
