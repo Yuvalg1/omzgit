@@ -4,6 +4,7 @@ import (
 	"program/consts"
 	"program/messages"
 	"program/popups/alert"
+	"program/popups/commit"
 	"program/popups/discard"
 	"program/popups/input"
 	"program/program/cokeline"
@@ -39,6 +40,9 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 
 	initialAlert := alert.InitialModel(getWidth(width), getHeight(height))
 	initialPopups.AddPopup("alert", initialAlert)
+
+	initialCommit := commit.InitialModel(getWidth(width), getHeight(height), "commit")
+	initialPopups.AddPopup("commit", initialCommit)
 
 	return Model{
 		ActiveTab: consts.FILES - 1,
