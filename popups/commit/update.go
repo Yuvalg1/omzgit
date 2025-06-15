@@ -32,7 +32,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "enter":
 				if git.Exec(m.getCommitString()...) {
-					m.visible = false
+					m = InitialModel(m.width, m.height, "commit")
 					return m, nil
 				}
 

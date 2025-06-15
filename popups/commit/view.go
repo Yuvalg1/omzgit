@@ -15,7 +15,7 @@ func (m Model) View() string {
 		Height(m.height-1).
 		Width(m.width-2).
 		Render(
-			m.textinput.View()+m.renderMoreOptions()+"\n"+m.getCommitStringString())
+			m.textinput.View()+m.renderMoreOptions())
 }
 
 func (m Model) renderOption(letter byte, desc string) string {
