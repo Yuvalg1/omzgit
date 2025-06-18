@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"program/messages"
 	"program/program"
 	"program/program/branches"
 	"program/program/commits"
 	"program/program/files"
-	"syscall"
+
+	tsize "github.com/kopoli/go-terminal-size"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/term"
@@ -30,13 +30,15 @@ func main() {
 
 	p := tea.NewProgram(m)
 
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGWINCH)
+	listener, err := tsize.NewSizeListener()
+	if err != nil {
+		panic(err)
+	}
+	defer listener.Close()
 
 	go func() {
-		for range sigChan {
-			width, height, _ := term.GetSize(os.Stdout.Fd())
-			p.Send(messages.TerminalMsg{Width: width, Height: height})
+		for size := range listener.Change {
+			p.Send(messages.TerminalMsg{Width: size.Width, Height: size.Height})
 		}
 	}()
 
