@@ -2,10 +2,12 @@ package program
 
 import (
 	"program/consts"
+	"program/git"
 	"program/messages"
 	"program/program/cokeline"
 	"program/program/popups"
 
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -39,11 +41,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case messages.TickMsg, messages.RefreshMsg:
-		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res
-		return m, cmd
+		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
+		m.Tabs[m.ActiveTab] = res1
 
-	case messages.PopupMsg:
+		res2, cmd2 := m.Popup.Update(msg)
+		m.Popup = res2.(popups.Model[popups.InnerModel])
+		return m, tea.Batch(cmd1, cmd2)
+
+	case messages.PopupMsg, messages.ApiMsg:
 		res, cmd := m.Popup.Update(msg)
 		m.Popup = res.(popups.Model[popups.InnerModel])
 		return m, cmd
@@ -51,6 +56,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.ModeMsg:
 		m.mode = msg.Mode
 		return m, nil
+
+	case spinner.TickMsg:
+		res, cmd := m.Popup.Update(msg)
+		m.Popup = res.(popups.Model[popups.InnerModel])
+		return m, cmd
 
 	case tea.KeyMsg:
 		current := m.Popup.GetCurrent()
@@ -68,8 +78,39 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
+		case "f":
+			return m, m.PopupCmd("async", "", "fetching", func() tea.Cmd {
+				if git.Exec("fetch") {
+					return nil
+				}
+
+				return m.PopupCmd("alert", "Fetch Error", "Could not Resolve host", func() tea.Cmd { return nil })
+			})
+
 		case "g":
 			return m, m.ModeCmd("goto")
+
+		case "l":
+			return m, m.PopupCmd("async", "", "pulling", func() tea.Cmd {
+				if git.Exec("pull") {
+					return nil
+				}
+
+				return m.PopupCmd("alert", "Pull Error", "Could not Resolve host", func() tea.Cmd { return nil })
+			})
+
+		case "p":
+			return m, m.PopupCmd("async", "", "pushing", func() tea.Cmd {
+				if git.Exec("push") {
+					return nil
+				}
+
+				stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+
+				return m.PopupCmd("discard", "upstream push", stdout, func() bool {
+					return git.Exec("push", "--set-upstream", "origin", stdout)
+				})
+			})
 
 		case "ctrl+c", "q":
 			return m, tea.Quit

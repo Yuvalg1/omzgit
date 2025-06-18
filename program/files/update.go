@@ -65,9 +65,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "a", "r":
-			res, cmd := m.list.UpdateCurrent(msg)
-			m.list = res
-			return m, tea.Batch(cmd, m.CokeCmd())
+			res1, cmd1 := m.list.UpdateCurrent(msg)
+			m.list = res1
+
+			res2, cmd2 := m.Diffs[m.list.ActiveRow].Update(msg)
+			m.Diffs[m.list.ActiveRow] = res2.(diff.Model)
+
+			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 
 		case "A":
 			if !git.Exec("add", "--all") {
@@ -98,7 +102,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "c":
-			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() {})
+			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() bool { return true })
 
 		case "d":
 			res, cmd := m.list.UpdateCurrent(msg)
@@ -106,8 +110,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "D":
-			return m, m.PopupCmd("discard", "discard", "All Files", func() {
-				git.Exec("reset", "--hard")
+			return m, m.PopupCmd("discard", "discard", "All Files", func() bool {
+				return git.Exec("reset", "--hard")
 			})
 
 		case "R":

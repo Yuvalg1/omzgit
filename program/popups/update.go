@@ -3,6 +3,7 @@ package popups
 import (
 	"program/messages"
 
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -24,6 +25,20 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Popups[m.current] = res.(T)
 
 		return m, cmd
+
+	case messages.ApiMsg:
+		res, cmd := m.Popups[m.current].Update(msg)
+		m.Popups[m.current] = res.(T)
+
+		return m, cmd
+
+	case spinner.TickMsg:
+		if m.current == "async" && m.Popups[m.current].GetVisible() {
+			res, cmd := m.Popups[m.current].Update(msg)
+			m.Popups[m.current] = res.(T)
+			return m, cmd
+		}
+		return m, nil
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {

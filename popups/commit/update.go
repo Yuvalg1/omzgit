@@ -36,7 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, nil
 				}
 
-				return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() {})
+				return m, m.PopupCmd("alert", "Commit Error!", "Commit error")
 
 			default:
 				res, cmd := m.textinput.Update(msg)
@@ -83,12 +83,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
+		case "enter":
+			if git.Exec(m.getCommitString()...) {
+				m = InitialModel(m.width, m.height, "commit")
+				return m, nil
+			}
+
+			return m, m.PopupCmd("alert", "Commit Error!", "Commit error")
+
 		case "esc":
 			m.visible = false
-			return m, nil
-
-		case "o":
-			m.moreOptions = true
 			return m, nil
 
 		case "F":
@@ -109,6 +113,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			m.textinput.Focus()
+			return m, nil
+
+		case "o":
+			m.moreOptions = true
 			return m, nil
 
 		default:
