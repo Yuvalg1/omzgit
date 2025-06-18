@@ -108,7 +108,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "c":
-			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() bool { return true })
+			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
 
 		case "d":
 			res, cmd := m.list.UpdateCurrent(msg)
@@ -116,8 +116,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "D":
-			return m, m.PopupCmd("discard", "discard", "All Files", func() bool {
-				return git.Exec("reset", "--hard")
+			return m, m.PopupCmd("discard", "discard", "All Files", func() tea.Cmd {
+				git.Exec("reset", "--hard")
+				return nil
 			})
 
 		case "R":
