@@ -1,6 +1,9 @@
 package git
 
-import "os/exec"
+import (
+	"os/exec"
+	"strings"
+)
 
 func Exec(args ...string) bool {
 	cmd := exec.Command("git", args...)
@@ -18,5 +21,5 @@ func GetExec(args ...string) string {
 		return ""
 	}
 
-	return string(stdout)
+	return strings.TrimSpace(string(stdout))
 }
