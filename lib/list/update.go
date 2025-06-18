@@ -27,10 +27,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.TextInput.Blur()
 				m.TextInput.SetValue("")
 
-				res, cmd := m.Children[m.ActiveRow].Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'g'}})
-				m.Children[m.ActiveRow] = res.(T)
-
-				return m, cmd
+				return m, m.ModeCmd("goto")
 
 			case "enter":
 				m.SetContent(m.Children)
@@ -39,7 +36,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res, cmd := m.Children[0].Update(msg)
 				m.Children[0] = res.(T)
 
-				return m, cmd
+				return m, tea.Batch(cmd, m.ModeCmd("goto"))
 			}
 
 			res, cmd := m.TextInput.Update(msg)

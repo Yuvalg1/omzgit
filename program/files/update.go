@@ -63,6 +63,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 
 	case tea.KeyMsg:
+		if m.list.TextInput.Focused() {
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[row.Model])
+			return m, cmd
+		}
+
 		switch keypress := msg.String(); keypress {
 		case "a", "r":
 			res1, cmd1 := m.list.UpdateCurrent(msg)
