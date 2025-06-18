@@ -4,6 +4,7 @@ import (
 	"program/consts"
 	"program/messages"
 	"program/popups/alert"
+	"program/popups/async"
 	"program/popups/commit"
 	"program/popups/discard"
 	"program/popups/input"
@@ -44,6 +45,9 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialCommit := commit.InitialModel(getWidth(width), getHeight(height), "commit")
 	initialPopups.AddPopup("commit", initialCommit)
 
+	initialAsync := async.InitialModel(width, height, "fetching")
+	initialPopups.AddPopup("async", initialAsync)
+
 	return Model{
 		ActiveTab: consts.FILES - 1,
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
@@ -63,12 +67,25 @@ func (m Model) Init() tea.Cmd {
 		cmds = append(cmds, element.Init())
 	}
 
+	cmds = append(cmds, m.Popup.Init())
+
 	return tea.Batch(cmds...)
 }
 
 func (m Model) ModeCmd(mode string) tea.Cmd {
 	return func() tea.Msg {
 		return messages.ModeMsg{Mode: mode}
+	}
+}
+
+func (m Model) PopupCmd(pType string, verb string, name string, callbackFn any) tea.Cmd {
+	return func() tea.Msg {
+		return messages.PopupMsg{
+			Fn:   callbackFn,
+			Type: pType,
+			Name: name,
+			Verb: verb,
+		}
 	}
 }
 

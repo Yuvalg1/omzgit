@@ -47,10 +47,9 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {
+func (m Model) PopupCmd(pType string, placeholder string, title string) tea.Cmd {
 	return func() tea.Msg {
 		return messages.PopupMsg{
-			Fn:   fn,
 			Name: title,
 			Type: pType,
 			Verb: placeholder,

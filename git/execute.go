@@ -9,3 +9,14 @@ func Exec(args ...string) bool {
 
 	return err == nil
 }
+
+func GetExec(args ...string) string {
+	cmd := exec.Command("git", args...)
+
+	stdout, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+
+	return string(stdout)
+}
