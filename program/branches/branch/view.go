@@ -4,6 +4,7 @@ import (
 	"program/consts"
 	"program/default/colors"
 	"program/default/colors/bg"
+	"program/default/colors/gray"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -14,8 +15,15 @@ func (m Model) View() string {
 
 	title := consts.TrimRight(m.Name, m.width-lipgloss.Width(rest))
 
-	return m.getTitleStyle().Render(title) +
-		m.getTitleStyle().Width(m.width-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest)
+	borderStyle := lipgloss.NewStyle().
+		Background(colors.GetColor(m.Active, bg.C[3], bg.C[0])).
+		Border(lipgloss.MarkdownBorder(), false, false, false, true).
+		BorderBackground(bg.C[0]).
+		BorderForeground(colors.GetColor(m.Active, gray.C[0], bg.C[1])).
+		Width(m.width - 1)
+
+	return borderStyle.Render(m.getTitleStyle().Render(title) +
+		m.getTitleStyle().Width(m.width-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest))
 }
 
 func getColor(current bool) lipgloss.Color {

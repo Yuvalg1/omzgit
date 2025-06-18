@@ -77,6 +77,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return pickTab(&m, msg)
 		}
 
+		if m.mode == "search" {
+			res, cmd := m.Tabs[m.ActiveTab].Update(msg)
+			m.Tabs[m.ActiveTab] = res
+			return m, cmd
+		}
+
 		switch keypress := msg.String(); keypress {
 		case "f":
 			return m, m.PopupCmd("async", "", "fetching", func() tea.Cmd {
