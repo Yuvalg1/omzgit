@@ -20,12 +20,12 @@ var (
 	_ messages.Cokerer      = (*branches.Model)(nil)
 	_ messages.Popuper[any] = (*branches.Model)(nil)
 
-	_ messages.Popuper[func() bool] = (*discard.Model)(nil)
-	_ messages.Refresher            = (*discard.Model)(nil)
+	_ messages.Popuper[func() tea.Cmd] = (*discard.Model)(nil)
+	_ messages.Refresher               = (*discard.Model)(nil)
 
-	_ messages.Cokerer              = (*files.Model)(nil)
-	_ messages.Popuper[func() bool] = (*files.Model)(nil)
-	_ messages.Ticker               = (*files.Model)(nil)
+	_ messages.Cokerer                 = (*files.Model)(nil)
+	_ messages.Popuper[func() tea.Cmd] = (*files.Model)(nil)
+	_ messages.Ticker                  = (*files.Model)(nil)
 
 	_ messages.Refresher = (*input.Model)(nil)
 
