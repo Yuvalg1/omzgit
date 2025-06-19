@@ -86,7 +86,7 @@ To move between branches, use the arrow keys or ```j/k``` (more on that later)
 
 ```o``` - toggle options menu
 
-#### Options
+#### Commit Options
 
 ```a``` - --amend
 
