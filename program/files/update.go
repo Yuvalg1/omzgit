@@ -36,7 +36,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		current.Active = true
-		m.list.ActiveRow = min(m.list.ActiveRow, len(m.list.Children)-1)
 
 		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
 		return m, m.TickCmd()
