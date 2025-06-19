@@ -1,10 +1,10 @@
 package branch
 
 import (
-	"program/consts"
-	"program/default/colors"
-	"program/default/colors/bg"
-	"program/default/colors/gray"
+	"omzgit/consts"
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
 
 	"github.com/charmbracelet/lipgloss"
 )

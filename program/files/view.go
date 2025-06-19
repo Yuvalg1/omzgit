@@ -1,7 +1,7 @@
 package files
 
 import (
-	"program/default/colors/bg"
+	"omzgit/default/colors/bg"
 
 	"github.com/charmbracelet/lipgloss"
 )

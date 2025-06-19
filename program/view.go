@@ -1,8 +1,8 @@
 package program
 
 import (
-	"program/default/colors/bg"
-	"program/overlay"
+	"omzgit/default/colors/bg"
+	"omzgit/overlay"
 
 	"github.com/charmbracelet/lipgloss"
 )

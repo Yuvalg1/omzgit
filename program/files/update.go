@@ -1,11 +1,11 @@
 package files
 
 import (
-	"program/git"
-	"program/lib/list"
-	"program/messages"
-	"program/program/files/diff"
-	"program/program/files/row"
+	"omzgit/git"
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/program/files/diff"
+	"omzgit/program/files/row"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

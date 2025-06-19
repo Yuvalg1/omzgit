@@ -1,8 +1,8 @@
 package alert
 
 import (
-	"program/consts"
-	"program/default/style"
+	"omzgit/consts"
+	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )

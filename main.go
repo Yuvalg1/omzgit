@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"omzgit/messages"
+	"omzgit/program"
+	"omzgit/program/branches"
+	"omzgit/program/commits"
+	"omzgit/program/files"
 	"os"
-	"program/messages"
-	"program/program"
-	"program/program/branches"
-	"program/program/commits"
-	"program/program/files"
 
 	tsize "github.com/kopoli/go-terminal-size"
 

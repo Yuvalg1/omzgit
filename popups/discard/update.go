@@ -1,7 +1,7 @@
 package discard
 
 import (
-	"program/messages"
+	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"golang.org/x/text/cases"
@@ -16,7 +16,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case messages.PopupMsg:
-		m.CallbackFn = msg.Fn.(func() bool)
+		m.CallbackFn = msg.Fn.(func() tea.Cmd)
 		m.Name = msg.Name
 		m.visible = true
 		m.verb = msg.Verb
@@ -29,8 +29,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "y", "Y":
-			if !m.CallbackFn() {
-				return m, m.PopupCmd("alert", cases.Title(language.English).String(m.verb)+" Error!", "Could not "+m.verb+" requested item.", func() bool { return true })
+			if m.CallbackFn() != nil {
+				return m, m.PopupCmd("alert", cases.Title(language.English).String(m.verb)+" Error!", "Could not "+m.verb+" requested item.", func() tea.Cmd { return nil })
 			}
 			m.visible = false
 			return m, m.RefreshCmd()

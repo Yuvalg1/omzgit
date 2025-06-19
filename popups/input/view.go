@@ -1,9 +1,9 @@
 package input
 
 import (
-	"program/consts"
-	"program/default/colors"
-	"program/default/style"
+	"omzgit/consts"
+	"omzgit/default/colors"
+	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )

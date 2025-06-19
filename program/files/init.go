@@ -2,15 +2,15 @@ package files
 
 import (
 	"fmt"
+	"omzgit/consts"
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/program/files/diff"
+	"omzgit/program/files/row"
 	"os/exec"
-	"program/consts"
-	"program/default/colors"
-	"program/default/colors/bg"
-	"program/default/colors/gray"
-	"program/lib/list"
-	"program/messages"
-	"program/program/files/diff"
-	"program/program/files/row"
 	"strings"
 	"time"
 

@@ -1,7 +1,7 @@
 package async
 
 import (
-	"program/default/style"
+	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )

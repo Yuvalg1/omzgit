@@ -1,7 +1,7 @@
 package commits
 
 import (
-	"program/default/style"
+	"omzgit/default/style"
 )
 
 func (m Model) View() string {

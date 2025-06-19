@@ -1,8 +1,8 @@
 package input
 
 import (
-	"program/default/colors"
-	"program/messages"
+	"omzgit/default/colors"
+	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"

@@ -1,11 +1,11 @@
 package row
 
 import (
-	"program/consts"
-	"program/default/colors"
-	"program/default/colors/bg"
-	"program/default/colors/gray"
-	"program/default/style"
+	"omzgit/consts"
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
+	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )

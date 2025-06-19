@@ -2,8 +2,8 @@ package cokeline
 
 import (
 	"fmt"
-	"program/default/colors"
-	"program/default/colors/status"
+	"omzgit/default/colors"
+	"omzgit/default/colors/status"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
