@@ -40,11 +40,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "d":
-			return m, m.PopupCmd("discard", "discard", m.Path, func() bool {
+			return m, m.PopupCmd("discard", "discard", m.Path, func() tea.Cmd {
 				if m.Staged {
 					m.Staged = !git.Exec("reset", "--", m.Path)
 				}
-				return git.Exec("restore", m.Path)
+				git.Exec("restore", m.Path)
+				return nil
 			})
 
 		case "r":

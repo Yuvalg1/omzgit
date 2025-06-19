@@ -39,5 +39,5 @@ var (
 	_ messages.Refresher               = (*program.Model)(nil)
 	_ messages.Popuper[func() tea.Cmd] = (*program.Model)(nil)
 
-	_ messages.Popuper[func() bool] = (*row.Model)(nil)
+	_ messages.Popuper[func() tea.Cmd] = (*row.Model)(nil)
 )

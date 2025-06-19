@@ -54,7 +54,7 @@ func getHeight(height int) int {
 	return 1
 }
 
-func (m Model) PopupCmd(pType string, verb string, path string, fn func() bool) tea.Cmd {
+func (m Model) PopupCmd(pType string, verb string, path string, fn func() tea.Cmd) tea.Cmd {
 	return func() tea.Msg {
 		parts := strings.Split(path, "/")
 		return messages.PopupMsg{
