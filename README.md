@@ -26,12 +26,6 @@ go install
 > [!NOTE]
 > I'm working on more installation options.
 
-## Run omzgit
-
-```
-omzgit
-```
-
 ## Usage
 
 ```f``` - fetch changes
