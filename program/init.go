@@ -78,7 +78,7 @@ func (m Model) ModeCmd(mode string) tea.Cmd {
 	}
 }
 
-func (m Model) PopupCmd(pType string, verb string, name string, callbackFn any) tea.Cmd {
+func (m Model) PopupCmd(pType string, verb string, name string, callbackFn func() tea.Cmd) tea.Cmd {
 	return func() tea.Msg {
 		return messages.PopupMsg{
 			Fn:   callbackFn,
