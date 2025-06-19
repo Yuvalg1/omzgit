@@ -21,8 +21,8 @@ var (
 	_ messages.Cokerer      = (*branches.Model)(nil)
 	_ messages.Popuper[any] = (*branches.Model)(nil)
 
-	_ messages.Popuper[func()] = (*commit.Model)(nil)
-	_ messages.Refresher       = (*commit.Model)(nil)
+	_ messages.Popuper[func() tea.Cmd] = (*commit.Model)(nil)
+	_ messages.Refresher               = (*commit.Model)(nil)
 
 	_ messages.Popuper[func() tea.Cmd] = (*discard.Model)(nil)
 	_ messages.Refresher               = (*discard.Model)(nil)

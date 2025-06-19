@@ -36,7 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, m.RefreshCmd()
 				}
 
-				return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() {})
+				return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() tea.Cmd { return nil })
 
 			default:
 				res, cmd := m.textinput.Update(msg)
@@ -89,7 +89,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.RefreshCmd()
 			}
 
-			return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() {})
+			return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() tea.Cmd { return nil })
 
 		case "esc":
 			m.visible = false
