@@ -1,7 +1,7 @@
 package row
 
 import (
-	"program/messages"
+	"omzgit/messages"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"

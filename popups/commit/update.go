@@ -1,8 +1,8 @@
 package commit
 
 import (
-	"program/git"
-	"program/messages"
+	"omzgit/git"
+	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -33,10 +33,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "enter":
 				if git.Exec(m.getCommitString()...) {
 					m = InitialModel(m.width, m.height, "commit")
-					return m, nil
+					return m, m.RefreshCmd()
 				}
 
-				return m, m.PopupCmd("alert", "Commit Error!", "Commit error")
+				return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() {})
 
 			default:
 				res, cmd := m.textinput.Update(msg)
@@ -86,10 +86,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			if git.Exec(m.getCommitString()...) {
 				m = InitialModel(m.width, m.height, "commit")
-				return m, nil
+				return m, m.RefreshCmd()
 			}
 
-			return m, m.PopupCmd("alert", "Commit Error!", "Commit error")
+			return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() {})
 
 		case "esc":
 			m.visible = false

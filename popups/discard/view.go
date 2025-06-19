@@ -1,9 +1,9 @@
 package discard
 
 import (
-	"program/consts"
-	"program/default/colors/bg"
-	"program/default/style"
+	"omzgit/consts"
+	"omzgit/default/colors/bg"
+	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 	"golang.org/x/text/cases"

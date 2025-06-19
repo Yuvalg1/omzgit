@@ -1,7 +1,7 @@
 package commit
 
 import (
-	"program/messages"
+	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -47,13 +47,19 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) PopupCmd(pType string, placeholder string, title string) tea.Cmd {
+func (m Model) PopupCmd(pType string, placeholder string, title string, fn func()) tea.Cmd {
 	return func() tea.Msg {
 		return messages.PopupMsg{
 			Name: title,
 			Type: pType,
 			Verb: placeholder,
 		}
+	}
+}
+
+func (m Model) RefreshCmd() tea.Cmd {
+	return func() tea.Msg {
+		return messages.RefreshMsg{}
 	}
 }
 

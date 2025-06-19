@@ -1,10 +1,10 @@
 package branches
 
 import (
-	"program/git"
-	"program/lib/list"
-	"program/messages"
-	"program/program/branches/branch"
+	"omzgit/git"
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/program/branches/branch"
 	"slices"
 
 	tea "github.com/charmbracelet/bubbletea"

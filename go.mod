@@ -1,4 +1,4 @@
-module program
+module omzgit
 
 go 1.24.1
 

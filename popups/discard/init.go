@@ -1,13 +1,13 @@
 package discard
 
 import (
-	"program/messages"
+	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	CallbackFn func() bool
+	CallbackFn func() tea.Cmd
 	Name       string
 	visible    bool
 	verb       string
@@ -16,7 +16,7 @@ type Model struct {
 	Height int
 }
 
-func InitialModel(fn func() bool, width int, height int) Model {
+func InitialModel(fn func() tea.Cmd, width int, height int) Model {
 	return Model{
 		CallbackFn: fn,
 		Name:       "",

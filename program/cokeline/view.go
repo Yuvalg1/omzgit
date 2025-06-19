@@ -1,8 +1,8 @@
 package cokeline
 
 import (
-	"program/default/colors/bg"
-	"program/default/colors/gray"
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
 
 	"github.com/charmbracelet/lipgloss"
 )

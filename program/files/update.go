@@ -1,11 +1,11 @@
 package files
 
 import (
-	"program/git"
-	"program/lib/list"
-	"program/messages"
-	"program/program/files/diff"
-	"program/program/files/row"
+	"omzgit/git"
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/program/files/diff"
+	"omzgit/program/files/row"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -36,6 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		current.Active = true
+		m.list.ActiveRow = min(m.list.ActiveRow, len(m.list.Children)-1)
 
 		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
 		return m, m.TickCmd()

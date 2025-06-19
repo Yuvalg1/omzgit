@@ -1,11 +1,11 @@
 package program
 
 import (
-	"program/consts"
-	"program/git"
-	"program/messages"
-	"program/program/cokeline"
-	"program/program/popups"
+	"omzgit/consts"
+	"omzgit/git"
+	"omzgit/messages"
+	"omzgit/program/cokeline"
+	"omzgit/program/popups"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"

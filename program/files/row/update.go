@@ -1,8 +1,8 @@
 package row
 
 import (
-	"program/git"
-	"program/messages"
+	"omzgit/git"
+	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

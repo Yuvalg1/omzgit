@@ -1,15 +1,15 @@
 package program
 
 import (
-	"program/consts"
-	"program/messages"
-	"program/popups/alert"
-	"program/popups/async"
-	"program/popups/commit"
-	"program/popups/discard"
-	"program/popups/input"
-	"program/program/cokeline"
-	"program/program/popups"
+	"omzgit/consts"
+	"omzgit/messages"
+	"omzgit/popups/alert"
+	"omzgit/popups/async"
+	"omzgit/popups/commit"
+	"omzgit/popups/discard"
+	"omzgit/popups/input"
+	"omzgit/program/cokeline"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -36,7 +36,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialInput := input.InitialModel(func(name string) {}, getWidth(width), getHeight(height))
 	initialPopups.AddPopup("input", initialInput)
 
-	initialDiscard := discard.InitialModel(func() bool { return false }, getWidth(width), getHeight(height))
+	initialDiscard := discard.InitialModel(func() tea.Cmd { return nil }, getWidth(width), getHeight(height))
 	initialPopups.AddPopup("discard", initialDiscard)
 
 	initialAlert := alert.InitialModel(getWidth(width), getHeight(height))

@@ -1,7 +1,7 @@
 package list
 
 import (
-	"program/default/style"
+	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 )

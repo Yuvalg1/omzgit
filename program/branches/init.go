@@ -2,13 +2,13 @@ package branches
 
 import (
 	"fmt"
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/program/branches/branch"
 	"os/exec"
-	"program/default/colors"
-	"program/default/colors/bg"
-	"program/default/colors/gray"
-	"program/lib/list"
-	"program/messages"
-	"program/program/branches/branch"
 	"slices"
 	"strings"
 

@@ -1,15 +1,16 @@
 package pointers
 
 import (
-	"program/lib/list"
-	"program/messages"
-	"program/popups/async"
-	"program/popups/discard"
-	"program/popups/input"
-	"program/program"
-	"program/program/branches"
-	"program/program/files"
-	"program/program/files/row"
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/popups/async"
+	"omzgit/popups/commit"
+	"omzgit/popups/discard"
+	"omzgit/popups/input"
+	"omzgit/program"
+	"omzgit/program/branches"
+	"omzgit/program/files"
+	"omzgit/program/files/row"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -19,6 +20,9 @@ var (
 
 	_ messages.Cokerer      = (*branches.Model)(nil)
 	_ messages.Popuper[any] = (*branches.Model)(nil)
+
+	_ messages.Popuper[func()] = (*commit.Model)(nil)
+	_ messages.Refresher       = (*commit.Model)(nil)
 
 	_ messages.Popuper[func() tea.Cmd] = (*discard.Model)(nil)
 	_ messages.Refresher               = (*discard.Model)(nil)

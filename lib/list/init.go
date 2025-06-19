@@ -1,7 +1,7 @@
 package list
 
 import (
-	"program/messages"
+	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
