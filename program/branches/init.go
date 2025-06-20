@@ -62,12 +62,12 @@ func (m Model) CokeCmd() tea.Cmd {
 	return func() tea.Msg {
 		return messages.CokeMsg{
 			Center: lipgloss.NewStyle().
-				Background(bg.C[4]).
+				Background(bg.C[2]).
 				Foreground(m.getCurrentBranchColor()).
 				Padding(0, 1).
 				Render(m.list.Children[m.list.ActiveRow].Name),
 			Right: lipgloss.NewStyle().
-				Background(gray.C[2]).
+				Background(gray.C[1]).
 				Padding(0, 1).
 				Render(fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children))),
 		}

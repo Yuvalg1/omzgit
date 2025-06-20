@@ -50,16 +50,16 @@ func (m Model) CokeCmd() tea.Cmd {
 		path := parts[len(parts)-1]
 
 		return messages.CokeMsg{
-			Left:   lipgloss.NewStyle().Background(colors.Blue).Padding(0, 1).Render("Files"),
+			Left:   lipgloss.NewStyle().Background(colors.Yellow).Foreground(bg.C[0]).Padding(0, 1).Render("Files"),
 			Center: m.getCokeCmdStyle().Render(" " + path + " "),
-			Right: lipgloss.NewStyle().Background(gray.C[2]).Padding(0, 1).Render(fmt.Sprintf(
+			Right: lipgloss.NewStyle().Background(gray.C[1]).Padding(0, 1).Render(fmt.Sprintf(
 				"%d/%d", m.list.ActiveRow+1, len(m.list.Children))),
 		}
 	}
 }
 
 func (m Model) getCokeCmdStyle() lipgloss.Style {
-	cokeStyle := lipgloss.NewStyle().Padding(0, 1).Background(bg.C[3])
+	cokeStyle := lipgloss.NewStyle().Padding(0, 1).Background(bg.C[2])
 
 	if len(m.list.Children) > 0 && m.list.GetCurrent().Staged {
 		return cokeStyle.Foreground(colors.Green)

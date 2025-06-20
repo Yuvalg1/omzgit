@@ -3,15 +3,13 @@ package colors
 import "github.com/charmbracelet/lipgloss"
 
 var (
-	Red    = lipgloss.Color("#E67E80")
-	Orange = lipgloss.Color("#E69875")
-	Yellow = lipgloss.Color("#DBBC7F")
-	Green  = lipgloss.Color("#A7C080")
-	Blue   = lipgloss.Color("#7FBBB3")
-	Aqua   = lipgloss.Color("#83C092")
-	Purple = lipgloss.Color("#D699B6")
-
-	Fg = lipgloss.Color("#D3C6AA")
+	Red    = lipgloss.Color("#FF7B72")
+	Yellow = lipgloss.Color("#F2CC60")
+	Green  = lipgloss.Color("#56D364")
+	Blue   = lipgloss.Color("#79C0FF")
+	Orange = lipgloss.Color("#F0883E")
+	Aqua   = lipgloss.Color("#A5D6FF")
+	Pink   = lipgloss.Color("#FF9BCE")
 )
 
 func GetColor(cond bool, color1 lipgloss.Color, color2 lipgloss.Color) lipgloss.Color {

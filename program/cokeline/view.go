@@ -2,14 +2,13 @@ package cokeline
 
 import (
 	"omzgit/default/colors/bg"
-	"omzgit/default/colors/gray"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
 func (m Model) View() string {
 	partStyle := lipgloss.NewStyle().
-		Background(gray.C[0]).
+		Background(bg.C[3]).
 		Foreground(bg.C[0])
 
 	tabTitle := partStyle.Render(m.Left)

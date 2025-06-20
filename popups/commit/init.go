@@ -1,10 +1,14 @@
 package commit
 
 import (
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
 	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -22,6 +26,8 @@ func InitialModel(width int, height int, title string) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Placeholder = "Message"
+	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0]).Foreground(colors.Yellow)
+	ti.TextStyle = lipgloss.NewStyle().Foreground(gray.C[0])
 	ti.Width = getWidth(width) - 4
 
 	options := map[byte]string{}
