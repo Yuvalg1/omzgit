@@ -22,7 +22,7 @@ func InitialModel(fn func(string), width int, height int) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Focus()
-	ti.Width = getWidth(width)
+	ti.Width = getWidth(width) - 4
 	ti.PlaceholderStyle = ti.PlaceholderStyle.Foreground(colors.Blue)
 
 	return Model{

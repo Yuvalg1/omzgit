@@ -121,6 +121,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				})
 			})
 
+		case "P":
+			stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+
+			return m, m.PopupCmd("discard", "force push", stdout, func() tea.Cmd {
+				if git.Exec("push", "--force") {
+					return nil
+				}
+
+				return m.PopupCmd("alert", "Force Push Error", "Could not resolve host", func() tea.Cmd {
+					return nil
+				})
+			})
+
 		case "ctrl+c", "q":
 			return m, tea.Quit
 

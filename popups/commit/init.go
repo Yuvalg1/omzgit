@@ -22,7 +22,7 @@ func InitialModel(width int, height int, title string) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Placeholder = "Message"
-	ti.Width = getWidth(width)
+	ti.Width = getWidth(width) - 4
 
 	options := map[byte]string{}
 	options['a'] = ""
