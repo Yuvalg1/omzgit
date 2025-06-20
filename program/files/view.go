@@ -10,6 +10,7 @@ func (m Model) View() string {
 	filesStyle := lipgloss.NewStyle().
 		Background(bg.C[0]).
 		Border(lipgloss.NormalBorder(), false, true, false, false).
+		BorderBackground(bg.C[0]).
 		BorderForeground(bg.C[4]).
 		Height(m.Height).
 		Width(m.Width/2 - 1)
