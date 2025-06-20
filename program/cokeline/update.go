@@ -2,6 +2,7 @@ package cokeline
 
 import (
 	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
 	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -22,11 +23,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "b":
-			m.Left = lipgloss.NewStyle().Padding(0, 1).Background(colors.Orange).Render("Branches")
+			m.Left = lipgloss.NewStyle().Padding(0, 1).Bold(true).Background(colors.Pink).Foreground(bg.C[0]).Render("Branches")
 		case "c":
-			m.Left = lipgloss.NewStyle().Padding(0, 1).Background(colors.Red).Render("Commits")
+			m.Left = lipgloss.NewStyle().Padding(0, 1).Bold(true).Background(colors.Red).Foreground(bg.C[0]).Render("Commits")
 		case "f":
-			m.Left = lipgloss.NewStyle().Padding(0, 1).Background(colors.Blue).Render("Files")
+			m.Left = lipgloss.NewStyle().Padding(0, 1).Bold(true).Background(colors.Yellow).Foreground(bg.C[0]).Render("Files")
 		default:
 			return m, nil
 		}

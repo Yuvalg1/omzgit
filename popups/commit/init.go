@@ -1,6 +1,8 @@
 package commit
 
 import (
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
 	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -22,6 +24,8 @@ func InitialModel(width int, height int, title string) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Placeholder = "Message"
+	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0])
+	ti.TextStyle = ti.TextStyle.Foreground(colors.Yellow)
 	ti.Width = getWidth(width) - 4
 
 	options := map[byte]string{}

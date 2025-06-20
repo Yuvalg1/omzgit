@@ -15,10 +15,10 @@ func (m Model) View() string {
 	path = consts.TrimRight(path, m.width-3)
 
 	return lipgloss.NewStyle().
-		Background(colors.GetColor(m.Active, bg.C[3], bg.C[0])).
+		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 		Border(lipgloss.MarkdownBorder(), false, false, false, true).
 		BorderBackground(bg.C[0]).
-		BorderForeground(colors.GetColor(m.Active, gray.C[0], bg.C[1])).
+		BorderForeground(colors.GetColor(m.Active, gray.C[0], bg.C[2])).
 		Foreground(colors.GetColor(m.Staged, colors.Green, colors.Red)).
 		Width(m.width - 1).
 		Render(m.status + " " +
@@ -27,7 +27,7 @@ func (m Model) View() string {
 
 func getStrikethroughStyle(active bool, staged bool, status string) lipgloss.Style {
 	current := style.Bg.
-		Background(colors.GetColor(active, bg.C[3], bg.C[0])).
+		Background(colors.GetColor(active, bg.C[2], bg.C[0])).
 		Foreground(colors.GetColor(staged, colors.Green, colors.Red))
 	if status == "D" {
 		return current.Strikethrough(true)

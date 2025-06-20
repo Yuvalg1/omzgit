@@ -2,10 +2,12 @@ package input
 
 import (
 	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
 	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -23,7 +25,8 @@ func InitialModel(fn func(string), width int, height int) Model {
 	ti.CharLimit = 50
 	ti.Focus()
 	ti.Width = getWidth(width) - 4
-	ti.PlaceholderStyle = ti.PlaceholderStyle.Foreground(colors.Blue)
+	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0])
+	ti.TextStyle = lipgloss.NewStyle().Foreground(colors.Pink)
 
 	return Model{
 		CallbackFn: fn,
