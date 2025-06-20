@@ -91,3 +91,9 @@ To move between branches, use the arrow keys or ```j/k``` (more on that later)
 ```n``` - --no-verify
 
 ```y``` - --allow-empty
+
+### Vim
+
+If you are stuck in any popup or in a screen in which you can't get out, simply press ```esc```.
+
+In addition to ```j/k```, you can filter the lists using ```/``` to enter a search query.
