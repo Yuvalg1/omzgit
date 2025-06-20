@@ -66,6 +66,8 @@ func (m *Model[T]) SetContent(children []T) {
 	if len(m.Children) == 0 {
 		m.Children = append(m.Children, *m.createChildFn(m.emptyMsg))
 	}
+
+	m.ActiveRow = min(m.ActiveRow, max(len(m.Children)-1, 0))
 }
 
 func (m Model[T]) UpdateContent(msg tea.Msg) (Model[T], tea.Cmd) {
