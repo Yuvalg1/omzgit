@@ -2,6 +2,7 @@ package program
 
 import (
 	"omzgit/consts"
+	"omzgit/git"
 	"omzgit/messages"
 	"omzgit/popups/alert"
 	"omzgit/popups/async"
@@ -51,7 +52,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 
 	return Model{
 		ActiveTab:     consts.FILES - 1,
-		currentBranch: "",
+		currentBranch: getCurrentBranch(),
 		cokeline:      cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:          getTabs(tabs),
 		Popup:         initialPopups,
@@ -117,4 +118,8 @@ func getCokes(tabs []ExtendedModel) []string {
 	}
 
 	return cokes
+}
+
+func getCurrentBranch() string {
+	return git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
 }

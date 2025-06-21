@@ -41,6 +41,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case messages.TickMsg, messages.RefreshMsg:
+		m.currentBranch = getCurrentBranch()
 		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res1
 
@@ -111,8 +112,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				m.currentBranch = git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
-
 				return m.PopupCmd("discard", "upstream push", m.currentBranch, func() tea.Cmd {
 					return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
 						if git.Exec("push", "--set-upstream", "origin", m.currentBranch) {
@@ -124,8 +123,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "P":
-			m.currentBranch = git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
-
 			return m, m.PopupCmd("discard", "force push", m.currentBranch, func() tea.Cmd {
 				return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
 					if git.Exec("push", "--force") {
@@ -180,6 +177,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "c":
 		return handlePick(m, consts.COMMITS, msg)
 	case "f":
+		m.currentBranch = getCurrentBranch()
 		return handlePick(m, consts.FILES, msg)
 
 	case "g":
