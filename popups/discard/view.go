@@ -2,12 +2,19 @@ package discard
 
 import (
 	"omzgit/consts"
+	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
 	"omzgit/default/style"
 
 	"github.com/charmbracelet/lipgloss"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+)
+
+var (
+	cancelColor  = gray.C[2]
+	discardColor = colors.Red
 )
 
 func (m Model) View() string {
