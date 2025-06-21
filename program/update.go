@@ -115,6 +115,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				return m.PopupCmd("discard", "upstream push", stdout, func() tea.Cmd {
 					return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
+						stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+
 						if git.Exec("push", "--set-upstream", "origin", stdout) {
 							return nil
 						}
