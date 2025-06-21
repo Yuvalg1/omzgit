@@ -120,7 +120,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						if git.Exec("push", "--set-upstream", "origin", stdout) {
 							return nil
 						}
-						return m.PopupCmd("alert", "Upstream Error", stdout, func() tea.Cmd { return nil })
+						return m.PopupCmd("alert", "Upstream Error", "Could not reslove host", func() tea.Cmd { return nil })
 					})
 				})
 			})
