@@ -87,7 +87,7 @@ func (m Model) getCommitString() []string {
 		}
 	}
 
-	commitStrings = append(commitStrings, m.commitMessageType, "\""+m.textinput.Value()+"\"")
+	commitStrings = append(commitStrings, m.commitMessageType, m.textinput.Value())
 
 	return commitStrings
 }
