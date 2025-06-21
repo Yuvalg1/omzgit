@@ -2,7 +2,6 @@ package program
 
 import (
 	"omzgit/consts"
-	"omzgit/git"
 	"omzgit/messages"
 	"omzgit/popups/alert"
 	"omzgit/popups/async"
@@ -16,12 +15,11 @@ import (
 )
 
 type Model struct {
-	ActiveTab     int
-	cokeline      cokeline.Model
-	currentBranch string
-	Tabs          []tea.Model
-	mode          string
-	Popup         popups.Model[popups.InnerModel]
+	ActiveTab int
+	cokeline  cokeline.Model
+	Tabs      []tea.Model
+	mode      string
+	Popup     popups.Model[popups.InnerModel]
 
 	Height int
 	Width  int
@@ -51,12 +49,11 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialPopups.AddPopup("async", initialAsync)
 
 	return Model{
-		ActiveTab:     consts.FILES - 1,
-		currentBranch: getCurrentBranch(),
-		cokeline:      cokeline.InitialModel(width, height, getCokes(tabs)),
-		Tabs:          getTabs(tabs),
-		Popup:         initialPopups,
-		mode:          "",
+		ActiveTab: consts.FILES - 1,
+		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
+		Tabs:      getTabs(tabs),
+		Popup:     initialPopups,
+		mode:      "",
 
 		Width:  getWidth(width),
 		Height: getHeight(height),
@@ -118,8 +115,4 @@ func getCokes(tabs []ExtendedModel) []string {
 	}
 
 	return cokes
-}
-
-func getCurrentBranch() string {
-	return git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
 }
