@@ -2,16 +2,25 @@ package alert
 
 import (
 	"omzgit/consts"
-	"omzgit/default/style"
+	"omzgit/default/colors"
+	"omzgit/default/colors/bg"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
-var borderColor = lipgloss.Color("#CCCCCC")
-
 func (m Model) View() string {
-	titleStyle := style.Bg.Width(m.Width).Foreground(lipgloss.Color("#FA7970"))
-	borderStyle := style.Bg.Border(lipgloss.NormalBorder(), false, true, true).Width(m.Width - 2).BorderForeground(lipgloss.Color("#FA7970")).Foreground(lipgloss.Color("#FA7970"))
+	titleStyle := lipgloss.NewStyle().
+		Background(bg.C[0]).
+		Foreground(colors.Red).
+		Width(m.Width)
+
+	borderStyle := lipgloss.NewStyle().
+		Background(bg.C[0]).
+		Border(lipgloss.NormalBorder(), false, true, true).
+		BorderBackground(bg.C[0]).
+		BorderForeground(colors.Red).
+		Foreground(colors.Red).
+		Width(m.Width - 2)
 
 	return titleStyle.Render(consts.PadTitle(m.verb, m.Width) + borderStyle.Render(m.error))
 }

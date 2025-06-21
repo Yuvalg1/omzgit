@@ -11,13 +11,14 @@ import (
 
 func (m Model) View() string {
 	titleStyle := lipgloss.NewStyle().Background(bg.C[0])
-	return titleStyle.Render(consts.PadTitle("commit "+m.commitMessageType, m.width) + lipgloss.NewStyle().
-		Background(bg.C[0]).
-		Border(lipgloss.NormalBorder(), false, true, true).
-		Height(m.height-1).
-		Width(m.width-2).
-		Render(
-			m.textinput.View()+m.renderMoreOptions()))
+	return titleStyle.Render(consts.PadTitle("commit "+m.commitMessageType, m.width) +
+		lipgloss.NewStyle().
+			Background(bg.C[0]).
+			Border(lipgloss.NormalBorder(), false, true, true).
+			Height(m.height-1).
+			Width(m.width-2).
+			Render(
+				m.textinput.View()+m.renderMoreOptions()))
 }
 
 func (m Model) renderOption(letter byte, desc string) string {

@@ -10,23 +10,21 @@ import (
 	"golang.org/x/text/language"
 )
 
-var (
-	cancelColor  = lipgloss.Color("#CCCCCC")
-	discardColor = lipgloss.Color("#FA7970")
-)
-
 func (m Model) View() string {
-	containerStyle := style.Bg.
-		Width(m.Width-2).
-		Height(m.Height).
+	containerStyle := lipgloss.NewStyle().
+		AlignHorizontal(lipgloss.Center).
+		Background(bg.C[0]).
+		BorderBackground(bg.C[0]).
+		BorderForeground(bg.C[4]).
 		Border(lipgloss.NormalBorder(), false, true, true).
-		AlignHorizontal(lipgloss.Center)
+		Height(m.Height).
+		Width(m.Width - 2)
 
 	contentStyle := style.Bg.Padding(1).Bold(true)
 
 	optionStyle := style.Bg.
 		Width((m.Width - 7) / 2).
-		Foreground(lipgloss.Color("#21262D")).
+		Foreground(bg.C[0]).
 		AlignHorizontal(lipgloss.Center)
 
 	yesButtonStyle := style.Bg.Background(discardColor)
