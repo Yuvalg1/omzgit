@@ -4,8 +4,6 @@ import (
 	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -29,8 +27,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "y", "Y":
-			if m.CallbackFn() != nil {
-				return m, m.PopupCmd("alert", cases.Title(language.English).String(m.verb)+" Error!", "Could not "+m.verb+" requested item.", func() tea.Cmd { return nil })
+			callbackCmd := m.CallbackFn()
+			if callbackCmd != nil {
+				return m, callbackCmd
 			}
 			m.visible = false
 			return m, m.RefreshCmd()
