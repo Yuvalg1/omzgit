@@ -114,10 +114,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
 
 				return m.PopupCmd("discard", "upstream push", stdout, func() tea.Cmd {
-					if git.Exec("push", "--set-upstream", "origin", stdout) {
-						return nil
-					}
-					return m.PopupCmd("alert", "Upstream Error", "Could not resolve host", func() tea.Cmd { return nil })
+					return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
+						stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+
+						if git.Exec("push", "--set-upstream", "origin", stdout) {
+							return nil
+						}
+						return m.PopupCmd("alert", "Upstream Error", "Could not reslove host", func() tea.Cmd { return nil })
+					})
 				})
 			})
 
@@ -125,12 +129,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
 
 			return m, m.PopupCmd("discard", "force push", stdout, func() tea.Cmd {
-				if git.Exec("push", "--force") {
-					return nil
-				}
+				return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
+					if git.Exec("push", "--force") {
+						return nil
+					}
 
-				return m.PopupCmd("alert", "Force Push Error", "Could not resolve host", func() tea.Cmd {
-					return nil
+					return m.PopupCmd("alert", "Force Push Error", "Could not resolve host", func() tea.Cmd {
+						return nil
+					})
 				})
 			})
 
