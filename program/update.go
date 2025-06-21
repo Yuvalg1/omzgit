@@ -111,22 +111,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+				m.currentBranch = git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
 
-				return m.PopupCmd("discard", "upstream push", stdout, func() tea.Cmd {
+				return m.PopupCmd("discard", "upstream push", m.currentBranch, func() tea.Cmd {
 					return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
-						if git.Exec("push", "--set-upstream", "origin", stdout) {
+						if git.Exec("push", "--set-upstream", "origin", m.currentBranch) {
 							return nil
 						}
-						return m.PopupCmd("alert", "Upstream Error", "Could not resolve host", func() tea.Cmd { return nil })
+						return m.PopupCmd("alert", "Upstream Error", m.currentBranch, func() tea.Cmd { return nil })
 					})
 				})
 			})
 
 		case "P":
-			stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+			m.currentBranch = git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
 
-			return m, m.PopupCmd("discard", "force push", stdout, func() tea.Cmd {
+			return m, m.PopupCmd("discard", "force push", m.currentBranch, func() tea.Cmd {
 				return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
 					if git.Exec("push", "--force") {
 						return nil

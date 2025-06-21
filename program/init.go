@@ -15,11 +15,12 @@ import (
 )
 
 type Model struct {
-	ActiveTab int
-	cokeline  cokeline.Model
-	Tabs      []tea.Model
-	mode      string
-	Popup     popups.Model[popups.InnerModel]
+	ActiveTab     int
+	cokeline      cokeline.Model
+	currentBranch string
+	Tabs          []tea.Model
+	mode          string
+	Popup         popups.Model[popups.InnerModel]
 
 	Height int
 	Width  int
@@ -49,11 +50,12 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialPopups.AddPopup("async", initialAsync)
 
 	return Model{
-		ActiveTab: consts.FILES - 1,
-		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
-		Tabs:      getTabs(tabs),
-		Popup:     initialPopups,
-		mode:      "",
+		ActiveTab:     consts.FILES - 1,
+		currentBranch: "",
+		cokeline:      cokeline.InitialModel(width, height, getCokes(tabs)),
+		Tabs:          getTabs(tabs),
+		Popup:         initialPopups,
+		mode:          "",
 
 		Width:  getWidth(width),
 		Height: getHeight(height),
