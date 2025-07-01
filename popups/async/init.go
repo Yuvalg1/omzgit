@@ -1,6 +1,7 @@
 package async
 
 import (
+	"omzgit/default/colors/bg"
 	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -20,6 +21,7 @@ type Model struct {
 func InitialModel(width int, height int, title string) Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
+	s.Style.Background(bg.C[0])
 
 	return Model{
 		callbackFn: func() tea.Cmd { return nil },

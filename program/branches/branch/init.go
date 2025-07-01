@@ -11,11 +11,12 @@ import (
 )
 
 type Model struct {
-	Active      bool
-	Current     bool
-	diff        string
-	lastUpdated string
-	Name        string
+	Active        bool
+	Current       bool
+	defaultBranch string
+	diff          string
+	lastUpdated   string
+	Name          string
 
 	width  int
 	height int
@@ -24,24 +25,25 @@ type Model struct {
 func InitialModel(width int, height int, name string, defaultBranch string, empty bool) Model {
 	if empty {
 		return Model{
-			Active:      true,
-			Name:        name,
-			lastUpdated: "",
-			Current:     false,
-			diff:        "",
+			Active:        true,
+			Name:          name,
+			lastUpdated:   "",
+			Current:       false,
+			defaultBranch: defaultBranch,
+			diff:          "",
 
 			width:  getWidth(width),
 			height: getHeight(height),
 		}
 	}
 
-	lastUpdated := getLastUpdatedDate(name[2:])
 	return Model{
-		Active:      false,
-		Name:        name[2:],
-		lastUpdated: lastUpdated,
-		Current:     strings.Contains(name[:2], "*"),
-		diff:        getBranchDiff(defaultBranch, name[2:]),
+		Active:        false,
+		Name:          name[2:],
+		Current:       strings.Contains(name[:2], "*"),
+		defaultBranch: defaultBranch,
+		diff:          "",
+		lastUpdated:   "",
 
 		width:  getWidth(width),
 		height: getHeight(height),
@@ -60,8 +62,12 @@ func getHeight(height int) int {
 	return 1
 }
 
-func getLastUpdatedDate(name string) string {
-	originName := "origin/" + name
+func (m Model) getLastUpdatedDate() string {
+	if !m.Active {
+		return ""
+	}
+
+	originName := "origin/" + m.Name
 	cmd := exec.Command("git", "log", "-1", "--format=%cd", originName)
 
 	stdout, err := cmd.Output()
@@ -105,9 +111,13 @@ func formatUnixTime(unixTime int64) string {
 	return fmt.Sprint(fTime, " Years Ago")
 }
 
-func getBranchDiff(defaultBranch string, currentBranch string) string {
-	currentRemoteBranch := "origin/" + currentBranch
-	if currentRemoteBranch == defaultBranch {
+func (m Model) getBranchDiff() string {
+	if !m.Active {
+		return ""
+	}
+
+	currentRemoteBranch := "origin/" + m.Name
+	if currentRemoteBranch == m.defaultBranch {
 		return "Default"
 	}
 

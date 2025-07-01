@@ -17,14 +17,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "enter":
 			m.Active = true
+			m.lastUpdated = m.getLastUpdatedDate()
+			m.diff = m.getBranchDiff()
 			return m, nil
 
-		case "g", "G", "/", "esc":
+		case "j", "k", "down", "up", "g", "G", "/", "esc":
 			m.Active = !m.Active
-			return m, nil
-
-		case "j", "k", "down", "up":
-			m.Active = !m.Active
+			m.lastUpdated = m.getLastUpdatedDate()
+			m.diff = m.getBranchDiff()
 			return m, nil
 
 		default:
