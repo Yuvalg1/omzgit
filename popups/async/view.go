@@ -13,6 +13,6 @@ func (m Model) View() string {
 		BorderForeground(bg.C[4]).
 		Height(m.height - 2).
 		Render(
-			lipgloss.NewStyle().Width(m.width-2-lipgloss.Width(m.spinner.View())).Render(m.title+"... ") +
-				m.spinner.View())
+			lipgloss.NewStyle().Width(m.width-2-lipgloss.Width(m.spinner.View())).Background(bg.C[0]).Render(m.title+"... ") +
+				lipgloss.NewStyle().Background(bg.C[0]).Render(m.spinner.View()))
 }
