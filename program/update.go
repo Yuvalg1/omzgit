@@ -86,11 +86,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "f":
 			return m, m.PopupCmd("async", "", "fetching", func() tea.Cmd {
-				if git.Exec("fetch") {
+				output, err := git.Exec("fetch")
+				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Fetch Error", "Could not Resolve host", func() tea.Cmd { return nil })
+				return m.PopupCmd("alert", "Fetch Error", output, func() tea.Cmd { return nil })
 			})
 
 		case "g":
@@ -98,43 +99,47 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "l":
 			return m, m.PopupCmd("async", "", "pulling", func() tea.Cmd {
-				if git.Exec("pull") {
+				output, err := git.Exec("pull")
+				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Pull Error", "Could not Resolve host", func() tea.Cmd { return nil })
+				return m.PopupCmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
 			})
 
 		case "p":
 			return m, m.PopupCmd("async", "", "pushing", func() tea.Cmd {
-				if git.Exec("push") {
+				_, err := git.Exec("push")
+				if err == nil {
 					return nil
 				}
 
-				stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+				output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-				return m.PopupCmd("discard", "upstream push", stdout, func() tea.Cmd {
-					return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
-						stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+				return m.PopupCmd("discard", "upstream push", output, func() tea.Cmd {
+					return m.PopupCmd("async", "", "upstream pushing", func() tea.Cmd {
+						output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-						if git.Exec("push", "--set-upstream", "origin", stdout) {
+						output, err := git.Exec("push", "--set-upstream", "origin", output)
+						if err == nil {
 							return nil
 						}
-						return m.PopupCmd("alert", "Upstream Error", "Could not reslove host", func() tea.Cmd { return nil })
+						return m.PopupCmd("alert", "Upstream Error", output, func() tea.Cmd { return nil })
 					})
 				})
 			})
 
 		case "P":
-			stdout := git.GetExec("rev-parse", "--abbrev-ref", "HEAD")
+			output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-			return m, m.PopupCmd("discard", "force push", stdout, func() tea.Cmd {
+			return m, m.PopupCmd("discard", "force push", output, func() tea.Cmd {
 				return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
-					if git.Exec("push", "--force") {
+					output, err := git.Exec("push", "--force")
+					if err == nil {
 						return nil
 					}
 
-					return m.PopupCmd("alert", "Force Push Error", "Could not resolve host", func() tea.Cmd {
+					return m.PopupCmd("alert", "Force Push Error", output, func() tea.Cmd {
 						return nil
 					})
 				})

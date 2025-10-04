@@ -80,9 +80,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 
 		case "A":
-			if !git.Exec("add", "--all") {
-				return m, nil
-			}
+			git.Exec("add", "--all")
 
 			var cmds []tea.Cmd
 			cmds = append(cmds, m.CokeCmd())
@@ -122,9 +120,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "R":
-			if !git.Exec("reset") {
-				return m, nil
-			}
+			git.Exec("reset")
 
 			var cmds []tea.Cmd
 			cmds = append(cmds, m.CokeCmd())
