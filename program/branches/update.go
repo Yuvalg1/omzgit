@@ -52,7 +52,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "c":
-			if git.Exec("checkout", m.list.GetCurrent().Name) {
+			output, err := git.Exec("checkout", m.list.GetCurrent().Name)
+			if err == nil {
 				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 
 				if current != -1 {
@@ -62,24 +63,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.list.Children[m.list.ActiveRow].Current = true
 				return m, nil
 			}
-			return m, m.PopupCmd("alert", "Alert!", "Please commit or stash your changes before switching branches", func(name string) {})
+			return m, m.PopupCmd("alert", "Alert!", output, func(name string) {})
 
 		case "d":
 			return m, m.PopupCmd("discard", "delete", m.list.GetCurrent().Name, func() tea.Cmd {
-				if git.Exec("branch", "-d", m.list.GetCurrent().Name) {
+				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Name)
+				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Delete Error", "Could not delete "+m.list.GetCurrent().Name, func(name string) {})
+				return m.PopupCmd("alert", "Delete Error", output, func(name string) {})
 			})
 
 		case "D":
 			return m, m.PopupCmd("discard", "force delete", m.list.GetCurrent().Name, func() tea.Cmd {
-				if git.Exec("branch", "-D", m.list.GetCurrent().Name) {
+				output, err := git.Exec("branch", "-D", m.list.GetCurrent().Name)
+				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Force Delete Error", "Could not force delete "+m.list.GetCurrent().Name, func(name string) {})
+				return m.PopupCmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
 		case "esc":

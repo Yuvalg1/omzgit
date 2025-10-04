@@ -19,7 +19,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "a":
 			if !m.Staged {
-				m.Staged = git.Exec("add", m.Path)
+				_, err := git.Exec("add", m.Path)
+				m.Staged = err == nil
 			}
 			return m, nil
 
@@ -42,7 +43,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "d":
 			return m, m.PopupCmd("discard", "discard", m.Path, func() tea.Cmd {
 				if m.Staged {
-					m.Staged = !git.Exec("reset", "--", m.Path)
+					_, err := git.Exec("reset", "--", m.Path)
+					m.Staged = err != nil
 				}
 				git.Exec("restore", m.Path)
 				return nil
@@ -50,7 +52,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "r":
 			if m.Staged {
-				m.Staged = !git.Exec("reset", "--", m.Path)
+				_, err := git.Exec("reset", "--", m.Path)
+				m.Staged = err != nil
 			}
 			return m, nil
 

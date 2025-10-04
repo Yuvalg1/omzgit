@@ -5,21 +5,10 @@ import (
 	"strings"
 )
 
-func Exec(args ...string) bool {
+func Exec(args ...string) (string, error) {
 	cmd := exec.Command("git", args...)
 
-	_, err := cmd.Output()
+	output, err := cmd.CombinedOutput()
 
-	return err == nil
-}
-
-func GetExec(args ...string) string {
-	cmd := exec.Command("git", args...)
-
-	stdout, err := cmd.Output()
-	if err != nil {
-		return ""
-	}
-
-	return strings.TrimSpace(string(stdout))
+	return strings.TrimSpace(string(output)), err
 }

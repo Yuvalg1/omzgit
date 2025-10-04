@@ -31,12 +31,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 
 			case "enter":
-				if git.Exec(m.getCommitString()...) {
+				output, err := git.Exec(m.getCommitString()...)
+				if err == nil {
 					m = InitialModel(m.width, m.height, "commit")
 					return m, m.RefreshCmd()
 				}
 
-				return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() tea.Cmd { return nil })
+				return m, m.PopupCmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
 
 			default:
 				res, cmd := m.textinput.Update(msg)
@@ -84,12 +85,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			if git.Exec(m.getCommitString()...) {
+			output, err := git.Exec(m.getCommitString()...)
+			if err == nil {
 				m = InitialModel(m.width, m.height, "commit")
 				return m, m.RefreshCmd()
 			}
 
-			return m, m.PopupCmd("alert", "Commit Error!", "Commit error", func() tea.Cmd { return nil })
+			return m, m.PopupCmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
 
 		case "esc":
 			m.visible = false
