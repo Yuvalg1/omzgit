@@ -76,7 +76,7 @@ func InitialModel(width int, height int) Model {
 
 	files[0].Active = true
 
-	initialList := list.InitialModel(tWidth, tHeight, files, 0, "No Files Found")
+	initialList := list.InitialModel(tHeight, files, 0, "No Files Found")
 
 	initialList.SetCreateChild(func(name string) *row.Model {
 		created := row.InitialModel(name, getWidth(width), true)

@@ -31,9 +31,9 @@ func InitialModel(width int, height int, title string) Model {
 	initialActive := slices.IndexFunc(branches, func(branch branch.Model) bool { return branch.Current })
 	branches[initialActive].Active = true
 
-	initialList := list.InitialModel(getWidth(width), getHeight(height), branches, initialActive, "No Branches Found")
+	initialList := list.InitialModel(getHeight(height), branches, initialActive, "No Branches Found")
 	initialList.SetCreateChild(func(name string) *branch.Model {
-		created := branch.InitialModel(getWidth(width), getHeight(height), getDefaultBranch(), "", true)
+		created := branch.InitialModel(getWidth(width), getHeight(height), name, "", true)
 		return &created
 	})
 	initialList.SetFilterFn(func(branch branch.Model, text string) bool {

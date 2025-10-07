@@ -24,9 +24,9 @@ func InitialModel(fn func(string), width int, height int) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Focus()
-	ti.Width = getWidth(width) - 4
+	ti.Width = getWidth(width) - 5
 	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0])
-	ti.TextStyle = lipgloss.NewStyle().Foreground(colors.Pink)
+	ti.TextStyle = lipgloss.NewStyle().Foreground(colors.Pink).Background(bg.C[0])
 
 	return Model{
 		CallbackFn: fn,

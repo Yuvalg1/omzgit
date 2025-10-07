@@ -54,7 +54,7 @@ func getHeight(height int) int {
 }
 
 func getWidth(width int) int {
-	return min(34, width-2)
+	return min(36, width-width%2)
 }
 
 func (m Model) GetVisible() bool {

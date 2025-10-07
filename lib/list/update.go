@@ -9,7 +9,6 @@ import (
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.TerminalMsg:
-		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
 		var cmds []tea.Cmd

@@ -16,14 +16,12 @@ type Model[T tea.Model] struct {
 	TextInput     textinput.Model
 	emptyMsg      string
 
-	width  int
 	height int
 }
 
-func InitialModel[T tea.Model](width int, height int, children []T, initialActive int, emptyMsg string) Model[T] {
+func InitialModel[T tea.Model](height int, children []T, initialActive int, emptyMsg string) Model[T] {
 	ti := textinput.New()
 	ti.CharLimit = 20
-	ti.Width = getWidth(width)
 
 	return Model[T]{
 		Children:  children,
@@ -36,7 +34,6 @@ func InitialModel[T tea.Model](width int, height int, children []T, initialActiv
 		TextInput: ti,
 		emptyMsg:  emptyMsg,
 
-		width:  getWidth(width),
 		height: getHeight(height),
 	}
 }
@@ -49,10 +46,6 @@ func (m Model[T]) ModeCmd(mode string) tea.Cmd {
 	return func() tea.Msg {
 		return messages.ModeMsg{Mode: mode}
 	}
-}
-
-func getWidth(width int) int {
-	return width
 }
 
 func getHeight(height int) int {

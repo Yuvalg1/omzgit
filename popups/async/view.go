@@ -8,6 +8,7 @@ import (
 
 func (m Model) View() string {
 	return lipgloss.NewStyle().
+		Background(bg.C[0]).
 		Border(lipgloss.NormalBorder(), true).
 		BorderBackground(bg.C[0]).
 		BorderForeground(bg.C[4]).
