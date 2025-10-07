@@ -2,10 +2,11 @@ package branch
 
 import (
 	"fmt"
-	"os/exec"
 	"slices"
 	"strings"
 	"time"
+
+	"omzgit/git"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -68,15 +69,13 @@ func (m Model) getLastUpdatedDate() string {
 	}
 
 	originName := "origin/" + m.Name
-	cmd := exec.Command("git", "log", "-1", "--format=%cd", originName)
-
-	stdout, err := cmd.Output()
+	output, err := git.Exec("log", "-1", "--format=%cd", originName)
 	if err != nil {
 		return "---"
 	}
 
 	layout := "Mon Jan 2 15:04:05 2006 -0700"
-	parsedDate, err := time.Parse(layout, string(stdout)[:len(string(stdout))-1])
+	parsedDate, err := time.Parse(layout, string(output)[:len(string(output))-1])
 	if err != nil {
 		return "---"
 	}
@@ -122,14 +121,12 @@ func (m Model) getBranchDiff() string {
 	}
 
 	branchPath := currentRemoteBranch + "...HEAD"
-	cmd := exec.Command("git", "rev-list", "--left-right", "--count", branchPath)
-
-	stdout, err := cmd.Output()
+	output, err := git.Exec("rev-list", "--left-right", "--count", branchPath)
 	if err != nil {
 		return "0 | 0"
 	}
 
-	fields := strings.Fields(string(stdout))
+	fields := strings.Fields(string(output))
 	slices.Reverse(fields)
 	trimmed := strings.Join(fields, "|")
 	return trimmed

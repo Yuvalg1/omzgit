@@ -1,14 +1,18 @@
 package git
 
 import (
+	"bytes"
 	"os/exec"
-	"strings"
 )
 
 func Exec(args ...string) (string, error) {
+	var out bytes.Buffer
+
 	cmd := exec.Command("git", args...)
+	cmd.Stdout = &out
+	cmd.Stderr = &out
 
-	output, err := cmd.CombinedOutput()
+	err := cmd.Run()
 
-	return strings.TrimSpace(string(output)), err
+	return out.String(), err
 }

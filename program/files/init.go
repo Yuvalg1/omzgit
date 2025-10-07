@@ -2,17 +2,18 @@ package files
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"omzgit/consts"
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
 	"omzgit/default/colors/gray"
+	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
-	"os/exec"
-	"strings"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -113,14 +114,12 @@ func getHeight(height int) int {
 }
 
 func GetFilesChanged(width int) []row.Model {
-	cmd := exec.Command("git", "status", "--short", "--untracked-files=all")
-
-	stdout, err := cmd.Output()
+	output, err := git.Exec("status", "--short", "--untracked-files=all")
 	if err != nil {
 		return []row.Model{row.InitialModel("a files error has occured", width, true)}
 	}
 
-	fileLogs := strings.Split(string(stdout), "\n")
+	fileLogs := strings.Split(string(output), "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
 
 	if len(fileLogs) == 0 {

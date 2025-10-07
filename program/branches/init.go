@@ -2,15 +2,16 @@ package branches
 
 import (
 	"fmt"
+	"slices"
+	"strings"
+
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
 	"omzgit/default/colors/gray"
+	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/branches/branch"
-	"os/exec"
-	"slices"
-	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -93,14 +94,12 @@ func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) 
 }
 
 func getBranches(width int, height int) []branch.Model {
-	cmd := exec.Command("git", "branch")
-
-	stdout, err := cmd.Output()
+	output, err := git.Exec("branch")
 	if err != nil {
 		return []branch.Model{}
 	}
 
-	branches := strings.Split(string(stdout), "\n")
+	branches := strings.Split(string(output), "\n")
 	branches = branches[:len(branches)-1]
 
 	var models []branch.Model
@@ -112,12 +111,10 @@ func getBranches(width int, height int) []branch.Model {
 }
 
 func getDefaultBranch() string {
-	cmd := exec.Command("git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
-
-	stdout, err := cmd.Output()
+	output, err := git.Exec("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
 	if err != nil {
 		return ""
 	}
 
-	return string(stdout)[:len(string(stdout))-1]
+	return string(output)[:len(string(output))-1]
 }
