@@ -1,6 +1,8 @@
 package program
 
 import (
+	"strings"
+
 	"omzgit/consts"
 	"omzgit/git"
 	"omzgit/messages"
@@ -116,15 +118,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-				return m.PopupCmd("discard", "upstream push", output, func() tea.Cmd {
+				return m.PopupCmd("discard", "upstream push", strings.TrimSpace(output), func() tea.Cmd {
 					return m.PopupCmd("async", "", "upstream pushing", func() tea.Cmd {
 						output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-						output, err := git.Exec("push", "--set-upstream", "origin", output)
+						output, err := git.Exec("push", "--set-upstream", "origin", strings.TrimSpace(output))
 						if err == nil {
 							return nil
 						}
-						return m.PopupCmd("alert", "Upstream Error", output, func() tea.Cmd { return nil })
+						return m.PopupCmd("alert", "Upstream Error", strings.TrimSpace(output), func() tea.Cmd { return nil })
 					})
 				})
 			})
@@ -132,14 +134,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "P":
 			output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-			return m, m.PopupCmd("discard", "force push", output, func() tea.Cmd {
+			return m, m.PopupCmd("discard", "force push", strings.TrimSpace(output), func() tea.Cmd {
 				return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
 					output, err := git.Exec("push", "--force")
 					if err == nil {
 						return nil
 					}
 
-					return m.PopupCmd("alert", "Force Push Error", output, func() tea.Cmd {
+					return m.PopupCmd("alert", "Force Push Error", strings.TrimSpace(output), func() tea.Cmd {
 						return nil
 					})
 				})

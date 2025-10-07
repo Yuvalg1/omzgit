@@ -2,7 +2,8 @@ package diff
 
 import (
 	"os"
-	"os/exec"
+
+	"omzgit/git"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/ogios/cropviewport"
@@ -64,14 +65,8 @@ func (m Model) GetContent() string {
 
 func (m Model) getDiffStaged() string {
 	if m.staged {
-		cmd := exec.Command("git", "diff", "--staged", m.path)
-
-		stdout, err := cmd.Output()
-		if err != nil {
-			return "Staged File has been deleted."
-		}
-
-		return string(stdout)
+		output, _ := git.Exec("diff", "--staged", m.path)
+		return string(output)
 	}
 
 	file, err := os.Stat(m.path)
