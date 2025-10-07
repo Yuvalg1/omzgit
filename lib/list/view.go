@@ -12,8 +12,8 @@ func (m Model[T]) View() string {
 
 	children := m.getFilteredChildren()
 
-	if len(children) == 0 && !m.TextInput.Focused() {
-		fileStrings = m.Children[len(m.Children)-1].View()
+	if len(children) == 0 {
+		fileStrings = (*m.createChildFn(m.emptyMsg)).View()
 	}
 
 	for i := range min(len(children), m.height-1) {
@@ -22,7 +22,7 @@ func (m Model[T]) View() string {
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
 
-	return style.Bg.Width(m.width).Height(m.height).Render(m.getTextInput() + "\n" + fileStrings)
+	return style.Bg.Height(m.height).Render(m.getTextInput() + "\n" + fileStrings)
 }
 
 func (m Model[T]) getTextInput() string {
@@ -30,5 +30,5 @@ func (m Model[T]) getTextInput() string {
 		return ""
 	}
 
-	return lipgloss.NewStyle().Width(m.width).Render("Search " + m.TextInput.View())
+	return lipgloss.NewStyle().Render("Search " + m.TextInput.View())
 }

@@ -42,6 +42,8 @@ func (m Model) View() string {
 		style.Bg.Foreground(discardColor).Render("Y ") +
 		yesButtonStyle.Inherit(optionStyle).Render(cases.Title(language.English).String(m.verb))
 
+	discardStr := "Are you sure you want to " + m.verb + " " + m.Name + "?"
+
 	return style.Bg.Foreground(bg.C[4]).Render(consts.PadTitle("Attention", m.Width) + containerStyle.Render(
-		contentStyle.Render("Are you sure you want to "+m.verb+" "+m.Name+"?")+"\n"+buttons))
+		contentStyle.Render(discardStr)+"\n"+buttons))
 }

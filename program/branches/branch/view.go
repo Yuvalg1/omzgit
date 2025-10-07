@@ -10,10 +10,8 @@ import (
 )
 
 func (m Model) View() string {
-	rest := m.getTitleStyle().Width(10).Padding(0, 1).Render(m.diff) +
-		m.getTitleStyle().Width(16).Render(m.lastUpdated)
-
-	title := consts.TrimRight(m.Name, m.width-lipgloss.Width(rest))
+	rest := " " + m.diff + " " + m.lastUpdated + " "
+	title := consts.TrimRight(m.Name, m.width-len(rest))
 
 	borderStyle := lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
@@ -22,8 +20,8 @@ func (m Model) View() string {
 		BorderForeground(colors.GetColor(m.Active, gray.C[0], bg.C[2])).
 		Width(m.width - 1)
 
-	return borderStyle.Render(m.getTitleStyle().Render(title) +
-		m.getTitleStyle().Width(m.width-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest))
+	return borderStyle.Inherit(m.getTitleStyle()).Render(title +
+		lipgloss.NewStyle().Width(m.width-1-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest))
 }
 
 func getColor(current bool) lipgloss.Color {

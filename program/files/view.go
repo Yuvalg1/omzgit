@@ -7,14 +7,12 @@ import (
 )
 
 func (m Model) View() string {
-	filesStyle := lipgloss.NewStyle().
+	middle := lipgloss.NewStyle().
 		Background(bg.C[0]).
 		Border(lipgloss.NormalBorder(), false, true, false, false).
 		BorderBackground(bg.C[0]).
 		BorderForeground(bg.C[4]).
-		Height(m.Height).
-		Width(m.Width/2 - 1)
+		Height(m.Height).Width(1).Render("")
 
-	return lipgloss.NewStyle().
-		Render(lipgloss.JoinHorizontal(lipgloss.Top, filesStyle.Render(m.list.View()), m.Diffs[m.list.ActiveRow].View()))
+	return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), middle, m.Diffs[m.list.ActiveRow].View())
 }

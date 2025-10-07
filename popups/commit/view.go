@@ -13,12 +13,11 @@ func (m Model) View() string {
 	titleStyle := lipgloss.NewStyle().Background(bg.C[0])
 	return titleStyle.Render(consts.PadTitle("commit "+m.commitMessageType, m.width) +
 		lipgloss.NewStyle().
-			Background(bg.C[0]).
 			Border(lipgloss.NormalBorder(), false, true, true).
 			Height(m.height-1).
 			Width(m.width-2).
 			Render(
-				m.textinput.View()+m.renderMoreOptions()))
+				m.textinput.View()+"\n"+m.renderMoreOptions()))
 }
 
 func (m Model) renderOption(letter byte, desc string) string {
@@ -47,14 +46,14 @@ func (m Model) renderTitle(letter byte, title string) string {
 
 func (m Model) renderMoreOptions() string {
 	if m.moreOptions {
-		return "\n" +
+		return lipgloss.NewStyle().Background(bg.C[0]).Width(m.width - 2).Render(
 			m.renderOption('a', "--amend") + "\n" +
-			m.renderOption('e', "--edit") + "\n" +
-			m.renderOption('E', "--no-edit") + "\n" +
-			m.renderOption('n', "--no-verify") + "\n" +
-			m.renderOption('y', "--allow-empty")
+				m.renderOption('e', "--edit") + "\n" +
+				m.renderOption('E', "--no-edit") + "\n" +
+				m.renderOption('n', "--no-verify") + "\n" +
+				m.renderOption('y', "--allow-empty"))
 	}
 
 	return lipgloss.NewStyle().Background(bg.Dim).Foreground(colors.Yellow).Render("o") +
-		lipgloss.NewStyle().Background(bg.C[0]).Render(" options")
+		lipgloss.NewStyle().Width(m.width-4).Background(bg.C[0]).Render(" options")
 }

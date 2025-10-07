@@ -25,8 +25,8 @@ func InitialModel(width int, height int, title string) Model {
 	ti.CharLimit = 50
 	ti.Placeholder = "Message"
 	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0])
-	ti.TextStyle = ti.TextStyle.Foreground(colors.Yellow)
-	ti.Width = getWidth(width) - 4
+	ti.TextStyle = ti.TextStyle.Foreground(colors.Yellow).Background(bg.C[0])
+	ti.Width = getWidth(width) - 5
 
 	options := map[byte]string{}
 	options['a'] = ""
