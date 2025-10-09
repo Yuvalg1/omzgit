@@ -1,14 +1,12 @@
 package list
 
 import (
-	"omzgit/messages"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.TerminalMsg:
+	case tea.WindowSizeMsg:
 		m.height = getHeight(msg.Height)
 
 		var cmds []tea.Cmd
