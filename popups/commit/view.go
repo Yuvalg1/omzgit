@@ -14,6 +14,7 @@ func (m Model) View() string {
 	return titleStyle.Render(consts.PadTitle("commit "+m.commitMessageType, m.width) +
 		lipgloss.NewStyle().
 			Border(lipgloss.NormalBorder(), false, true, true).
+			BorderBackground(bg.C[0]).
 			Height(m.height-1).
 			Width(m.width-2).
 			Render(
@@ -55,5 +56,5 @@ func (m Model) renderMoreOptions() string {
 	}
 
 	return lipgloss.NewStyle().Background(bg.Dim).Foreground(colors.Yellow).Render("o") +
-		lipgloss.NewStyle().Width(m.width-4).Background(bg.C[0]).Render(" options")
+		lipgloss.NewStyle().Width(m.width-3).Background(bg.C[0]).Render(" options")
 }

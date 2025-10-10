@@ -26,6 +26,7 @@ func InitialModel(width int, height int, title string) Model {
 	ti.Placeholder = "Message"
 	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0])
 	ti.TextStyle = ti.TextStyle.Foreground(colors.Yellow).Background(bg.C[0])
+	ti.PromptStyle = ti.PromptStyle.Background(bg.C[0])
 	ti.Width = getWidth(width) - 5
 
 	options := map[byte]string{}
@@ -87,20 +88,9 @@ func (m Model) getCommitString() []string {
 		}
 	}
 
-	commitStrings = append(commitStrings, m.commitMessageType, m.textinput.Value())
-
-	return commitStrings
-}
-
-func (m Model) getCommitStringString() string {
-	commitStrings := "commit"
-	for _, element := range m.options {
-		if element != "" {
-			commitStrings += " " + element
-		}
+	if (m.textinput.Value() != "") {
+		commitStrings = append(commitStrings, m.commitMessageType, m.textinput.Value())
 	}
-
-	commitStrings += " " + m.commitMessageType + " " + "\"" + m.textinput.Value() + "\""
 
 	return commitStrings
 }

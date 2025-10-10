@@ -13,6 +13,7 @@ func (m Model) View() string {
 	current := m.Popup.GetCurrent()
 	if current.GetVisible() {
 		return lipgloss.NewStyle().
+			Background(bg.C[0]).
 			Render(overlay.PlaceOverlay((m.Width-lipgloss.Width(popup))/2, (m.Height-1-lipgloss.Height(popup))/2, m.Popup.View(), m.Tabs[m.ActiveTab].View()+"\n"+m.cokeline.View()))
 	}
 

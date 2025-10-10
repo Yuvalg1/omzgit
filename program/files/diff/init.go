@@ -47,18 +47,6 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m *Model) SetWidth(width int) {
-	block := m.viewport.Block
-	m.viewport.SetBlock(block[0], block[1], getWidth(width), block[3])
-	m.width = getWidth(width)
-}
-
-func (m *Model) SetHeight(height int) {
-	block := m.viewport.Block
-	m.viewport.SetBlock(block[0], block[1], block[2], getHeight(height))
-	m.height = getHeight(height)
-}
-
 func (m Model) GetContent() string {
 	return m.getDiffStaged()
 }
