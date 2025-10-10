@@ -7,16 +7,13 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.SetWidth(msg.Width)
-		m.SetHeight(msg.Height)
+		m.width = getWidth(msg.Width)
+		m.height = getHeight(msg.Height)
 
 		msg.Width = getWidth(msg.Width)
 		msg.Height = getHeight(msg.Height)
 
-		var cmds []tea.Cmd
-
-		m.Content = m.getDiffStaged()
-		return m, tea.Batch(cmds...)
+		return m, nil
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
