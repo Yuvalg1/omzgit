@@ -40,7 +40,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
 		return m, m.TickCmd()
 
-	case messages.TerminalMsg:
+	case tea.WindowSizeMsg:
 		var cmds []tea.Cmd
 
 		m.Width = getWidth(msg.Width)

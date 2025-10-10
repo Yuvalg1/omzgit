@@ -9,7 +9,7 @@ import (
 
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.TerminalMsg:
+	case tea.WindowSizeMsg:
 		var cmds []tea.Cmd
 		for index, element := range m.Popups {
 			res, cmd := element.Update(msg)

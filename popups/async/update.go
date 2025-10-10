@@ -19,7 +19,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.visible = false
 		return m, msg.Response
 
-	case messages.TerminalMsg:
+	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 		return m, nil

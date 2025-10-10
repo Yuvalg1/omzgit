@@ -8,8 +8,8 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.TerminalMsg:
-		m.textinput.Width = getWidth(msg.Width)
+	case tea.WindowSizeMsg:
+		m.textinput.Width = getWidth(msg.Width) - 5
 
 		m.Width = getWidth(msg.Width)
 		m.Height = getHeight(msg.Height)

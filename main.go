@@ -2,14 +2,11 @@ package main
 
 import (
 	"fmt"
-	"omzgit/messages"
 	"omzgit/program"
 	"omzgit/program/branches"
 	"omzgit/program/commits"
 	"omzgit/program/files"
 	"os"
-
-	tsize "github.com/kopoli/go-terminal-size"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/term"
@@ -29,18 +26,6 @@ func main() {
 	)
 
 	p := tea.NewProgram(m)
-
-	listener, err := tsize.NewSizeListener()
-	if err != nil {
-		panic(err)
-	}
-	defer listener.Close()
-
-	go func() {
-		for size := range listener.Change {
-			p.Send(messages.TerminalMsg{Width: size.Width, Height: size.Height})
-		}
-	}()
 
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)

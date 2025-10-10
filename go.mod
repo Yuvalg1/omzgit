@@ -6,18 +6,15 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/kopoli/go-terminal-size v0.0.0-20170219200355-5c97524c8b54
 	github.com/muesli/reflow v0.3.0
 	github.com/ogios/cropviewport v0.2.3
 )
 
 require (
-	github.com/alecthomas/chroma/v2 v2.17.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/charmbracelet/colorprofile v0.3.2 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
 	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
-	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/ogios/ansisgr-process v0.1.3 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 )
@@ -35,7 +32,6 @@ require (
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.16.0
 	github.com/rivo/uniseg v0.4.7 // indirect
-	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/text v0.29.0
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/text v0.30.0
 )
