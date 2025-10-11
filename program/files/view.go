@@ -12,7 +12,7 @@ func (m Model) View() string {
 		Border(lipgloss.NormalBorder(), false, true, false, false).
 		BorderBackground(bg.C[0]).
 		BorderForeground(bg.C[4]).
-		Height(m.Height).Width(1).Render("")
+		Height(m.height).Width(0).Render("")
 
-	return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), middle, m.Diffs[m.list.ActiveRow].View())
+	return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), middle, m.diffs[m.list.ActiveRow].View())
 }

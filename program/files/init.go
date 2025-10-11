@@ -21,10 +21,10 @@ import (
 
 type Model struct {
 	list  list.Model[row.Model]
-	Diffs []diff.Model
+	diffs []diff.Model
 
-	Height int
-	Width  int
+	height int
+	width  int
 }
 
 func (m Model) PopupCmd(pType string, verb string, path string, fn func() tea.Cmd) tea.Cmd {
@@ -88,10 +88,10 @@ func InitialModel(width int, height int) Model {
 
 	return Model{
 		list:  initialList,
-		Diffs: getDiffs(files, tWidth, tHeight),
+		diffs: getDiffs(files, tWidth, tHeight),
 
-		Width:  tWidth,
-		Height: tHeight,
+		width:  tWidth,
+		height: tHeight,
 	}
 }
 
@@ -139,11 +139,7 @@ func getDiffs(files []row.Model, width int, height int) []diff.Model {
 	var diffs []diff.Model
 
 	for _, element := range files {
-		diffs = append(diffs, diff.InitialModel(element.Path, element.Staged, width, height))
-	}
-
-	if len(diffs) > 0 {
-		diffs[0].Content = diffs[0].GetContent()
+		diffs = append(diffs, diff.InitialModel(element, width, height))
 	}
 
 	return diffs

@@ -33,7 +33,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res, cmd := m.Children[0].Update(msg)
 				m.Children[0] = res.(T)
 
-				return m, tea.Batch(cmd, m.ModeCmd("goto"))
+				return m, tea.Batch(cmd, m.ModeCmd(""))
 			}
 
 			res, cmd := m.TextInput.Update(msg)
@@ -74,6 +74,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			curr := m.ActiveRow
 			next := (m.ActiveRow + 1 + len(m.Children)) % len(m.Children)
 
+			m.innerOffset = min(m.height-2, m.innerOffset+1)
 			m.ActiveRow = next
 			cmds := move(m, msg, curr, next)
 
@@ -82,6 +83,12 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "k", "up":
 			curr := m.ActiveRow
 			next := (m.ActiveRow - 1 + len(m.Children)) % len(m.Children)
+
+			m.innerOffset = max(0, m.innerOffset-1)
+
+			if next == len(m.Children)-1 {
+				m.innerOffset = m.height - 2
+			}
 
 			m.ActiveRow = next
 			cmds := move(m, msg, curr, next)

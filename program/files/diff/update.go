@@ -19,24 +19,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 
 		case "a", "A":
-			if m.staged {
+			if m.Staged {
 				return m, nil
 			}
 
-			m.staged = true
-			m.Content = m.getDiffStaged()
+			m.Staged = true
+			m.content = m.getDiffStaged()
 			return m, nil
 
 		case "r", "R":
-			if !m.staged {
+			if !m.Staged {
 				return m, nil
 			}
-			m.staged = false
-			m.Content = m.getDiffStaged()
+			m.Staged = false
+			m.content = m.getDiffStaged()
 			return m, nil
 
 		case "j", "k", "up", "down":
-			m.Content = m.getDiffStaged()
+			m.content = m.getDiffStaged()
 			return m, nil
 
 		default:

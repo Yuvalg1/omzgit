@@ -33,7 +33,7 @@ type ExtendedModel struct {
 func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialPopups := popups.InitialModel[popups.InnerModel]("discard")
 
-	initialInput := input.InitialModel(func(name string) {}, getWidth(width), getHeight(height))
+	initialInput := input.InitialModel(func(name string) {}, getWidth(width), getHeight(height), true)
 	initialPopups.AddPopup("input", initialInput)
 
 	initialDiscard := discard.InitialModel(func() tea.Cmd { return nil }, getWidth(width), getHeight(height))

@@ -1,8 +1,9 @@
 package row
 
 import (
-	"omzgit/messages"
 	"strings"
+
+	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -14,8 +15,7 @@ type Model struct {
 	Staged bool
 	Active bool
 
-	width  int
-	height int
+	width int
 }
 
 func InitialModel(fileStr string, width int, empty bool) Model {
@@ -26,8 +26,7 @@ func InitialModel(fileStr string, width int, empty bool) Model {
 			Path:   fileStr,
 			status: " ",
 
-			width:  getWidth(width),
-			height: getHeight(1),
+			width: getWidth(width),
 		}
 	}
 
@@ -37,8 +36,7 @@ func InitialModel(fileStr string, width int, empty bool) Model {
 		Path:   getPath(fileStr),
 		status: getStatus(fileStr),
 
-		width:  getWidth(width),
-		height: getHeight(1),
+		width: getWidth(width),
 	}
 }
 
@@ -47,11 +45,7 @@ func (m Model) Init() tea.Cmd {
 }
 
 func getWidth(width int) int {
-	return width/2 - 1
-}
-
-func getHeight(height int) int {
-	return 1
+	return width / 2
 }
 
 func (m Model) PopupCmd(pType string, verb string, path string, fn func() tea.Cmd) tea.Cmd {

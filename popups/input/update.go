@@ -37,6 +37,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 
+		case " ":
+			if m.withoutSpaces {
+				return m, nil
+			}
+
 		default:
 			res, cmd := m.textinput.Update(msg)
 			m.textinput = res
