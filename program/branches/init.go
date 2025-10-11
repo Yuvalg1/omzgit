@@ -18,15 +18,16 @@ import (
 )
 
 type Model struct {
-	Title string
-	list  list.Model[branch.Model]
+	Title  string
+	list   list.Model[branch.Model]
+	remote bool
 
 	width  int
 	height int
 }
 
 func InitialModel(width int, height int, title string) Model {
-	branches := getBranches(getWidth(width), getHeight(height))
+	branches := getBranches(getWidth(width), getHeight(height), false)
 
 	initialActive := slices.IndexFunc(branches, func(branch branch.Model) bool { return branch.Current })
 	branches[initialActive].Active = true
@@ -39,8 +40,10 @@ func InitialModel(width int, height int, title string) Model {
 	initialList.SetFilterFn(func(branch branch.Model, text string) bool {
 		return strings.Contains(branch.Name, text)
 	})
+
 	return Model{
-		list: initialList,
+		list:   initialList,
+		remote: false,
 
 		width:  getWidth(width),
 		height: getHeight(height),
@@ -93,8 +96,14 @@ func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) 
 	}
 }
 
-func getBranches(width int, height int) []branch.Model {
-	output, err := git.Exec("branch")
+func getBranches(width int, height int, remote bool) []branch.Model {
+	args := []string{"branch"}
+
+	if remote {
+		args = append(args, "--remote")
+	}
+
+	output, err := git.Exec(args...)
 	if err != nil {
 		return []branch.Model{}
 	}

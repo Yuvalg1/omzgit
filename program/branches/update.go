@@ -1,11 +1,12 @@
 package branches
 
 import (
+	"slices"
+
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/branches/branch"
-	"slices"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -13,7 +14,7 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
-		m.list.SetContent(getBranches(m.width, m.height))
+		m.list.SetContent(getBranches(m.width, m.height, m.remote))
 
 		m.list.ActiveRow = slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 		current := m.list.GetCurrent()
@@ -85,9 +86,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m.PopupCmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
+		case "r":
+			m.list.TextInput.SetValue("")
+
+			m.remote = !m.remote
+			m.list.SetContent(getBranches(m.width, m.height, m.remote))
+
+			m.list.ActiveRow = min(m.list.ActiveRow, len(m.list.Children))
+			m.list.Children[m.list.ActiveRow].Active = true
+
+			return m, m.CokeCmd()
+
 		case "esc":
 			m.list.TextInput.SetValue("")
-			m.list.SetContent(getBranches(m.width, m.height))
+			m.list.SetContent(getBranches(m.width, m.height, m.remote))
 
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])
