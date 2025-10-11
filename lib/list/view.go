@@ -8,7 +8,11 @@ import (
 
 func (m Model[T]) View() string {
 	var fileStrings string
-	diff := max(m.ActiveRow-m.height+2, 0)
+	diff := max(m.ActiveRow-m.innerOffset, 0)
+
+	if m.innerOffset >= m.ActiveRow {
+		m.innerOffset = m.ActiveRow
+	}
 
 	children := m.getFilteredChildren()
 
@@ -16,7 +20,7 @@ func (m Model[T]) View() string {
 		fileStrings = (*m.createChildFn(m.emptyMsg)).View()
 	}
 
-	for i := range min(len(children), m.height-1) {
+	for i := range min(max(len(children)-diff, 0), m.height-1) {
 		fileStrings += children[i+diff].View() + "\n"
 	}
 

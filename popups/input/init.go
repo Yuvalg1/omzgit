@@ -11,16 +11,17 @@ import (
 )
 
 type Model struct {
-	CallbackFn func(string)
-	Name       string
-	textinput  textinput.Model
-	visible    bool
+	CallbackFn    func(string)
+	Name          string
+	textinput     textinput.Model
+	visible       bool
+	withoutSpaces bool
 
 	Width  int
 	Height int
 }
 
-func InitialModel(fn func(string), width int, height int) Model {
+func InitialModel(fn func(string), width int, height int, withoutSpaces bool) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Focus()
@@ -29,10 +30,11 @@ func InitialModel(fn func(string), width int, height int) Model {
 	ti.TextStyle = lipgloss.NewStyle().Foreground(colors.Pink).Background(bg.C[0])
 
 	return Model{
-		CallbackFn: fn,
-		Name:       "",
-		textinput:  ti,
-		visible:    false,
+		CallbackFn:    fn,
+		Name:          "",
+		textinput:     ti,
+		visible:       false,
+		withoutSpaces: withoutSpaces,
 
 		Width:  getWidth(width),
 		Height: getHeight(height),

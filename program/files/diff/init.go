@@ -4,35 +4,44 @@ import (
 	"os"
 
 	"omzgit/git"
+	"omzgit/program/files/row"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/ogios/cropviewport"
 )
 
 type Model struct {
-	Content  string
+	content  string
 	viewport cropviewport.CropViewportModel
 
-	staged bool
+	Staged bool
 	path   string
 
 	width  int
 	height int
 }
 
-func InitialModel(path string, staged bool, width int, height int) Model {
+func InitialModel(row row.Model, width int, height int) Model {
 	tWidth := getWidth(width)
 	tHeight := getHeight(height)
+
 	cropviewport := cropviewport.NewCropViewportModel().(*cropviewport.CropViewportModel)
 	cropviewport.SetBlock(0, 0, tWidth, tHeight)
-	return Model{
+
+	m := Model{
 		viewport: *cropviewport,
-		staged:   staged,
-		path:     path,
+		Staged:   row.Staged,
+		path:     row.Path,
 
 		width:  tWidth,
 		height: tHeight,
 	}
+
+	if row.Active {
+		m.content = m.getDiffStaged()
+	}
+
+	return m
 }
 
 func (m Model) Init() tea.Cmd {
@@ -47,12 +56,8 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m Model) GetContent() string {
-	return m.getDiffStaged()
-}
-
 func (m Model) getDiffStaged() string {
-	if m.staged {
+	if m.Staged {
 		output, _ := git.Exec("diff", "--staged", m.path)
 		return string(output)
 	}

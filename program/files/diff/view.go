@@ -9,7 +9,7 @@ import (
 func (m Model) View() string {
 	block := m.viewport.Block
 
-	m.viewport.SetContent(m.Content)
+	m.viewport.SetContent(m.content)
 	m.viewport.SetBlock(block[0], block[1], m.width-3, m.height)
 
 	return lipgloss.NewStyle().

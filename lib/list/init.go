@@ -16,7 +16,8 @@ type Model[T tea.Model] struct {
 	TextInput     textinput.Model
 	emptyMsg      string
 
-	height int
+	innerOffset int
+	height      int
 }
 
 func InitialModel[T tea.Model](height int, children []T, initialActive int, emptyMsg string) Model[T] {
@@ -34,7 +35,8 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 		TextInput: ti,
 		emptyMsg:  emptyMsg,
 
-		height: getHeight(height),
+		innerOffset: min(getHeight(height)-2, initialActive),
+		height:      getHeight(height),
 	}
 }
 

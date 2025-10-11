@@ -13,7 +13,7 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
-		m.list.SetContent(GetFilesChanged(m.Width))
+		m.list.SetContent(GetFilesChanged(m.width))
 
 		current := m.list.GetCurrent()
 
@@ -23,11 +23,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		current.Active = true
 
-		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
+		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
+
 		return m, nil
 
 	case messages.TickMsg:
-		m.list.SetContent(GetFilesChanged(m.Width))
+		m.list.SetContent(GetFilesChanged(m.width))
 
 		current := m.list.GetCurrent()
 
@@ -37,21 +38,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		current.Active = true
 
-		m.Diffs[m.list.ActiveRow].Content = m.Diffs[m.list.ActiveRow].GetContent()
+		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
+
 		return m, m.TickCmd()
 
 	case tea.WindowSizeMsg:
 		var cmds []tea.Cmd
 
-		m.Width = getWidth(msg.Width)
-		m.Height = getHeight(msg.Height)
+		m.width = getWidth(msg.Width)
+		m.height = getHeight(msg.Height)
 
 		msg.Width = getWidth(msg.Width)
 		msg.Height = getHeight(msg.Height)
 
-		for index, element := range m.Diffs {
+		for index, element := range m.diffs {
 			res, cmd := element.Update(msg)
-			m.Diffs[index] = res.(diff.Model)
+			m.diffs[index] = res.(diff.Model)
 
 			cmds = append(cmds, cmd)
 		}
@@ -74,8 +76,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res1, cmd1 := m.list.UpdateCurrent(msg)
 			m.list = res1
 
-			res2, cmd2 := m.Diffs[m.list.ActiveRow].Update(msg)
-			m.Diffs[m.list.ActiveRow] = res2.(diff.Model)
+			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
+			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
 
 			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 
@@ -89,9 +91,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list = res
 			cmds = append(cmds, cmd)
 
-			for index, element := range m.Diffs {
+			for index, element := range m.diffs {
 				res, cmd := element.Update(msg)
-				m.Diffs[index] = res.(diff.Model)
+				m.diffs[index] = res.(diff.Model)
 
 				cmds = append(cmds, cmd)
 			}
@@ -100,7 +102,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "esc":
 			m.list.TextInput.SetValue("")
-			m.list.SetContent(GetFilesChanged(m.Width))
+			m.list.SetContent(GetFilesChanged(m.width))
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[row.Model])
 			return m, tea.Batch(cmd, m.CokeCmd())
@@ -129,9 +131,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list = res
 			cmds = append(cmds, cmd)
 
-			for index, element := range m.Diffs {
+			for index, element := range m.diffs {
 				res, cmd := element.Update(msg)
-				m.Diffs[index] = res.(diff.Model)
+				m.diffs[index] = res.(diff.Model)
 
 				cmds = append(cmds, cmd)
 			}
@@ -142,8 +144,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res1, cmd1 := m.list.Update(msg)
 			m.list = res1.(list.Model[row.Model])
 
-			res2, cmd2 := m.Diffs[m.list.ActiveRow].Update(msg)
-			m.Diffs[m.list.ActiveRow] = res2.(diff.Model)
+			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
+			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
 
 			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 		}
