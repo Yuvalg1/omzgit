@@ -5,9 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"omzgit/default/colors"
-	"omzgit/default/colors/bg"
-	"omzgit/default/colors/gray"
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
@@ -15,7 +12,6 @@ import (
 	"omzgit/program/files/row"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -50,21 +46,13 @@ func (m Model) CokeCmd() tea.Cmd {
 		path := parts[len(parts)-1]
 
 		return messages.CokeMsg{
-			Left:   lipgloss.NewStyle().Background(colors.Yellow).Foreground(bg.C[0]).Padding(0, 1).Render("Files"),
-			Center: m.getCokeCmdStyle().Render(" " + path + " "),
-			Right: lipgloss.NewStyle().Background(gray.C[1]).Padding(0, 1).Render(fmt.Sprintf(
-				"%d/%d", m.list.ActiveRow+1, len(m.list.Children))),
+			Center: path,
+			Right: fmt.Sprintf(
+				"%d/%d", m.list.ActiveRow+1, len(m.list.Children)),
+
+			Primary: len(m.list.Children) > 0 && m.list.Children[m.list.ActiveRow].Staged,
 		}
 	}
-}
-
-func (m Model) getCokeCmdStyle() lipgloss.Style {
-	cokeStyle := lipgloss.NewStyle().Padding(0, 1).Background(bg.C[2])
-
-	if len(m.list.Children) > 0 && m.list.GetCurrent().Staged {
-		return cokeStyle.Foreground(colors.Green)
-	}
-	return cokeStyle.Foreground(colors.Red).Inherit(cokeStyle)
 }
 
 func InitialModel(width int, height int) Model {

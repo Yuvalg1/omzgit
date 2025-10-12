@@ -6,8 +6,6 @@ import (
 	"strings"
 
 	"omzgit/default/colors"
-	"omzgit/default/colors/bg"
-	"omzgit/default/colors/gray"
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
@@ -65,15 +63,10 @@ func getHeight(height int) int {
 func (m Model) CokeCmd() tea.Cmd {
 	return func() tea.Msg {
 		return messages.CokeMsg{
-			Center: lipgloss.NewStyle().
-				Background(bg.C[2]).
-				Foreground(m.getCurrentBranchColor()).
-				Padding(0, 1).
-				Render(m.list.Children[m.list.ActiveRow].Roller.Name),
-			Right: lipgloss.NewStyle().
-				Background(gray.C[1]).
-				Padding(0, 1).
-				Render(fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children))),
+			Center: m.list.Children[m.list.ActiveRow].Roller.Name,
+			Right:  fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
+
+			Primary: m.list.Children[m.list.ActiveRow].Current,
 		}
 	}
 }
