@@ -38,6 +38,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
+	case messages.RollerMsg:
+		res, cmd := m.list.UpdateCurrent(msg)
+		m.list = res
+
+		return m, cmd
+
 	case tea.KeyMsg:
 		if m.list.TextInput.Focused() {
 			res, cmd := m.list.Update(msg)
@@ -53,7 +59,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "c":
-			output, err := git.Exec("checkout", m.list.GetCurrent().Name)
+			output, err := git.Exec("checkout", m.list.GetCurrent().Roller.Name)
 			if err == nil {
 				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 
@@ -67,8 +73,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.PopupCmd("alert", "Alert!", output, func(name string) {})
 
 		case "d":
-			return m, m.PopupCmd("discard", "delete", m.list.GetCurrent().Name, func() tea.Cmd {
-				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Name)
+			return m, m.PopupCmd("discard", "delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
+				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Roller.Name)
 				if err == nil {
 					return nil
 				}
@@ -77,8 +83,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "D":
-			return m, m.PopupCmd("discard", "force delete", m.list.GetCurrent().Name, func() tea.Cmd {
-				output, err := git.Exec("branch", "-D", m.list.GetCurrent().Name)
+			return m, m.PopupCmd("discard", "force delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
+				output, err := git.Exec("branch", "-D", m.list.GetCurrent().Roller.Name)
 				if err == nil {
 					return nil
 				}

@@ -1,6 +1,8 @@
 package list
 
 import (
+	"omzgit/messages"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -16,6 +18,12 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, cmd)
 		}
 		return m, tea.Batch(cmds...)
+
+	case messages.RollerMsg:
+		res, cmd := m.Children[m.ActiveRow].Update(msg)
+		m.Children[m.ActiveRow] = res.(T)
+
+		return m, cmd
 
 	case tea.KeyMsg:
 		if m.TextInput.Focused() {
@@ -58,17 +66,19 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			curr := m.ActiveRow
 
 			m.ActiveRow = 0
-			cmds := move(m, msg, curr, 0)
+			cmd := move(m, msg, curr, 0)
+			m.innerOffset = 0
 
-			return m, tea.Batch(cmds...)
+			return m, cmd
 
 		case "G":
 			curr := m.ActiveRow
 
 			m.ActiveRow = len(m.Children) - 1
-			cmds := move(m, msg, curr, len(m.Children)-1)
+			cmd := move(m, msg, curr, len(m.Children)-1)
+			m.innerOffset = m.height - 2
 
-			return m, tea.Batch(cmds...)
+			return m, cmd
 
 		case "j", "down":
 			curr := m.ActiveRow
@@ -76,9 +86,9 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			m.innerOffset = min(m.height-2, m.innerOffset+1)
 			m.ActiveRow = next
-			cmds := move(m, msg, curr, next)
+			cmd := move(m, msg, curr, next)
 
-			return m, tea.Batch(cmds...)
+			return m, cmd
 
 		case "k", "up":
 			curr := m.ActiveRow
@@ -91,19 +101,18 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			m.ActiveRow = next
-			cmds := move(m, msg, curr, next)
+			cmd := move(m, msg, curr, next)
 
-			return m, tea.Batch(cmds...)
+			return m, cmd
 
 		case "/":
 			curr := m.ActiveRow
 
 			m.ActiveRow = 0
-			cmds := move(m, msg, curr, 0)
+			cmd := move(m, msg, curr, 0)
 
-			cmds = append(cmds, m.ModeCmd("search"))
 			m.TextInput.Focus()
-			return m, tea.Batch(cmds...)
+			return m, tea.Batch(cmd, m.ModeCmd("search"))
 
 		default:
 			var cmds []tea.Cmd
@@ -121,9 +130,9 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func move[T tea.Model](m Model[T], msg tea.Msg, curr int, next int) []tea.Cmd {
+func move[T tea.Model](m Model[T], msg tea.Msg, curr int, next int) tea.Cmd {
 	if len(m.Children) == 0 {
-		return []tea.Cmd{}
+		return nil
 	}
 
 	res1, cmd1 := m.Children[curr].Update(msg)
@@ -132,7 +141,7 @@ func move[T tea.Model](m Model[T], msg tea.Msg, curr int, next int) []tea.Cmd {
 	res2, cmd2 := m.Children[next].Update(msg)
 	m.Children[next] = res2.(T)
 
-	return []tea.Cmd{cmd1, cmd2}
+	return tea.Batch(cmd1, cmd2)
 }
 
 func (m Model[T]) getFilteredChildren() []T {

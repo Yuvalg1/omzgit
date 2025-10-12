@@ -11,6 +11,7 @@ import (
 	"omzgit/program/branches"
 	"omzgit/program/files"
 	"omzgit/program/files/row"
+	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -40,4 +41,6 @@ var (
 	_ messages.Popuper[func() tea.Cmd] = (*program.Model)(nil)
 
 	_ messages.Popuper[func() tea.Cmd] = (*row.Model)(nil)
+
+	_ messages.Rollerer = (*roller.Model)(nil)
 )

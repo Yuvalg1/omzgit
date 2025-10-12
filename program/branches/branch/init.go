@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"omzgit/git"
+	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -17,30 +18,30 @@ type Model struct {
 	defaultBranch string
 	diff          string
 	lastUpdated   string
-	Name          string
+	Roller        roller.Model
 
 	width  int
 	height int
 }
 
-func InitialModel(width int, height int, name string, defaultBranch string, empty bool) Model {
-	if empty {
-		return Model{
-			Active:        true,
-			Name:          name,
-			lastUpdated:   "",
-			Current:       false,
-			defaultBranch: defaultBranch,
-			diff:          "",
+func EmptyInitialModel(width int, height int, name string, defaultBranch string) Model {
+	return Model{
+		Active:        true,
+		Roller:        roller.InitialModel(getWidth(width), name),
+		lastUpdated:   "",
+		Current:       false,
+		defaultBranch: defaultBranch,
+		diff:          "",
 
-			width:  getWidth(width),
-			height: getHeight(height),
-		}
+		width:  getWidth(width),
+		height: getHeight(height),
 	}
+}
 
+func InitialModel(width int, height int, name string, defaultBranch string) Model {
 	return Model{
 		Active:        false,
-		Name:          name[2:],
+		Roller:        roller.InitialModel(getWidth(width), name[2:]),
 		Current:       strings.Contains(name[:2], "*"),
 		defaultBranch: defaultBranch,
 		diff:          "",
@@ -52,7 +53,7 @@ func InitialModel(width int, height int, name string, defaultBranch string, empt
 }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+	return m.Roller.Init()
 }
 
 func getWidth(width int) int {
@@ -68,7 +69,7 @@ func (m Model) getLastUpdatedDate() string {
 		return ""
 	}
 
-	originName := "origin/" + m.Name
+	originName := "origin/" + m.Roller.Name
 	output, err := git.Exec("log", "-1", "--format=%cd", originName)
 	if err != nil {
 		return "---"
@@ -115,7 +116,7 @@ func (m Model) getBranchDiff() string {
 		return ""
 	}
 
-	currentRemoteBranch := "origin/" + m.Name
+	currentRemoteBranch := "origin/" + m.Roller.Name
 	if currentRemoteBranch == m.defaultBranch {
 		return "Default"
 	}
