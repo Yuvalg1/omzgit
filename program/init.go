@@ -1,7 +1,6 @@
 package program
 
 import (
-	"omzgit/consts"
 	"omzgit/messages"
 	"omzgit/popups/alert"
 	"omzgit/popups/async"
@@ -49,7 +48,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialPopups.AddPopup("async", initialAsync)
 
 	return Model{
-		ActiveTab: consts.FILES - 1,
+		ActiveTab: 0,
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:      getTabs(tabs),
 		Popup:     initialPopups,
@@ -61,7 +60,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	cmds := make([]tea.Cmd, 0, consts.PAGES+1)
+	cmds := make([]tea.Cmd, 0, len(m.Tabs)+1)
 
 	for _, element := range m.Tabs {
 		cmds = append(cmds, element.Init())
