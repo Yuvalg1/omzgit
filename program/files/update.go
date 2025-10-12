@@ -21,11 +21,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
-		current.Active = true
+		res, cmd := m.list.UpdateCurrent(msg)
+		m.list = res
 
 		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
-		return m, nil
+		return m, cmd
 
 	case messages.TickMsg:
 		m.list.SetContent(GetFilesChanged(m.width))
@@ -36,11 +37,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.TickCmd()
 		}
 
-		current.Active = true
+		res, cmd := m.list.UpdateCurrent(msg)
+		m.list = res
 
 		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
-		return m, m.TickCmd()
+		return m, tea.Batch(cmd, m.TickCmd())
+
+	case messages.RollerMsg:
+		res, cmd := m.list.UpdateCurrent(msg)
+		m.list = res
+
+		return m, cmd
 
 	case tea.WindowSizeMsg:
 		var cmds []tea.Cmd

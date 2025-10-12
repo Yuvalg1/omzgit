@@ -34,11 +34,11 @@ func InitialModel(width int, height int, title string) Model {
 
 	initialList := list.InitialModel(getHeight(height), branches, initialActive, "No Branches Found")
 	initialList.SetCreateChild(func(name string) *branch.Model {
-		created := branch.InitialModel(getWidth(width), getHeight(height), name, "", true)
+		created := branch.EmptyInitialModel(getWidth(width), getHeight(height), name, "")
 		return &created
 	})
 	initialList.SetFilterFn(func(branch branch.Model, text string) bool {
-		return strings.Contains(branch.Name, text)
+		return strings.Contains(branch.Roller.Name, text)
 	})
 
 	return Model{
@@ -51,7 +51,7 @@ func InitialModel(width int, height int, title string) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+	return m.list.Children[m.list.ActiveRow].Init()
 }
 
 func getWidth(width int) int {
@@ -69,7 +69,7 @@ func (m Model) CokeCmd() tea.Cmd {
 				Background(bg.C[2]).
 				Foreground(m.getCurrentBranchColor()).
 				Padding(0, 1).
-				Render(m.list.Children[m.list.ActiveRow].Name),
+				Render(m.list.Children[m.list.ActiveRow].Roller.Name),
 			Right: lipgloss.NewStyle().
 				Background(gray.C[1]).
 				Padding(0, 1).
@@ -113,7 +113,7 @@ func getBranches(width int, height int, remote bool) []branch.Model {
 
 	var models []branch.Model
 	for _, element := range branches {
-		models = append(models, branch.InitialModel(width, height, element, getDefaultBranch(), false))
+		models = append(models, branch.InitialModel(width, height, element, getDefaultBranch()))
 	}
 
 	return models

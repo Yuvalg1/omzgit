@@ -31,7 +31,7 @@ func InitialModel(row row.Model, width int, height int) Model {
 	m := Model{
 		viewport: *cropviewport,
 		Staged:   row.Staged,
-		path:     row.Path,
+		path:     row.Roller.Name,
 
 		width:  tWidth,
 		height: tHeight,

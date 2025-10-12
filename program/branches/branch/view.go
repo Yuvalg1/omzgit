@@ -11,7 +11,7 @@ import (
 
 func (m Model) View() string {
 	rest := " " + m.diff + " " + m.lastUpdated + " "
-	title := consts.TrimRight(m.Name, m.width-len(rest))
+	title := consts.TrimRight(m.Roller.View(), m.width-len(rest))
 
 	borderStyle := lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).

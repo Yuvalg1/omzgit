@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"omzgit/consts"
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
 	"omzgit/default/colors/gray"
@@ -40,8 +39,8 @@ func (m Model) PopupCmd(pType string, verb string, path string, fn func() tea.Cm
 
 func (m Model) TickCmd() tea.Cmd {
 	return func() tea.Msg {
-		time.Sleep(consts.REFRESH_INTERVAL)
-		return messages.TickMsg{}
+		time.Sleep(10 * time.Second)
+		return messages.TickMsg{RollOffset: m.list.Children[m.list.ActiveRow].Roller.Offset}
 	}
 }
 
@@ -79,11 +78,11 @@ func InitialModel(width int, height int) Model {
 	initialList := list.InitialModel(tHeight, files, 0, "No Files Found")
 
 	initialList.SetCreateChild(func(name string) *row.Model {
-		created := row.InitialModel(name, getWidth(width), true)
+		created := row.InitialModel(name, getWidth(width))
 		return &created
 	})
 	initialList.SetFilterFn(func(row row.Model, text string) bool {
-		return strings.Contains(row.Path, text)
+		return strings.Contains(row.Roller.Name, text)
 	})
 
 	return Model{
@@ -99,7 +98,7 @@ func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{m.TickCmd()}
 
 	if len(m.list.Children) > 0 {
-		cmds = append(cmds, m.CokeCmd())
+		cmds = append(cmds, m.list.Children[m.list.ActiveRow].Init(), m.CokeCmd())
 	}
 
 	return tea.Batch(cmds...)
@@ -116,20 +115,20 @@ func getHeight(height int) int {
 func GetFilesChanged(width int) []row.Model {
 	output, err := git.Exec("status", "--short", "--untracked-files=all")
 	if err != nil {
-		return []row.Model{row.InitialModel("a files error has occured", width, true)}
+		return []row.Model{row.EmptyInitialModel("a files error has occured", width)}
 	}
 
 	fileLogs := strings.Split(string(output), "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
 
 	if len(fileLogs) == 0 {
-		return []row.Model{row.InitialModel("No Changes Made", width, true)}
+		return []row.Model{row.EmptyInitialModel("No Changes Made", width)}
 	}
 
 	var rows []row.Model
 
 	for _, element := range fileLogs {
-		rows = append(rows, row.InitialModel(element, width, false))
+		rows = append(rows, row.InitialModel(element, width))
 	}
 
 	return rows
@@ -146,5 +145,5 @@ func getDiffs(files []row.Model, width int, height int) []diff.Model {
 }
 
 func (m Model) getCurrentSplit() []string {
-	return strings.Split(m.list.GetCurrent().Path, "/")
+	return strings.Split(m.list.GetCurrent().Roller.Name, "/")
 }

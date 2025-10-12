@@ -1,7 +1,6 @@
 package row
 
 import (
-	"omzgit/consts"
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
 	"omzgit/default/colors/gray"
@@ -11,9 +10,6 @@ import (
 )
 
 func (m Model) View() string {
-	path := m.Path
-	path = consts.TrimRight(path, m.width-3)
-
 	return lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 		Border(lipgloss.MarkdownBorder(), false, false, false, true).
@@ -22,7 +18,7 @@ func (m Model) View() string {
 		Foreground(colors.GetColor(m.Staged, colors.Green, colors.Red)).
 		Width(m.width - 1).
 		Render(m.status + " " +
-			getStrikethroughStyle(m.Active, m.Staged, m.status).Render(path))
+			getStrikethroughStyle(m.Active, m.Staged, m.status).Render(m.Roller.View()))
 }
 
 func getStrikethroughStyle(active bool, staged bool, status string) lipgloss.Style {
