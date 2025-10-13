@@ -1,6 +1,10 @@
 package commits
 
 import (
+	"omzgit/lib/list"
+	"omzgit/messages"
+	"omzgit/program/commits/log"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -9,12 +13,37 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
-		return m, nil
+
+		msg.Width = m.width
+		msg.Height = m.height
+
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[log.Model])
+
+		return m, cmd
+
+	case messages.RollerMsg:
+		res, cmd := m.list.UpdateCurrent(msg)
+		m.list = res
+
+		return m, cmd
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
+		case "esc":
+			m.list.TextInput.SetValue("")
+			m.list.SetContent(getCommitLogs(m.width))
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[log.Model])
+
+			return m, tea.Batch(cmd, m.CokeCmd())
+
 		default:
-			return m, nil
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[log.Model])
+
+			return m, tea.Batch(cmd, m.CokeCmd())
 		}
 	}
 

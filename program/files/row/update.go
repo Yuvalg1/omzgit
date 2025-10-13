@@ -82,7 +82,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		default:
-			return m, nil
+			res, cmd := m.Roller.Update(msg)
+			m.Roller = res
+
+			return m, cmd
 		}
 	}
 
