@@ -5,14 +5,12 @@ import (
 	"slices"
 	"strings"
 
-	"omzgit/default/colors"
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/branches/branch"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -36,7 +34,7 @@ func InitialModel(width int, height int, title string) Model {
 		return &created
 	})
 	initialList.SetFilterFn(func(branch branch.Model, text string) bool {
-		return strings.Contains(branch.Roller.Name, text)
+		return strings.Contains(strings.ToLower(branch.Roller.Name), strings.ToLower(text))
 	})
 
 	return Model{
@@ -69,13 +67,6 @@ func (m Model) CokeCmd() tea.Cmd {
 			Primary: m.list.Children[m.list.ActiveRow].Current,
 		}
 	}
-}
-
-func (m Model) getCurrentBranchColor() lipgloss.Color {
-	if m.list.Children[m.list.ActiveRow].Current {
-		return lipgloss.Color(colors.Yellow)
-	}
-	return lipgloss.Color(colors.Blue)
 }
 
 func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {

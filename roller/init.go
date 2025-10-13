@@ -13,6 +13,7 @@ type Model struct {
 	Name       string
 	Offset     int
 	debounceFn func(f func())
+	disabled   bool
 
 	Width int
 }
@@ -36,7 +37,7 @@ func (m Model) InitRollerCmd() tea.Cmd {
 		channel := make(chan tea.Msg)
 		m.debounceFn(func() {
 			time.Sleep(2 * time.Second)
-			if m.Width < len(m.Name) {
+			if m.Width < len(m.Name) && !m.disabled {
 				channel <- m.RollerCmd()()
 			}
 		})
@@ -48,7 +49,7 @@ func (m Model) RollerCmd() tea.Cmd {
 	return func() tea.Msg {
 		channel := make(chan tea.Msg)
 		m.debounceFn(func() {
-			if m.Width < len(m.Name) {
+			if m.Width < len(m.Name) && !m.disabled {
 				channel <- messages.RollerMsg{}
 			}
 		})

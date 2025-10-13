@@ -27,7 +27,7 @@ func InitialModel(fn func(string), width int, height int, withoutSpaces bool) Mo
 	ti.Focus()
 	ti.Width = getWidth(width) - 5
 	ti.PlaceholderStyle = ti.PlaceholderStyle.Background(bg.C[0])
-	ti.TextStyle = lipgloss.NewStyle().Foreground(colors.Pink).Background(bg.C[0])
+	ti.TextStyle = lipgloss.NewStyle().Foreground(colors.Purple).Background(bg.C[0])
 
 	return Model{
 		CallbackFn:    fn,

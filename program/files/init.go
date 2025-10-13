@@ -60,17 +60,16 @@ func InitialModel(width int, height int) Model {
 	tHeight := getHeight(height)
 
 	files := GetFilesChanged(tWidth)
-
 	files[0].Active = true
 
 	initialList := list.InitialModel(tHeight, files, 0, "No Files Found")
 
 	initialList.SetCreateChild(func(name string) *row.Model {
-		created := row.InitialModel(name, getWidth(width))
+		created := row.EmptyInitialModel("No Files Found", getWidth(width))
 		return &created
 	})
 	initialList.SetFilterFn(func(row row.Model, text string) bool {
-		return strings.Contains(row.Roller.Name, text)
+		return strings.Contains(strings.ToLower(row.Roller.Name), strings.ToLower(text))
 	})
 
 	return Model{

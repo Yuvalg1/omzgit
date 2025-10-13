@@ -92,7 +92,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m.PopupCmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
-		case "r":
+		case "o":
 			m.list.TextInput.SetValue("")
 
 			m.remote = !m.remote

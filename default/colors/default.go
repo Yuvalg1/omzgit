@@ -9,7 +9,7 @@ var (
 	Blue   = lipgloss.Color("#79C0FF")
 	Orange = lipgloss.Color("#F0883E")
 	Aqua   = lipgloss.Color("#A5D6FF")
-	Pink   = lipgloss.Color("#FF9BCE")
+	Purple = lipgloss.Color("#D2A8FF")
 )
 
 func GetColor(cond bool, color1 lipgloss.Color, color2 lipgloss.Color) lipgloss.Color {
