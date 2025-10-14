@@ -7,6 +7,7 @@ import (
 	"omzgit/popups/commit"
 	"omzgit/popups/discard"
 	"omzgit/popups/input"
+	"omzgit/popups/reset"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
 
@@ -44,8 +45,11 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialCommit := commit.InitialModel(getWidth(width), getHeight(height), "commit")
 	initialPopups.AddPopup("commit", initialCommit)
 
-	initialAsync := async.InitialModel(width, height, "fetching")
+	initialAsync := async.InitialModel(getWidth(width), getHeight(height), "fetching")
 	initialPopups.AddPopup("async", initialAsync)
+
+	initialReset := reset.InitialModel(getWidth(width), getHeight(height))
+	initialPopups.AddPopup("reset", initialReset)
 
 	return Model{
 		ActiveTab: 0,
