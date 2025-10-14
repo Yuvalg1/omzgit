@@ -9,7 +9,7 @@ import (
 )
 
 func (m Model) View() string {
-	title := "choose a reset type for " + m.name
+	title := "choose a reset type for " + m.hash
 
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
@@ -34,6 +34,7 @@ func (m Model) renderOption(letter byte) string {
 func (m Model) renderLetter(letter byte) string {
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
+		Bold(true).
 		Foreground(colors.Yellow).
 		Render(string(letter) + " ")
 }

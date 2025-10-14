@@ -8,6 +8,7 @@ import (
 
 type Model struct {
 	name    string
+	hash    string
 	visible bool
 	options map[byte]string
 
@@ -52,11 +53,11 @@ func (m Model) RefreshCmd() tea.Cmd {
 }
 
 func getHeight(height int) int {
-	return 5
+	return 4
 }
 
 func getWidth(width int) int {
-	return min(34, width-2)
+	return min(34, width-2-width%2)
 }
 
 func (m Model) GetVisible() bool {
