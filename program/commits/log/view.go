@@ -17,7 +17,7 @@ func (m Model) View() string {
 		Render(m.Hash + " ")
 
 	current := ""
-	if len(m.branches) >= 3 {
+	if len(m.branches) >= 1 {
 		current = " " + lipgloss.NewStyle().
 			Background(colors.Aqua).
 			Padding(0, 1).
