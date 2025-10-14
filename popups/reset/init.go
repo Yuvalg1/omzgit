@@ -45,6 +45,12 @@ func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) 
 	}
 }
 
+func (m Model) RefreshCmd() tea.Cmd {
+	return func() tea.Msg {
+		return messages.RefreshMsg{}
+	}
+}
+
 func getHeight(height int) int {
 	return 5
 }

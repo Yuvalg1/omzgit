@@ -34,7 +34,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.visible = false
 
-			return m, nil
+			return m, m.RefreshCmd()
 
 		case "ctrl+c", "q":
 			return m, tea.Quit
