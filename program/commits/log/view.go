@@ -28,7 +28,7 @@ func (m Model) View() string {
 	desc := lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 		Foreground(colors.Purple).
-		Render(consts.TrimRight(m.Desc.View(), m.width-1-lipgloss.Width(hash)-lipgloss.Width(current)))
+		Render(consts.TrimRight(m.Desc.View(), max(m.width-1-lipgloss.Width(hash)-lipgloss.Width(current), 0)))
 
 	return style.Bg.Width(m.width).
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).

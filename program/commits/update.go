@@ -34,7 +34,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 
 		case "r":
-			return m, m.PopupCmd("reset", "reset", "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
+			return m, m.PopupCmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
 		case "esc":
 			m.list.TextInput.SetValue("")
