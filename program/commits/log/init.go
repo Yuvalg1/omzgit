@@ -9,8 +9,6 @@ import (
 type Model struct {
 	Active bool
 
-	author   string
-	date     string
 	Hash     string
 	branches []string
 	Desc     roller.Model
@@ -18,12 +16,10 @@ type Model struct {
 	width int
 }
 
-func InitialModel(width int, hash string, branches []string, author string, date string, desc string) Model {
+func InitialModel(width int, hash string, branches []string, desc string) Model {
 	return Model{
 		Active: false,
 
-		author:   author,
-		date:     date,
 		Hash:     hash,
 		branches: branches,
 		Desc:     roller.InitialModel(getWidth(width), desc),

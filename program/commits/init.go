@@ -67,7 +67,7 @@ func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) 
 }
 
 func getCommitLogs(width int) []log.Model {
-	output, err := git.Exec("log", `--pretty=format:%h%n%D%n%an%n%ad%n%s`, "--date=short")
+	output, err := git.Exec("log", `--pretty=format:%h%n%D%n%s`)
 	if err != nil {
 		return []log.Model{}
 	}
@@ -75,17 +75,18 @@ func getCommitLogs(width int) []log.Model {
 	var logs []log.Model
 	commits := strings.Split(output, "\n")
 
-	for i := 0; i < len(commits); i += 5 {
+	for i := 0; i < len(commits); i += 3 {
 		branchesStr := commits[i+1]
 		branchesStr = strings.TrimPrefix(branchesStr, "HEAD -> ")
 
 		hash := commits[i+0]
-		branches := strings.Split(branchesStr, ", ")
-		author := commits[i+2]
-		date := commits[i+3]
-		desc := commits[i+4]
+		branches := []string{}
+		if len(branchesStr) > 0 {
+			branches = strings.Split(branchesStr, ", ")
+		}
+		desc := commits[i+2]
 
-		logs = append(logs, log.InitialModel(width, hash, branches, author, date, desc))
+		logs = append(logs, log.InitialModel(width, hash, branches, desc))
 	}
 
 	return logs
