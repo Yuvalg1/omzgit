@@ -11,8 +11,7 @@ import (
 func (m Model) View() string {
 	titleStyle := lipgloss.NewStyle().
 		Background(bg.C[0]).
-		Foreground(colors.Red).
-		Width(m.Width)
+		Foreground(colors.Red)
 
 	borderStyle := lipgloss.NewStyle().
 		Background(bg.C[0]).

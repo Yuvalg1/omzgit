@@ -7,6 +7,7 @@ import (
 	"omzgit/popups/commit"
 	"omzgit/popups/discard"
 	"omzgit/popups/input"
+	"omzgit/popups/reset"
 	"omzgit/program"
 	"omzgit/program/branches"
 	"omzgit/program/files"
@@ -39,6 +40,9 @@ var (
 	_ messages.Moderer                 = (*program.Model)(nil)
 	_ messages.Refresher               = (*program.Model)(nil)
 	_ messages.Popuper[func() tea.Cmd] = (*program.Model)(nil)
+
+	_ messages.Refresher    = (*reset.Model)(nil)
+	_ messages.Popuper[any] = (*reset.Model)(nil)
 
 	_ messages.Popuper[func() tea.Cmd] = (*row.Model)(nil)
 
