@@ -61,7 +61,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "c":
 			output, err := git.Exec("checkout", m.list.GetCurrent().Roller.Name)
 			if err != nil {
-				return m, m.PopupCmd("alert", "Alert!", output, func(name string) {})
+				return m, m.PopupCmd("alert", "checkout error", output, func(name string) {})
 			}
 
 			current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })

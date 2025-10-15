@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"omzgit/git"
+	"omzgit/messages"
 	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -41,6 +42,23 @@ func EmptyInitialModel(width int, emptyMsg string) Model {
 		Desc: roller.InitialModel(getWidth(width), emptyMsg),
 
 		width: getWidth(width),
+	}
+}
+
+func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {
+	return func() tea.Msg {
+		return messages.PopupMsg{
+			Fn:   fn,
+			Name: title,
+			Type: pType,
+			Verb: placeholder,
+		}
+	}
+}
+
+func (m Model) RefreshCmd() tea.Cmd {
+	return func() tea.Msg {
+		return messages.RefreshMsg{}
 	}
 }
 

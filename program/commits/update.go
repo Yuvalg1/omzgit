@@ -26,6 +26,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
+	case messages.RefreshMsg:
+		m.list.SetContent(getCommitLogs(m.width))
+
+		current := m.list.GetCurrent()
+
+		if current == nil {
+			return m, nil
+		}
+
+		res, cmd := m.list.UpdateCurrent(msg)
+		m.list = res
+
+		return m, cmd
+
 	case messages.RollerMsg:
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
