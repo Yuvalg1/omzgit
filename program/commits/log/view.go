@@ -1,14 +1,11 @@
 package log
 
 import (
-	"strings"
-
 	"omzgit/consts"
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
 	"omzgit/default/colors/gray"
 	"omzgit/default/style"
-	"omzgit/git"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -20,8 +17,8 @@ func (m Model) View() string {
 		Render(m.Hash + " ")
 
 	current := ""
-	if len(m.branches) >= 1 {
-		current = m.getUnmergedBranch()
+	if m.tip != "" {
+		current = m.renderBranchName()
 	}
 
 	desc := lipgloss.NewStyle().
@@ -43,25 +40,10 @@ func (m Model) View() string {
 				Render(current))
 }
 
-func (m Model) getUnmergedBranch() string {
-	head, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
-	if m.branches[0] == strings.TrimSpace(head) {
-		return m.renderBranchName()
-	}
-
-	output, err := git.Exec("merge-base", strings.TrimSpace(head), m.branches[0])
-
-	if err == nil && !strings.HasPrefix(output, m.Hash) {
-		return " " + m.renderBranchName()
-	}
-
-	return ""
-}
-
 func (m Model) renderBranchName() string {
 	return lipgloss.NewStyle().
 		Background(colors.Aqua).
 		Padding(0, 1).
 		Foreground(bg.C[0]).
-		Render(consts.TrimRight(m.branches[0], min(len(m.branches[0]), m.width/2-4)))
+		Render(consts.TrimRight(m.tip, min(len(m.tip), m.width/2-4)))
 }
