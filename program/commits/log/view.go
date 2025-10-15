@@ -17,12 +17,8 @@ func (m Model) View() string {
 		Render(m.Hash + " ")
 
 	current := ""
-	if len(m.branches) >= 1 {
-		current = " " + lipgloss.NewStyle().
-			Background(colors.Aqua).
-			Padding(0, 1).
-			Foreground(bg.C[0]).
-			Render(m.branches[0])
+	if m.tip != "" {
+		current = m.renderBranchName()
 	}
 
 	desc := lipgloss.NewStyle().
@@ -42,4 +38,12 @@ func (m Model) View() string {
 				Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 				Width(m.width-1-lipgloss.Width(desc)-lipgloss.Width(hash)).
 				Render(current))
+}
+
+func (m Model) renderBranchName() string {
+	return lipgloss.NewStyle().
+		Background(colors.Aqua).
+		Padding(0, 1).
+		Foreground(bg.C[0]).
+		Render(consts.TrimRight(m.tip, min(len(m.tip), m.width/2-4)))
 }

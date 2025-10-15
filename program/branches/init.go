@@ -109,5 +109,5 @@ func getDefaultBranch() string {
 		return ""
 	}
 
-	return string(output)[:len(string(output))-1]
+	return output[:len(output)-1]
 }

@@ -79,7 +79,7 @@ func getCommitLogs(width int) []log.Model {
 		branchesStr := commits[i+1]
 		branchesStr = strings.TrimPrefix(branchesStr, "HEAD -> ")
 
-		hash := commits[i+0]
+		hash := commits[i]
 		branches := []string{}
 		if len(branchesStr) > 0 {
 			branches = strings.Split(branchesStr, ", ")
