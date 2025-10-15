@@ -50,7 +50,7 @@ func (m Model) CokeCmd() tea.Cmd {
 			Center: m.list.Children[m.list.ActiveRow].Hash,
 			Right:  fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
 
-			Primary: true,
+			Primary: m.list.Children[m.list.ActiveRow].Current,
 		}
 	}
 }
@@ -72,6 +72,8 @@ func getCommitLogs(width int) []log.Model {
 		return []log.Model{}
 	}
 
+	head, _ := git.Exec("rev-parse", "--short", "HEAD")
+
 	var logs []log.Model
 	commits := strings.Split(output, "\n")
 
@@ -86,7 +88,7 @@ func getCommitLogs(width int) []log.Model {
 		}
 		desc := commits[i+2]
 
-		logs = append(logs, log.InitialModel(width, hash, branches, desc))
+		logs = append(logs, log.InitialModel(width, hash, branches, desc, head))
 	}
 
 	return logs

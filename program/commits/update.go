@@ -1,8 +1,10 @@
 package commits
 
 import (
+	"slices"
 	"strconv"
 
+	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/commits/log"
@@ -32,6 +34,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
+		case "c":
+			output, err := git.Exec("checkout", m.list.GetCurrent().Hash)
+			if err != nil {
+				return m, m.PopupCmd("alert", "Alert!", output, func(name string) {})
+			}
+
+			current := slices.IndexFunc(m.list.Children, func(log log.Model) bool { return log.Current })
+
+			if current != -1 {
+				m.list.Children[current].Current = false
+			}
+
+			m.list.Children[m.list.ActiveRow].Current = true
+			return m, nil
 
 		case "r":
 			return m, m.PopupCmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})

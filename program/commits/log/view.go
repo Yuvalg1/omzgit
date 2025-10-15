@@ -13,7 +13,7 @@ import (
 func (m Model) View() string {
 	hash := lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
-		Foreground(colors.Yellow).
+		Foreground(colors.GetColor(m.Current, colors.Purple, colors.Yellow)).
 		Render(m.Hash + " ")
 
 	current := ""
@@ -23,7 +23,7 @@ func (m Model) View() string {
 
 	desc := lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
-		Foreground(colors.Purple).
+		Foreground(colors.GetColor(m.Current, colors.Yellow, colors.Purple)).
 		Render(consts.TrimRight(m.Desc.View(), max(m.width-1-lipgloss.Width(hash)-lipgloss.Width(current), 0)))
 
 	return style.Bg.Width(m.width).
