@@ -10,7 +10,8 @@ import (
 )
 
 type Model struct {
-	Active bool
+	Active  bool
+	Current bool
 
 	Hash     string
 	branches []string
@@ -20,9 +21,10 @@ type Model struct {
 	width int
 }
 
-func InitialModel(width int, hash string, branches []string, desc string) Model {
+func InitialModel(width int, hash string, branches []string, desc string, head string) Model {
 	return Model{
-		Active: false,
+		Active:  false,
+		Current: hash == head,
 
 		Hash:     hash,
 		branches: branches,
