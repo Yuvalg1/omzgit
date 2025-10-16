@@ -88,7 +88,7 @@ func getCommitLogs(width int) []log.Model {
 		}
 		desc := commits[i+2]
 
-		logs = append(logs, log.InitialModel(width, hash, branches, desc, head))
+		logs = append(logs, log.InitialModel(width, hash, branches, desc, strings.TrimSpace(head)))
 	}
 
 	return logs
