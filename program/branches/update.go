@@ -73,6 +73,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.Children[m.list.ActiveRow].Current = true
 			return m, nil
 
+		case "C":
+			return m, m.PopupCmd("discard", "force checkout", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
+				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Roller.Name)
+				if err != nil {
+					return m.PopupCmd("alert", "checkout error", output, func(name string) {})
+				}
+
+				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
+
+				if current != -1 {
+					m.list.Children[current].Current = false
+				}
+
+				m.list.Children[m.list.ActiveRow].Current = true
+				return nil
+			})
+
 		case "d":
 			return m, m.PopupCmd("discard", "delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Roller.Name)

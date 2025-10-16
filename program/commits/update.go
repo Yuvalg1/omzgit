@@ -63,6 +63,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.Children[m.list.ActiveRow].Current = true
 			return m, nil
 
+		case "C":
+			return m, m.PopupCmd("discard", "force checkout", m.list.GetCurrent().Hash, func() tea.Cmd {
+				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Hash)
+				if err != nil {
+					return m.PopupCmd("alert", "checkout error", output, func(name string) {})
+				}
+
+				current := slices.IndexFunc(m.list.Children, func(log log.Model) bool { return log.Current })
+
+				if current != -1 {
+					m.list.Children[current].Current = false
+				}
+
+				m.list.Children[m.list.ActiveRow].Current = true
+				return nil
+			})
+
 		case "r":
 			return m, m.PopupCmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
