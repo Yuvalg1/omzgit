@@ -47,6 +47,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case tea.KeyMsg:
+		if m.list.TextInput.Focused() {
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[log.Model])
+			return m, cmd
+		}
+
 		switch keypress := msg.String(); keypress {
 		case "c":
 			output, err := git.Exec("checkout", m.list.GetCurrent().Hash)
@@ -86,6 +92,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			m.list.TextInput.SetValue("")
 			m.list.SetContent(getCommitLogs(m.width))
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[log.Model])
+
+			return m, tea.Batch(cmd, m.CokeCmd())
+
+		case "/":
+			text := m.list.TextInput.Value()
+
+			m.list.TextInput.SetValue("")
+			m.list.SetContent(getCommitLogs(m.width))
+
+			m.list.Children[m.list.ActiveRow].Active = true
+			m.list.TextInput.SetValue(text)
 
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[log.Model])

@@ -111,8 +111,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			m.list.TextInput.SetValue("")
 			m.list.SetContent(GetFilesChanged(m.width))
+
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[row.Model])
+
+			return m, tea.Batch(cmd, m.CokeCmd())
+
+		case "/":
+			text := m.list.TextInput.Value()
+
+			m.list.TextInput.SetValue("")
+			m.list.SetContent(GetFilesChanged(m.width))
+
+			m.list.Children[m.list.ActiveRow].Active = true
+			m.list.TextInput.SetValue(text)
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[row.Model])
+
 			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "c":
