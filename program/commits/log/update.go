@@ -29,6 +29,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
+		case "enter":
+			m.Active = true
+			return m, nil
+
 		case "j", "k", "down", "up", "g", "G", "/", "esc":
 			m.Active = !m.Active
 			res, cmd := m.Desc.Update(msg)

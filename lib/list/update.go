@@ -32,7 +32,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.TextInput.Blur()
 				m.TextInput.SetValue("")
 
-				return m, m.ModeCmd("goto")
+				return m, m.ModeCmd("")
 
 			case "enter":
 				m.SetContent(m.Children)
