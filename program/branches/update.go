@@ -14,17 +14,17 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
-		m.list.SetContent(getBranches(m.width, m.height, m.remote))
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[branch.Model])
+
+		prev := m.list.GetCurrent()
+		prev.Active = false
 
 		m.list.ActiveRow = slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 		current := m.list.GetCurrent()
-
-		if current == nil {
-			return m, nil
-		}
-
 		current.Active = true
-		return m, nil
+
+		return m, cmd
 
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
@@ -114,35 +114,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.TextInput.SetValue("")
 
 			m.remote = !m.remote
-			m.list.SetContent(getBranches(m.width, m.height, m.remote))
+			m.list.Refresh()
 
 			m.list.ActiveRow = min(m.list.ActiveRow, len(m.list.Children))
 			m.list.Children[m.list.ActiveRow].Active = true
 
 			return m, m.CokeCmd()
-
-		case "esc":
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(getBranches(m.width, m.height, m.remote))
-
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[branch.Model])
-
-			return m, tea.Batch(cmd, m.CokeCmd())
-
-		case "/":
-			text := m.list.TextInput.Value()
-
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(getBranches(m.width, m.height, m.remote))
-
-			m.list.Children[m.list.ActiveRow].Active = true
-			m.list.TextInput.SetValue(text)
-
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[branch.Model])
-
-			return m, tea.Batch(cmd, m.CokeCmd())
 
 		default:
 			res, cmd := m.list.Update(msg)

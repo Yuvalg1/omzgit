@@ -13,23 +13,15 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
-		m.list.SetContent(GetFilesChanged(m.width))
-
-		current := m.list.GetCurrent()
-
-		if current == nil {
-			return m, nil
-		}
-
-		res, cmd := m.list.UpdateCurrent(msg)
-		m.list = res
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[row.Model])
 
 		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
 		return m, cmd
 
 	case messages.TickMsg:
-		m.list.SetContent(GetFilesChanged(m.width))
+		m.list.Refresh()
 
 		current := m.list.GetCurrent()
 
@@ -107,29 +99,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			return m, tea.Batch(cmds...)
-
-		case "esc":
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(GetFilesChanged(m.width))
-
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[row.Model])
-
-			return m, tea.Batch(cmd, m.CokeCmd())
-
-		case "/":
-			text := m.list.TextInput.Value()
-
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(GetFilesChanged(m.width))
-
-			m.list.Children[m.list.ActiveRow].Active = true
-			m.list.TextInput.SetValue(text)
-
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[row.Model])
-
-			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "c":
 			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
