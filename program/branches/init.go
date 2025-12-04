@@ -29,21 +29,29 @@ func InitialModel(width int, height int, title string) Model {
 	branches[initialActive].Active = true
 
 	initialList := list.InitialModel(getHeight(height), branches, initialActive, "No Branches Found")
+
 	initialList.SetCreateChild(func(name string) *branch.Model {
 		created := branch.EmptyInitialModel(getWidth(width), getHeight(height), name, "")
 		return &created
 	})
+
 	initialList.SetFilterFn(func(branch branch.Model, text string) bool {
 		return strings.Contains(strings.ToLower(branch.Roller.Name), strings.ToLower(text))
 	})
 
-	return Model{
+	m := Model{
 		list:   initialList,
 		remote: false,
 
 		width:  getWidth(width),
 		height: getHeight(height),
 	}
+
+	m.list.SetGetContentFn(func() []branch.Model {
+		return getBranches(m.width, m.height, m.remote)
+	})
+
+	return m
 }
 
 func (m Model) Init() tea.Cmd {

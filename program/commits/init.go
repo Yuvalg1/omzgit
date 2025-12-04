@@ -32,12 +32,17 @@ func InitialModel(width int, height int, title string) Model {
 			strings.Contains(strings.ToLower(row.Desc.Name), strings.ToLower(text))
 	})
 
-	return Model{
+	m := Model{
 		list: initialList,
 
 		width:  getWidth(width),
 		height: getHeight(height),
 	}
+
+	m.list.SetGetContentFn(func() []log.Model {
+		return getCommitLogs(m.width)
+	})
+	return m
 }
 
 func (m Model) Init() tea.Cmd {

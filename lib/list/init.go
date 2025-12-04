@@ -13,8 +13,10 @@ type Model[T tea.Model] struct {
 
 	createChildFn func(name string) *T
 	filterFn      func(row T, text string) bool
-	TextInput     textinput.Model
-	emptyMsg      string
+	getContentFn  func() []T
+
+	TextInput textinput.Model
+	emptyMsg  string
 
 	innerOffset int
 	height      int
@@ -65,6 +67,10 @@ func (m *Model[T]) SetContent(children []T) {
 	m.ActiveRow = min(m.ActiveRow, max(len(m.Children)-1, 0))
 }
 
+func (m *Model[T]) Refresh() {
+	m.SetContent(m.getContentFn())
+}
+
 func (m Model[T]) UpdateContent(msg tea.Msg) (Model[T], tea.Cmd) {
 	var cmds []tea.Cmd
 	for index, element := range m.Children {
@@ -94,6 +100,6 @@ func (m *Model[T]) SetFilterFn(fn func(row T, text string) bool) {
 	m.filterFn = fn
 }
 
-func (m *Model[T]) ResetValue() {
-	m.TextInput.SetValue("")
+func (m *Model[T]) SetGetContentFn(fn func() []T) {
+	m.getContentFn = fn
 }

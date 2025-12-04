@@ -68,17 +68,24 @@ func InitialModel(width int, height int) Model {
 		created := row.EmptyInitialModel("No Files Found", getWidth(width))
 		return &created
 	})
+
 	initialList.SetFilterFn(func(row row.Model, text string) bool {
 		return strings.Contains(strings.ToLower(row.Roller.Name), strings.ToLower(text))
 	})
 
-	return Model{
+	m := Model{
 		list:  initialList,
 		diffs: getDiffs(files, tWidth, tHeight),
 
 		width:  tWidth,
 		height: tHeight,
 	}
+
+	m.list.SetGetContentFn(func() []row.Model {
+		return GetFilesChanged(m.width)
+	})
+
+	return m
 }
 
 func (m Model) Init() tea.Cmd {

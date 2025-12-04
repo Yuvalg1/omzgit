@@ -8,6 +8,20 @@ import (
 
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case messages.RefreshMsg:
+		m.Refresh()
+
+		current := m.GetCurrent()
+
+		if current == nil {
+			return m, nil
+		}
+
+		res, cmd := m.UpdateCurrent(msg)
+		m = res
+
+		return m, cmd
+
 	case tea.WindowSizeMsg:
 		m.height = getHeight(msg.Height)
 
@@ -56,6 +70,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "esc":
 			m.TextInput.SetValue("")
+			m.Refresh()
 
 			res, cmd := m.Children[m.ActiveRow].Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'g'}})
 			m.Children[m.ActiveRow] = res.(T)
@@ -106,13 +121,22 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "/":
+			text := m.TextInput.Value()
+
+			m.TextInput.SetValue("")
+			m.Refresh()
+
+			res, cmd1 := m.Children[m.ActiveRow].Update(msg)
+			m.Children[m.ActiveRow] = res.(T)
+
+			m.TextInput.SetValue(text)
 			curr := m.ActiveRow
 
 			m.ActiveRow = 0
-			cmd := move(m, msg, curr, 0)
+			cmd2 := move(m, msg, curr, 0)
 
 			m.TextInput.Focus()
-			return m, tea.Batch(cmd, m.ModeCmd("search"))
+			return m, tea.Batch(cmd1, cmd2, m.ModeCmd("search"))
 
 		default:
 			var cmds []tea.Cmd

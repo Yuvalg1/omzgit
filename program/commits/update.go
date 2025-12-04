@@ -26,20 +26,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.RefreshMsg:
-		m.list.SetContent(getCommitLogs(m.width))
-
-		current := m.list.GetCurrent()
-
-		if current == nil {
-			return m, nil
-		}
-
-		res, cmd := m.list.UpdateCurrent(msg)
-		m.list = res
-
-		return m, cmd
-
 	case messages.RollerMsg:
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
@@ -88,29 +74,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "r":
 			return m, m.PopupCmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
-
-		case "esc":
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(getCommitLogs(m.width))
-
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[log.Model])
-
-			return m, tea.Batch(cmd, m.CokeCmd())
-
-		case "/":
-			text := m.list.TextInput.Value()
-
-			m.list.TextInput.SetValue("")
-			m.list.SetContent(getCommitLogs(m.width))
-
-			m.list.Children[m.list.ActiveRow].Active = true
-			m.list.TextInput.SetValue(text)
-
-			res, cmd := m.list.Update(msg)
-			m.list = res.(list.Model[log.Model])
-
-			return m, tea.Batch(cmd, m.CokeCmd())
 
 		default:
 			res, cmd := m.list.Update(msg)
