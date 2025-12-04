@@ -42,6 +42,9 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if m.TextInput.Focused() {
 			switch msg.String() {
+			case "ctrl+c":
+				return m, tea.Quit
+
 			case "esc":
 				m.TextInput.Blur()
 				m.TextInput.SetValue("")
