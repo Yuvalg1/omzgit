@@ -67,10 +67,6 @@ func (m *Model[T]) SetContent(children []T) {
 	m.ActiveRow = min(m.ActiveRow, max(len(m.Children)-1, 0))
 }
 
-func (m *Model[T]) Refresh() {
-	m.SetContent(m.getContentFn())
-}
-
 func (m Model[T]) UpdateContent(msg tea.Msg) (Model[T], tea.Cmd) {
 	var cmds []tea.Cmd
 	for index, element := range m.Children {

@@ -9,8 +9,6 @@ import (
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
-		m.Refresh()
-
 		current := m.GetCurrent()
 
 		if current == nil {
@@ -73,7 +71,6 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "esc":
 			m.TextInput.SetValue("")
-			m.Refresh()
 
 			res, cmd := m.Children[m.ActiveRow].Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'g'}})
 			m.Children[m.ActiveRow] = res.(T)
@@ -127,7 +124,6 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			text := m.TextInput.Value()
 
 			m.TextInput.SetValue("")
-			m.Refresh()
 
 			res, cmd1 := m.Children[m.ActiveRow].Update(msg)
 			m.Children[m.ActiveRow] = res.(T)

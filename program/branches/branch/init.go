@@ -20,8 +20,7 @@ type Model struct {
 	lastUpdated   string
 	Roller        roller.Model
 
-	width  int
-	height int
+	width int
 }
 
 func EmptyInitialModel(width int, height int, name string, defaultBranch string) Model {
@@ -33,12 +32,11 @@ func EmptyInitialModel(width int, height int, name string, defaultBranch string)
 		defaultBranch: defaultBranch,
 		diff:          "",
 
-		width:  getWidth(width),
-		height: getHeight(height),
+		width: getWidth(width),
 	}
 }
 
-func InitialModel(width int, height int, name string, defaultBranch string) Model {
+func InitialModel(width int, name string, defaultBranch string) Model {
 	return Model{
 		Active:        false,
 		Roller:        roller.InitialModel(getWidth(width), name[2:]),
@@ -47,8 +45,7 @@ func InitialModel(width int, height int, name string, defaultBranch string) Mode
 		diff:          "",
 		lastUpdated:   "",
 
-		width:  getWidth(width),
-		height: getHeight(height),
+		width: getWidth(width),
 	}
 }
 
@@ -58,10 +55,6 @@ func (m Model) Init() tea.Cmd {
 
 func getWidth(width int) int {
 	return width
-}
-
-func getHeight(height int) int {
-	return 1
 }
 
 func (m Model) getLastUpdatedDate() string {
