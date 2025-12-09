@@ -14,6 +14,8 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
+		m.list.SetContent(getBranches(m.width, m.remote))
+
 		res, cmd := m.list.Update(msg)
 		m.list = res.(list.Model[branch.Model])
 
@@ -114,12 +116,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.TextInput.SetValue("")
 
 			m.remote = !m.remote
-			m.list.Refresh()
+			m.list.SetContent(getBranches(m.width, m.remote))
 
 			m.list.ActiveRow = min(m.list.ActiveRow, len(m.list.Children))
 			m.list.Children[m.list.ActiveRow].Active = true
 
 			return m, m.CokeCmd()
+
+		case "esc", "/":
+			m.list.SetContent(getBranches(m.width, m.remote))
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[branch.Model])
+
+			return m, tea.Batch(cmd, m.CokeCmd())
 
 		default:
 			res, cmd := m.list.Update(msg)

@@ -14,7 +14,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
-		m.height = getHeight(msg.Height)
 
 		res, cmd := m.Roller.Update(msg)
 		m.Roller = res

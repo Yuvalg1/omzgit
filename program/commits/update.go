@@ -75,6 +75,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "r":
 			return m, m.PopupCmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
+		case "esc", "/":
+			m.list.SetContent(getCommitLogs(m.width))
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[log.Model])
+
+			return m, tea.Batch(cmd, m.CokeCmd())
+
 		default:
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[log.Model])

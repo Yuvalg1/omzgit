@@ -13,6 +13,8 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
+		m.list.SetContent(GetFilesChanged(m.width))
+
 		res, cmd := m.list.Update(msg)
 		m.list = res.(list.Model[row.Model])
 
@@ -21,7 +23,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case messages.TickMsg:
-		m.list.Refresh()
+		m.list.SetContent(GetFilesChanged(m.width))
 
 		current := m.list.GetCurrent()
 
@@ -132,6 +134,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			return m, tea.Batch(cmds...)
+
+		case "esc", "/":
+			m.list.SetContent(GetFilesChanged(m.width))
+
+			res1, cmd1 := m.list.Update(msg)
+			m.list = res1.(list.Model[row.Model])
+
+			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
+			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
+
+			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 
 		default:
 			res1, cmd1 := m.list.Update(msg)

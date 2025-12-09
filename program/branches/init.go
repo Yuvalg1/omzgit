@@ -23,7 +23,7 @@ type Model struct {
 }
 
 func InitialModel(width int, height int, title string) Model {
-	branches := getBranches(getWidth(width), getHeight(height), false)
+	branches := getBranches(getWidth(width), false)
 
 	initialActive := slices.IndexFunc(branches, func(branch branch.Model) bool { return branch.Current })
 	branches[initialActive].Active = true
@@ -48,7 +48,7 @@ func InitialModel(width int, height int, title string) Model {
 	}
 
 	m.list.SetGetContentFn(func() []branch.Model {
-		return getBranches(m.width, m.height, m.remote)
+		return getBranches(m.width, m.remote)
 	})
 
 	return m
@@ -88,7 +88,7 @@ func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) 
 	}
 }
 
-func getBranches(width int, height int, remote bool) []branch.Model {
+func getBranches(width int, remote bool) []branch.Model {
 	args := []string{"branch"}
 
 	if remote {
@@ -105,7 +105,7 @@ func getBranches(width int, height int, remote bool) []branch.Model {
 
 	var models []branch.Model
 	for _, element := range branches {
-		models = append(models, branch.InitialModel(width, height, element, getDefaultBranch()))
+		models = append(models, branch.InitialModel(width, element, getDefaultBranch()))
 	}
 
 	return models
