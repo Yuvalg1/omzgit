@@ -14,6 +14,14 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case messages.RefreshMsg:
+		m.list.SetContent(getCommitLogs(m.width))
+
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[log.Model])
+
+		return m, cmd
+
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
