@@ -59,10 +59,8 @@ func InitialModel(width int, height int) Model {
 	tWidth := getWidth(width)
 	tHeight := getHeight(height)
 
-	files := GetFilesChanged(tWidth)
-	files[0].Active = true
-
-	initialList := list.InitialModel(tHeight, files, 0, "No Files Found")
+	emptyRow := row.EmptyInitialModel("No Files Found", getWidth(width))
+	initialList := list.InitialModel(tHeight, []row.Model{emptyRow}, 0, "No Files Found")
 
 	initialList.SetCreateChild(func(name string) *row.Model {
 		created := row.EmptyInitialModel("No Files Found", getWidth(width))
@@ -75,7 +73,7 @@ func InitialModel(width int, height int) Model {
 
 	m := Model{
 		list:  initialList,
-		diffs: getDiffs(files, tWidth, tHeight),
+		diffs: []diff.Model{diff.InitialModel(emptyRow, tWidth, tHeight)},
 
 		width:  tWidth,
 		height: tHeight,
@@ -89,7 +87,9 @@ func InitialModel(width int, height int) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	cmds := []tea.Cmd{m.TickCmd()}
+	cmds := []tea.Cmd{m.TickCmd(), func() tea.Msg {
+		return tea.KeyMsg{Type: tea.KeyEsc, Runes: []rune{'\x1b'}}
+	}}
 
 	if len(m.list.Children) > 0 {
 		cmds = append(cmds, m.list.Children[m.list.ActiveRow].Init(), m.CokeCmd())

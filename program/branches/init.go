@@ -2,7 +2,6 @@ package branches
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
 	"omzgit/git"
@@ -23,12 +22,7 @@ type Model struct {
 }
 
 func InitialModel(width int, height int, title string) Model {
-	branches := getBranches(getWidth(width), false)
-
-	initialActive := slices.IndexFunc(branches, func(branch branch.Model) bool { return branch.Current })
-	branches[initialActive].Active = true
-
-	initialList := list.InitialModel(getHeight(height), branches, initialActive, "No Branches Found")
+	initialList := list.InitialModel(getHeight(height), []branch.Model{branch.EmptyInitialModel(getWidth(width), getHeight(height), "No Branches Found", "")}, 0, "No Branches Found")
 
 	initialList.SetCreateChild(func(name string) *branch.Model {
 		created := branch.EmptyInitialModel(getWidth(width), getHeight(height), name, "")

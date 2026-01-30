@@ -141,6 +141,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res1, cmd1 := m.list.Update(msg)
 			m.list = res1.(list.Model[row.Model])
 
+			m.diffs = getDiffs(m.list.Children, m.width, m.height)
+
 			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
 			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
 

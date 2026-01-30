@@ -20,8 +20,7 @@ type Model struct {
 }
 
 func InitialModel(width int, height int, title string) Model {
-	logs := getCommitLogs(getWidth(width))
-	initialList := list.InitialModel(getHeight(height), logs, 0, "No Commits Found")
+	initialList := list.InitialModel(getHeight(height), []log.Model{log.EmptyInitialModel(getWidth(width), "No commits found")}, 0, "No Commits Found")
 
 	initialList.SetCreateChild(func(name string) *log.Model {
 		created := log.EmptyInitialModel(getWidth(width), name)
