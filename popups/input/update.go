@@ -37,6 +37,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 
+		case "down":
+			m.textinput.SetCursor(len(m.textinput.Value()))
+			return m, nil
+
+		case "up":
+			m.textinput.SetCursor(0)
+			return m, nil
+
 		case " ":
 			if m.withoutSpaces {
 				return m, nil
