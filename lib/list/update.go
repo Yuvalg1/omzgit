@@ -49,6 +49,14 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				return m, m.ModeCmd("")
 
+			case "down":
+				m.TextInput.SetCursor(len(m.TextInput.Value()))
+				return m, nil
+
+			case "up":
+				m.TextInput.SetCursor(0)
+				return m, nil
+
 			case "enter":
 				m.SetContent(m.Children)
 				m.TextInput.Blur()

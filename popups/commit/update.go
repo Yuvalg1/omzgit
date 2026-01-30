@@ -30,6 +30,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.textinput.Blur()
 				return m, nil
 
+			case "down":
+				m.textinput.SetCursor(len(m.textinput.Value()))
+				return m, nil
+
+			case "up":
+				m.textinput.SetCursor(0)
+				return m, nil
+
 			case "enter":
 				output, err := git.Exec(m.getCommitString()...)
 				if err == nil {
