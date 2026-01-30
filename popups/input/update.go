@@ -45,9 +45,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.textinput.SetCursor(0)
 			return m, nil
 
+		case "tab":
+			if m.withoutSpaces {
+				res, cmd := m.textinput.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'/'}})
+				m.textinput = res
+
+				return m, cmd
+			}
+
 		case " ":
 			if m.withoutSpaces {
-				return m, nil
+				res, cmd := m.textinput.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'-'}})
+				m.textinput = res
+
+				return m, cmd
 			}
 
 		default:
