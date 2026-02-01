@@ -110,6 +110,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m.PopupCmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
 			})
 
+		case "L":
+			return m, m.PopupCmd("async", "", "rebase pulling", func() tea.Cmd {
+				output, err := git.Exec("pull", "--rebase")
+				if err == nil {
+					return nil
+				}
+
+				return m.PopupCmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
+			})
+
 		case "p":
 			return m, m.PopupCmd("async", "", "pushing", func() tea.Cmd {
 				_, err := git.Exec("push")
