@@ -1,6 +1,7 @@
 package program
 
 import (
+	"fmt"
 	"strings"
 
 	"omzgit/consts"
@@ -117,7 +118,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
+				return m.PopupCmd("alert", "Rebase Pull Error", output, func() tea.Cmd { return nil })
 			})
 
 		case "p":
@@ -155,6 +156,28 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m.PopupCmd("alert", "Force Push Error", strings.TrimSpace(output), func() tea.Cmd {
 						return nil
 					})
+				})
+			})
+
+		case "w":
+			return m, m.PopupCmd("async", "", "creating pr", func() tea.Cmd {
+				remote, _ := git.Exec("remote", "get-url", "origin")
+				remote = strings.TrimSpace(remote)
+				remote = strings.TrimSuffix(remote, ".git")
+
+				branch, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
+				branch = strings.TrimSpace(branch)
+
+				url := fmt.Sprintf("%s/compare/%s?expand=1", remote, branch)
+
+				output, err := git.Exec("web--browse", url)
+
+				if err == nil {
+					return nil
+				}
+
+				return m.PopupCmd("alert", "Create PR Error", strings.TrimSpace(output), func() tea.Cmd {
+					return nil
 				})
 			})
 
