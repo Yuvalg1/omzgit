@@ -159,28 +159,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				})
 			})
 
-		case "w":
-			return m, m.PopupCmd("async", "", "creating pr", func() tea.Cmd {
-				remote, _ := git.Exec("remote", "get-url", "origin")
-				remote = strings.TrimSpace(remote)
-				remote = strings.TrimSuffix(remote, ".git")
-
-				branch, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
-				branch = strings.TrimSpace(branch)
-
-				url := fmt.Sprintf("%s/compare/%s?expand=1", remote, branch)
-
-				output, err := git.Exec("web--browse", url)
-
-				if err == nil {
-					return nil
-				}
-
-				return m.PopupCmd("alert", "Create PR Error", strings.TrimSpace(output), func() tea.Cmd {
-					return nil
-				})
-			})
-
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
@@ -218,6 +196,25 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	m.mode = ""
 
 	switch keypress := msg.String(); keypress {
+	case "a":
+		return m, m.PopupCmd("async", "", "opening actions", func() tea.Cmd {
+			remote, _ := git.Exec("remote", "get-url", "origin")
+			remote = strings.TrimSpace(remote)
+			remote = strings.TrimSuffix(remote, ".git")
+
+			url := fmt.Sprintf("%s/actions", remote)
+
+			output, err := git.Exec("web--browse", url)
+
+			if err == nil {
+				return nil
+			}
+
+			return m.PopupCmd("alert", "Open Issues Error", strings.TrimSpace(output), func() tea.Cmd {
+				return nil
+			})
+		})
+
 	case "b":
 		return handlePick(m, consts.BRANCHES, msg)
 	case "c":
@@ -229,6 +226,47 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res
 		return m, cmd
+
+	case "i":
+		return m, m.PopupCmd("async", "", "opening issues", func() tea.Cmd {
+			remote, _ := git.Exec("remote", "get-url", "origin")
+			remote = strings.TrimSpace(remote)
+			remote = strings.TrimSuffix(remote, ".git")
+
+			url := fmt.Sprintf("%s/issues", remote)
+
+			output, err := git.Exec("web--browse", url)
+
+			if err == nil {
+				return nil
+			}
+
+			return m.PopupCmd("alert", "Open Issues Error", strings.TrimSpace(output), func() tea.Cmd {
+				return nil
+			})
+		})
+
+	case "p":
+		return m, m.PopupCmd("async", "", "creating pr", func() tea.Cmd {
+			remote, _ := git.Exec("remote", "get-url", "origin")
+			remote = strings.TrimSpace(remote)
+			remote = strings.TrimSuffix(remote, ".git")
+
+			branch, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
+			branch = strings.TrimSpace(branch)
+
+			url := fmt.Sprintf("%s/compare/%s?expand=1", remote, branch)
+
+			output, err := git.Exec("web--browse", url)
+
+			if err == nil {
+				return nil
+			}
+
+			return m.PopupCmd("alert", "Create PR Error", strings.TrimSpace(output), func() tea.Cmd {
+				return nil
+			})
+		})
 
 	default:
 		return m, nil
