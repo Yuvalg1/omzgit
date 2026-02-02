@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"omzgit/config"
 	"omzgit/consts"
 	"omzgit/git"
 	"omzgit/messages"
@@ -204,15 +205,9 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 			url := fmt.Sprintf("%s/actions", remote)
 
-			output, err := git.Exec("web--browse", url)
-
-			if err == nil {
-				return nil
-			}
-
-			return m.PopupCmd("alert", "Open Issues Error", strings.TrimSpace(output), func() tea.Cmd {
-				return nil
-			})
+			git.Exec("web--browse", url)
+			config.RestoreConsole()
+			return nil
 		})
 
 	case "b":
@@ -235,15 +230,8 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 			url := fmt.Sprintf("%s/issues", remote)
 
-			output, err := git.Exec("web--browse", url)
-
-			if err == nil {
-				return nil
-			}
-
-			return m.PopupCmd("alert", "Open Issues Error", strings.TrimSpace(output), func() tea.Cmd {
-				return nil
-			})
+			git.Exec("web--browse", url)
+			return nil
 		})
 
 	case "p":
@@ -257,15 +245,8 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 			url := fmt.Sprintf("%s/compare/%s?expand=1", remote, branch)
 
-			output, err := git.Exec("web--browse", url)
-
-			if err == nil {
-				return nil
-			}
-
-			return m.PopupCmd("alert", "Create PR Error", strings.TrimSpace(output), func() tea.Cmd {
-				return nil
-			})
+			git.Exec("web--browse", url)
+			return nil
 		})
 
 	default:

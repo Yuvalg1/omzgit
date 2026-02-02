@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"omzgit/program"
 	"omzgit/program/branches"
 	"omzgit/program/commits"
 	"omzgit/program/files"
-	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/term"
