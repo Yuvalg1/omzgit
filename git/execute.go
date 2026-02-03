@@ -18,3 +18,12 @@ func Exec(args ...string) (string, error) {
 
 	return out.String(), err
 }
+
+func ExecNoOutput(args ...string) {
+	cmd := exec.Command("git", args...)
+	cmd.Stdin = nil
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+
+	cmd.Run()
+}
