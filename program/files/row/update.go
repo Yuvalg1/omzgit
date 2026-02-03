@@ -1,9 +1,12 @@
 package row
 
 import (
+	"strings"
+
 	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -62,7 +65,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "d":
-			return m, m.PopupCmd("discard", "discard", m.Roller.Name, func() tea.Cmd {
+			parts := strings.Split(m.Roller.Name, "/")
+			return m, popups.Cmd("discard", "discard", "'"+parts[len(parts)-1]+"'", func() tea.Cmd {
 				if m.Staged {
 					_, err := git.Exec("reset", "--", m.Roller.Name)
 					m.Staged = err != nil

@@ -1,7 +1,7 @@
 package input
 
 import (
-	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -15,7 +15,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Height = getHeight(msg.Height)
 		return m, nil
 
-	case messages.PopupMsg:
+	case popups.Msg:
 		m.textinput.SetValue("")
 		m.CallbackFn = msg.Fn.(func(string))
 		m.Name = msg.Name

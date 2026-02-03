@@ -3,7 +3,6 @@ package row
 import (
 	"strings"
 
-	"omzgit/messages"
 	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -47,18 +46,6 @@ func (m Model) Init() tea.Cmd {
 
 func getWidth(width int) int {
 	return width / 2
-}
-
-func (m Model) PopupCmd(pType string, verb string, path string, fn func() tea.Cmd) tea.Cmd {
-	return func() tea.Msg {
-		parts := strings.Split(path, "/")
-		return messages.PopupMsg{
-			Fn:   fn,
-			Name: "'" + parts[len(parts)-1] + "'",
-			Type: pType,
-			Verb: verb,
-		}
-	}
 }
 
 func getAdded(fileStr string) bool {

@@ -6,6 +6,7 @@ import (
 	"omzgit/messages"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -103,7 +104,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 
 		case "c":
-			return m, m.PopupCmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
+			return m, popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
 
 		case "d":
 			res, cmd := m.list.UpdateCurrent(msg)
@@ -111,7 +112,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 
 		case "D":
-			return m, m.PopupCmd("discard", "discard", "All Files", func() tea.Cmd {
+			return m, popups.Cmd("discard", "discard", "All Files", func() tea.Cmd {
 				git.Exec("reset", "--hard")
 				return nil
 			})

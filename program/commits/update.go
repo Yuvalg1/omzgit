@@ -8,6 +8,7 @@ import (
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/commits/log"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -51,7 +52,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "c":
 			output, err := git.Exec("checkout", m.list.GetCurrent().Hash)
 			if err != nil {
-				return m, m.PopupCmd("alert", "Alert!", output, func(name string) {})
+				return m, popups.Cmd("alert", "Alert!", output, func(name string) {})
 			}
 
 			current := slices.IndexFunc(m.list.Children, func(log log.Model) bool { return log.Current })
@@ -64,10 +65,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "C":
-			return m, m.PopupCmd("discard", "force checkout", m.list.GetCurrent().Hash, func() tea.Cmd {
+			return m, popups.Cmd("discard", "force checkout", m.list.GetCurrent().Hash, func() tea.Cmd {
 				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Hash)
 				if err != nil {
-					return m.PopupCmd("alert", "checkout error", output, func(name string) {})
+					return popups.Cmd("alert", "checkout error", output, func(name string) {})
 				}
 
 				current := slices.IndexFunc(m.list.Children, func(log log.Model) bool { return log.Current })
@@ -81,7 +82,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "r":
-			return m, m.PopupCmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
+			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
 		case "esc", "/":
 			m.list.SetContent(getCommitLogs(m.width))

@@ -22,17 +22,6 @@ type Model struct {
 	width  int
 }
 
-func (m Model) PopupCmd(pType string, verb string, path string, fn func() tea.Cmd) tea.Cmd {
-	return func() tea.Msg {
-		return messages.PopupMsg{
-			Fn:   fn,
-			Name: path,
-			Type: pType,
-			Verb: verb,
-		}
-	}
-}
-
 func (m Model) TickCmd() tea.Cmd {
 	return func() tea.Msg {
 		time.Sleep(10 * time.Second)

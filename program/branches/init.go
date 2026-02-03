@@ -71,17 +71,6 @@ func (m Model) CokeCmd() tea.Cmd {
 	}
 }
 
-func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {
-	return func() tea.Msg {
-		return messages.PopupMsg{
-			Fn:   fn,
-			Name: title,
-			Type: pType,
-			Verb: placeholder,
-		}
-	}
-}
-
 func getBranches(width int, remote bool) []branch.Model {
 	args := []string{"branch"}
 
