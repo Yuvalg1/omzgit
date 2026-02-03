@@ -1,6 +1,7 @@
 package row
 
 import (
+	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
 
@@ -79,6 +80,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "R":
 			m.Staged = false
+			return m, nil
+
+		case "y":
+			clipboard.Copy(m.Roller.Name)
 			return m, nil
 
 		default:

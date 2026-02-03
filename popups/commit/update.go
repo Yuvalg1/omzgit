@@ -1,6 +1,7 @@
 package commit
 
 import (
+	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
 
@@ -127,6 +128,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "o":
 			m.moreOptions = true
+			return m, nil
+
+		case "y":
+			clipboard.Copy(m.textinput.Value())
 			return m, nil
 
 		default:
