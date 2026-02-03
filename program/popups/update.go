@@ -1,7 +1,7 @@
 package popups
 
 import (
-	"omzgit/messages"
+	"omzgit/messages/api"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -26,7 +26,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.ApiMsg:
+	case api.Msg:
 		res, cmd := m.Popups[m.current].Update(msg)
 		m.Popups[m.current] = res.(T)
 

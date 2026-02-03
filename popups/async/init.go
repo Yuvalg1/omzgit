@@ -2,7 +2,6 @@ package async
 
 import (
 	"omzgit/default/colors/bg"
-	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -48,10 +47,4 @@ func getWidth(width int) int {
 
 func getHeight(height int) int {
 	return 3
-}
-
-func (m Model) ApiCmd() tea.Cmd {
-	return func() tea.Msg {
-		return messages.ApiMsg{Response: m.callbackFn()}
-	}
 }
