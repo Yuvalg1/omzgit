@@ -2,6 +2,7 @@ package list
 
 import (
 	"omzgit/messages"
+	"omzgit/messages/mode"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -41,7 +42,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.TextInput.Blur()
 				m.TextInput.SetValue("")
 
-				return m, m.ModeCmd("")
+				return m, mode.Cmd("")
 
 			case "down":
 				m.TextInput.SetCursor(len(m.TextInput.Value()))
@@ -58,7 +59,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				res, cmd := m.Children[0].Update(msg)
 				m.Children[0] = res.(T)
 
-				return m, tea.Batch(cmd, m.ModeCmd(""))
+				return m, tea.Batch(cmd, mode.Cmd(""))
 			}
 
 			res, cmd := m.TextInput.Update(msg)
@@ -143,7 +144,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd2 := move(m, msg, curr, 0)
 
 			m.TextInput.Focus()
-			return m, tea.Batch(cmd1, cmd2, m.ModeCmd("search"))
+			return m, tea.Batch(cmd1, cmd2, mode.Cmd("search"))
 
 		default:
 			var cmds []tea.Cmd

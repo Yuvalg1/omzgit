@@ -1,8 +1,6 @@
 package list
 
 import (
-	"omzgit/messages"
-
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -44,12 +42,6 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 
 func (m Model[T]) Init() tea.Cmd {
 	return nil
-}
-
-func (m Model[T]) ModeCmd(mode string) tea.Cmd {
-	return func() tea.Msg {
-		return messages.ModeMsg{Mode: mode}
-	}
 }
 
 func getHeight(height int) int {
