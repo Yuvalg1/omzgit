@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"omzgit/config"
 	"omzgit/consts"
 	"omzgit/git"
 	"omzgit/messages"
@@ -205,8 +204,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 			url := fmt.Sprintf("%s/actions", remote)
 
-			git.Exec("web--browse", url)
-			config.RestoreConsole()
+			git.ExecNoOutput("web--browse", url)
 			return nil
 		})
 
@@ -230,7 +228,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 			url := fmt.Sprintf("%s/issues/new", remote)
 
-			git.Exec("web--browse", url)
+			git.ExecNoOutput("web--browse", url)
 			return nil
 		})
 
@@ -245,7 +243,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 			url := fmt.Sprintf("%s/compare/%s?expand=1", remote, branch)
 
-			git.Exec("web--browse", url)
+			git.ExecNoOutput("web--browse", url)
 			return nil
 		})
 
