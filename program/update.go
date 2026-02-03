@@ -6,6 +6,7 @@ import (
 
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/messages/tick"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
 
@@ -48,7 +49,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.TickMsg, messages.RefreshMsg:
+	case tick.Msg, messages.RefreshMsg:
 		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res1
 

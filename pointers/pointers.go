@@ -26,7 +26,6 @@ var (
 	_ messages.Refresher = (*discard.Model)(nil)
 
 	_ messages.Cokerer = (*files.Model)(nil)
-	_ messages.Ticker  = (*files.Model)(nil)
 
 	_ messages.Refresher = (*input.Model)(nil)
 
