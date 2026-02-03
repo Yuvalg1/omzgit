@@ -9,12 +9,6 @@ import (
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case messages.RefreshMsg:
-		current := m.GetCurrent()
-
-		if current == nil {
-			return m, nil
-		}
-
 		res, cmd := m.UpdateCurrent(msg)
 		m = res
 
@@ -125,6 +119,12 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			m.ActiveRow = next
 			cmd := move(m, msg, curr, next)
+
+			return m, cmd
+
+		case "y":
+			res, cmd := m.UpdateCurrent(msg)
+			m = res
 
 			return m, cmd
 

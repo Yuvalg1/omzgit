@@ -1,6 +1,7 @@
 package branch
 
 import (
+	"omzgit/clipboard"
 	"omzgit/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -44,6 +45,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Roller = res
 
 			return m, cmd
+
+		case "y":
+			clipboard.Copy(m.Roller.Name)
+			return m, nil
 
 		default:
 			return m, nil

@@ -1,6 +1,7 @@
 package log
 
 import (
+	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
 
@@ -40,6 +41,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Desc = res
 
 			return m, cmd
+
+		case "y":
+			clipboard.Copy(m.Hash)
+			return m, nil
 
 		case "ctrl+p":
 			output, err := git.Exec("cherry-pick", m.Hash)
