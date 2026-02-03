@@ -5,13 +5,13 @@ import (
 	"strings"
 
 	"omzgit/git"
-	"omzgit/messages"
 	"omzgit/messages/api"
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
+	"omzgit/roller"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -46,7 +46,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cokeline = res.(cokeline.Model)
 		return m, cmd
 
-	case messages.RollerMsg:
+	case roller.Msg:
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res
 

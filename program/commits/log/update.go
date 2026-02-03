@@ -3,9 +3,9 @@ package log
 import (
 	"omzgit/clipboard"
 	"omzgit/git"
-	"omzgit/messages"
 	"omzgit/messages/refresh"
 	"omzgit/program/popups"
+	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -25,7 +25,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, nil
 
-	case messages.RollerMsg:
+	case roller.Msg:
 		res, cmd := m.Desc.Update(msg)
 		m.Desc = res
 		return m, cmd

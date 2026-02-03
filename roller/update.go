@@ -1,10 +1,6 @@
 package roller
 
-import (
-	"omzgit/messages"
-
-	tea "github.com/charmbracelet/bubbletea"
-)
+import tea "github.com/charmbracelet/bubbletea"
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -12,7 +8,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.Width = getWidth(msg.Width)
 		return m, m.RollerCmd()
 
-	case messages.RollerMsg:
+	case Msg:
 		m.Offset = (m.Offset + 1) % (len(m.Name) + 1)
 
 		return m, m.RollerCmd()

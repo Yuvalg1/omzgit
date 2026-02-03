@@ -3,8 +3,6 @@ package roller
 import (
 	"time"
 
-	"omzgit/messages"
-
 	"github.com/bep/debounce"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -50,7 +48,7 @@ func (m Model) RollerCmd() tea.Cmd {
 		channel := make(chan tea.Msg)
 		m.debounceFn(func() {
 			if m.Width < len(m.Name) && !m.disabled {
-				channel <- messages.RollerMsg{}
+				channel <- Msg{}
 			}
 		})
 		return <-channel

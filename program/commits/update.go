@@ -6,10 +6,10 @@ import (
 
 	"omzgit/git"
 	"omzgit/lib/list"
-	"omzgit/messages"
 	"omzgit/messages/refresh"
 	"omzgit/program/commits/log"
 	"omzgit/program/popups"
+	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -36,7 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.RollerMsg:
+	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
 
