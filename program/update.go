@@ -223,12 +223,12 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case "i":
-		return m, m.PopupCmd("async", "", "opening issues", func() tea.Cmd {
+		return m, m.PopupCmd("async", "", "creating issue", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)
 			remote = strings.TrimSuffix(remote, ".git")
 
-			url := fmt.Sprintf("%s/issues", remote)
+			url := fmt.Sprintf("%s/issues/new", remote)
 
 			git.Exec("web--browse", url)
 			return nil
