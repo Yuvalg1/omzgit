@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"omzgit/consts"
 	"omzgit/git"
 	"omzgit/messages"
 	"omzgit/program/cokeline"
@@ -172,10 +171,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func handlePick(m *Model, key int, msg tea.Msg) (tea.Model, tea.Cmd) {
+func handlePick(m *Model, key string, msg tea.Msg) (tea.Model, tea.Cmd) {
 	escMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("esc")}
 
-	m.ActiveTab = key - 1
+	m.ActiveTab = key
 
 	res1, cmd1 := m.Tabs[m.ActiveTab].Update(escMsg)
 	m.Tabs[m.ActiveTab] = res1
@@ -209,11 +208,11 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		})
 
 	case "b":
-		return handlePick(m, consts.BRANCHES, msg)
+		return handlePick(m, "Branches", msg)
 	case "c":
-		return handlePick(m, consts.COMMITS, msg)
+		return handlePick(m, "Commits", msg)
 	case "f":
-		return handlePick(m, consts.FILES, msg)
+		return handlePick(m, "Files", msg)
 
 	case "g":
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)

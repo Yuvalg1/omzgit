@@ -15,9 +15,9 @@ import (
 )
 
 type Model struct {
-	ActiveTab int
+	ActiveTab string
 	cokeline  cokeline.Model
-	Tabs      []tea.Model
+	Tabs      map[string]tea.Model
 	mode      string
 	Popup     popups.Model[popups.InnerModel]
 
@@ -52,7 +52,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialPopups.AddPopup("reset", initialReset)
 
 	return Model{
-		ActiveTab: 0,
+		ActiveTab: "Files",
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:      getTabs(tabs),
 		Popup:     initialPopups,
@@ -100,11 +100,11 @@ func getHeight(height int) int {
 	return height
 }
 
-func getTabs(extended []ExtendedModel) []tea.Model {
-	var tabs []tea.Model
+func getTabs(extended []ExtendedModel) map[string]tea.Model {
+	tabs := map[string]tea.Model{}
 
 	for _, element := range extended {
-		tabs = append(tabs, element.Tab)
+		tabs[element.Title] = element.Tab
 	}
 
 	return tabs
