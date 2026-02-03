@@ -3,13 +3,14 @@ package list
 import (
 	"omzgit/messages"
 	"omzgit/messages/mode"
+	"omzgit/messages/refresh"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.RefreshMsg:
+	case refresh.Msg:
 		res, cmd := m.UpdateCurrent(msg)
 		m = res
 

@@ -3,6 +3,7 @@ package commit
 import (
 	"omzgit/clipboard"
 	"omzgit/git"
+	"omzgit/messages/refresh"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -43,7 +44,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				output, err := git.Exec(m.getCommitString()...)
 				if err == nil {
 					m = InitialModel(m.width, m.height, "commit")
-					return m, m.RefreshCmd()
+					return m, refresh.Cmd()
 				}
 
 				return m, popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
@@ -97,7 +98,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			output, err := git.Exec(m.getCommitString()...)
 			if err == nil {
 				m = InitialModel(m.width, m.height, "commit")
-				return m, m.RefreshCmd()
+				return m, refresh.Cmd()
 			}
 
 			return m, popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })

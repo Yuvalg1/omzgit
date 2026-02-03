@@ -4,6 +4,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
+	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
@@ -14,7 +15,7 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.RefreshMsg:
+	case refresh.Msg:
 		m.list.SetContent(GetFilesChanged(m.width))
 
 		res, cmd := m.list.Update(msg)

@@ -1,8 +1,6 @@
 package reset
 
 import (
-	"omzgit/messages"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -33,12 +31,6 @@ func InitialModel(width int, height int) Model {
 
 func (m Model) Init() tea.Cmd {
 	return nil
-}
-
-func (m Model) RefreshCmd() tea.Cmd {
-	return func() tea.Msg {
-		return messages.RefreshMsg{}
-	}
 }
 
 func getHeight(height int) int {

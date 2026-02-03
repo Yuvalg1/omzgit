@@ -3,7 +3,6 @@ package input
 import (
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
-	"omzgit/messages"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -43,12 +42,6 @@ func InitialModel(fn func(string), width int, height int, withoutSpaces bool) Mo
 
 func (m Model) Init() tea.Cmd {
 	return nil
-}
-
-func (m Model) RefreshCmd() tea.Cmd {
-	return func() tea.Msg {
-		return messages.RefreshMsg{}
-	}
 }
 
 func getHeight(height int) int {

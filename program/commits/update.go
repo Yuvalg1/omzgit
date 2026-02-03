@@ -7,6 +7,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
+	"omzgit/messages/refresh"
 	"omzgit/program/commits/log"
 	"omzgit/program/popups"
 
@@ -15,7 +16,7 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.RefreshMsg:
+	case refresh.Msg:
 		m.list.SetContent(getCommitLogs(m.width))
 
 		res, cmd := m.list.Update(msg)
