@@ -4,6 +4,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
+	"omzgit/messages/tick"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
 	"omzgit/program/popups"
@@ -23,13 +24,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.TickMsg:
+	case tick.Msg:
 		m.list.SetContent(GetFilesChanged(m.width))
 
 		current := m.list.GetCurrent()
 
 		if current == nil {
-			return m, m.TickCmd()
+			return m, tick.Cmd(m.list.Children[m.list.ActiveRow].Roller.Offset)
 		}
 
 		res, cmd := m.list.UpdateCurrent(msg)
@@ -37,7 +38,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
-		return m, tea.Batch(cmd, m.TickCmd())
+		return m, tea.Batch(cmd, tick.Cmd(m.list.Children[m.list.ActiveRow].Roller.Offset))
 
 	case messages.RollerMsg:
 		res, cmd := m.list.UpdateCurrent(msg)

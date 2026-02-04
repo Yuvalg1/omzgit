@@ -6,6 +6,7 @@ import (
 	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/messages/tick"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -28,7 +29,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, nil
 
-	case messages.TickMsg:
+	case tick.Msg:
 		m.Active = true
 		m.Roller.Offset = msg.RollOffset
 

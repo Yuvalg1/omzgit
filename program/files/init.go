@@ -3,11 +3,11 @@ package files
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages"
+	"omzgit/messages/tick"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
 
@@ -20,13 +20,6 @@ type Model struct {
 
 	height int
 	width  int
-}
-
-func (m Model) TickCmd() tea.Cmd {
-	return func() tea.Msg {
-		time.Sleep(10 * time.Second)
-		return messages.TickMsg{RollOffset: m.list.Children[m.list.ActiveRow].Roller.Offset}
-	}
 }
 
 func (m Model) CokeCmd() tea.Cmd {
@@ -76,7 +69,7 @@ func InitialModel(width int, height int) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	cmds := []tea.Cmd{m.TickCmd(), func() tea.Msg {
+	cmds := []tea.Cmd{tick.Cmd(0), func() tea.Msg {
 		return tea.KeyMsg{Type: tea.KeyEsc, Runes: []rune{'\x1b'}}
 	}}
 
