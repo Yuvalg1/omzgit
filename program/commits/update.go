@@ -18,11 +18,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
 		m.list.SetContent(m.getCommitLogs())
+		m.list.GetCurrent().Active = true
 
-		res, cmd := m.list.Update(msg)
-		m.list = res.(list.Model[log.Model])
-
-		return m, cmd
+		return m, m.CokeCmd()
 
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
@@ -36,12 +34,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case list.Msg:
-		m.list.SetContent(m.getCommitLogs())
-		m.list.Children[m.list.ActiveRow].Active = true
-
-		return m, m.CokeCmd()
-
 	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
@@ -52,6 +44,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.list.TextInput.Focused() {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[log.Model])
+
 			return m, cmd
 		}
 

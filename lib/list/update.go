@@ -17,9 +17,15 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case tea.WindowSizeMsg:
+		previousHeight := m.height
 		m.height = getHeight(msg.Height)
 
 		var cmds []tea.Cmd
+
+		if m.height != previousHeight {
+			cmds = append(cmds, refresh.Cmd())
+		}
+
 		for index, element := range m.Children {
 			res, cmd := element.Update(msg)
 			m.Children[index] = res.(T)
@@ -66,7 +72,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.TextInput.Update(msg)
 			m.TextInput = res
 
-			return m, tea.Batch(cmd, Cmd())
+			return m, tea.Batch(cmd, refresh.Cmd())
 		}
 
 		switch keypress := msg.String(); keypress {
@@ -99,7 +105,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.ActiveRow+1 == (m.Page+1)*(m.height-1) {
 				m.Page = m.Page + 1
-				return m, tea.Batch(Cmd(), cmd)
+				return m, tea.Batch(refresh.Cmd(), cmd)
 			}
 
 			return m, cmd
@@ -115,7 +121,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.ActiveRow+1 == (m.Page+1)*(m.height-1) {
 				m.Page = m.Page + 1
-				return m, tea.Batch(Cmd(), cmd2)
+				return m, tea.Batch(refresh.Cmd(), cmd2)
 			}
 
 			return m, cmd2
@@ -127,7 +133,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.innerOffset = max(0, m.innerOffset-1)
 
 			if next == len(m.Children)-1 {
-				m.innerOffset = m.height - 3
+				m.innerOffset = m.height - 2
 			}
 
 			m.ActiveRow = next
@@ -135,7 +141,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.ActiveRow+1 == (m.Page+1)*(m.height-1) {
 				m.Page = m.Page + 1
-				return m, tea.Batch(Cmd(), cmd)
+				return m, tea.Batch(refresh.Cmd(), cmd)
 			}
 
 			return m, cmd

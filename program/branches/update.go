@@ -17,18 +17,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
 		m.list.SetContent(m.getBranches())
+		m.list.GetCurrent().Active = true
 
-		res, cmd := m.list.Update(msg)
-		m.list = res.(list.Model[branch.Model])
-
-		prev := m.list.GetCurrent()
-		prev.Active = false
-
-		m.list.ActiveRow = max(slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current }), 0)
-		current := m.list.GetCurrent()
-		current.Active = true
-
-		return m, cmd
+		return m, nil
 
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
@@ -42,12 +33,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case list.Msg:
-		m.list.SetContent(m.getBranches())
-		m.list.Children[m.list.ActiveRow].Active = true
-
-		return m, m.CokeCmd()
-
 	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
@@ -58,6 +43,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.list.TextInput.Focused() {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])
+
 			return m, cmd
 		}
 

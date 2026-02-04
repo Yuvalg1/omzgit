@@ -14,14 +14,12 @@ func (m Model[T]) View() string {
 		m.innerOffset = m.ActiveRow
 	}
 
-	children := m.getFilteredChildren()
-
-	if len(children) == 0 {
+	if len(m.Children) == 0 {
 		fileStrings = (*m.createChildFn(m.emptyMsg)).View()
 	}
 
-	for i := range min(max(len(children)-diff, 0), m.height-1) {
-		fileStrings += children[i+diff].View() + "\n"
+	for i := range min(max(len(m.Children)-diff, 0), m.height-1) {
+		fileStrings += m.Children[i+diff].View() + "\n"
 	}
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
