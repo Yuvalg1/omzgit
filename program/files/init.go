@@ -46,9 +46,7 @@ func InitialModel(width int, height int) Model {
 		return &created
 	})
 
-	initialList.SetFilterFn(func(row row.Model, text string) bool {
-		return strings.Contains(strings.ToLower(row.Roller.Name), strings.ToLower(text))
-	})
+	initialList.SetFilterFn(filterFn)
 
 	m := Model{
 		list:  initialList,
@@ -57,10 +55,6 @@ func InitialModel(width int, height int) Model {
 		width:  tWidth,
 		height: tHeight,
 	}
-
-	m.list.SetGetContentFn(func() []row.Model {
-		return GetFilesChanged(m.width)
-	})
 
 	return m
 }
@@ -85,23 +79,30 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func GetFilesChanged(width int) []row.Model {
+func (m Model) GetFilesChanged() []row.Model {
 	output, err := git.Exec("status", "--short", "--untracked-files=all")
 	if err != nil {
-		return []row.Model{row.EmptyInitialModel("a files error has occured", width)}
+		return []row.Model{row.EmptyInitialModel("a files error has occured", m.width)}
 	}
 
 	fileLogs := strings.Split(string(output), "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
 
 	if len(fileLogs) == 0 {
-		return []row.Model{row.EmptyInitialModel("No Changes Made", width)}
+		return []row.Model{row.EmptyInitialModel("No Changes Made", m.width)}
 	}
 
 	var rows []row.Model
+	index := 0
 
-	for _, element := range fileLogs {
-		rows = append(rows, row.InitialModel(element, width))
+	for len(rows) < m.list.NewSize() && index < len(fileLogs) {
+		row := row.InitialModel(fileLogs[index], m.width)
+
+		if filterFn(row, m.list.TextInput.Value()) {
+			rows = append(rows, row)
+		}
+
+		index++
 	}
 
 	return rows
@@ -119,4 +120,8 @@ func getDiffs(files []row.Model, width int, height int) []diff.Model {
 
 func (m Model) getCurrentSplit() []string {
 	return strings.Split(m.list.GetCurrent().Roller.Name, "/")
+}
+
+func filterFn(row row.Model, text string) bool {
+	return strings.Contains(strings.ToLower(row.Roller.Name), strings.ToLower(text))
 }

@@ -29,9 +29,7 @@ func InitialModel(width int, height int, title string) Model {
 		return &created
 	})
 
-	initialList.SetFilterFn(func(branch branch.Model, text string) bool {
-		return strings.Contains(strings.ToLower(branch.Roller.Name), strings.ToLower(text))
-	})
+	initialList.SetFilterFn(filterFn)
 
 	m := Model{
 		list:   initialList,
@@ -40,10 +38,6 @@ func InitialModel(width int, height int, title string) Model {
 		width:  getWidth(width),
 		height: getHeight(height),
 	}
-
-	m.list.SetGetContentFn(func() []branch.Model {
-		return getBranches(m.width, m.remote)
-	})
 
 	return m
 }
@@ -68,10 +62,10 @@ func (m Model) CokeCmd() tea.Cmd {
 	)
 }
 
-func getBranches(width int, remote bool) []branch.Model {
+func (m Model) getBranches() []branch.Model {
 	args := []string{"branch"}
 
-	if remote {
+	if m.remote {
 		args = append(args, "--remote")
 	}
 
@@ -82,10 +76,17 @@ func getBranches(width int, remote bool) []branch.Model {
 
 	branches := strings.Split(string(output), "\n")
 	branches = branches[:len(branches)-1]
+	index := 0
 
 	var models []branch.Model
-	for _, element := range branches {
-		models = append(models, branch.InitialModel(width, element, getDefaultBranch()))
+	for len(models) < m.list.NewSize() && index < len(branches) {
+		branch := branch.InitialModel(m.width, branches[index], getDefaultBranch())
+
+		if filterFn(branch, m.list.TextInput.Value()) {
+			models = append(models, branch)
+		}
+
+		index++
 	}
 
 	return models
@@ -98,4 +99,8 @@ func getDefaultBranch() string {
 	}
 
 	return output[:len(output)-1]
+}
+
+func filterFn(branch branch.Model, text string) bool {
+	return strings.Contains(strings.ToLower(branch.Roller.Name), strings.ToLower(text))
 }

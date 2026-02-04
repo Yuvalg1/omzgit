@@ -17,7 +17,7 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
-		m.list.SetContent(getCommitLogs(m.width))
+		m.list.SetContent(m.getCommitLogs())
 
 		res, cmd := m.list.Update(msg)
 		m.list = res.(list.Model[log.Model])
@@ -35,6 +35,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list = res.(list.Model[log.Model])
 
 		return m, cmd
+
+	case list.Msg:
+		m.list.SetContent(m.getCommitLogs())
+		m.list.Children[m.list.ActiveRow].Active = true
+
+		return m, m.CokeCmd()
 
 	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
@@ -86,7 +92,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
 		case "esc", "/":
-			m.list.SetContent(getCommitLogs(m.width))
+			m.list.SetContent(m.getCommitLogs())
 
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[log.Model])

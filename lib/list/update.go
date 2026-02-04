@@ -66,7 +66,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.TextInput.Update(msg)
 			m.TextInput = res
 
-			return m, cmd
+			return m, tea.Batch(cmd, Cmd())
 		}
 
 		switch keypress := msg.String(); keypress {
@@ -97,17 +97,28 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd := move(m, msg, curr, len(m.Children)-1)
 			m.innerOffset = m.height - 2
 
+			if m.ActiveRow+1 == (m.Page+1)*(m.height-1) {
+				m.Page = m.Page + 1
+				return m, tea.Batch(Cmd(), cmd)
+			}
+
 			return m, cmd
 
 		case "j", "down":
 			curr := m.ActiveRow
+
 			next := (m.ActiveRow + 1 + len(m.Children)) % len(m.Children)
 
 			m.innerOffset = min(m.height-2, m.innerOffset+1)
 			m.ActiveRow = next
-			cmd := move(m, msg, curr, next)
+			cmd2 := move(m, msg, curr, next)
 
-			return m, cmd
+			if m.ActiveRow+1 == (m.Page+1)*(m.height-1) {
+				m.Page = m.Page + 1
+				return m, tea.Batch(Cmd(), cmd2)
+			}
+
+			return m, cmd2
 
 		case "k", "up":
 			curr := m.ActiveRow
@@ -116,11 +127,16 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.innerOffset = max(0, m.innerOffset-1)
 
 			if next == len(m.Children)-1 {
-				m.innerOffset = m.height - 2
+				m.innerOffset = m.height - 3
 			}
 
 			m.ActiveRow = next
 			cmd := move(m, msg, curr, next)
+
+			if m.ActiveRow+1 == (m.Page+1)*(m.height-1) {
+				m.Page = m.Page + 1
+				return m, tea.Batch(Cmd(), cmd)
+			}
 
 			return m, cmd
 
