@@ -6,8 +6,8 @@ type Msg struct {
 	Response tea.Cmd
 }
 
-func Cmd(response tea.Cmd) tea.Cmd {
+func Cmd(response func() tea.Cmd) tea.Cmd {
 	return func() tea.Msg {
-		return Msg{Response: response}
+		return Msg{Response: response()}
 	}
 }
