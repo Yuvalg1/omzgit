@@ -124,12 +124,6 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, cmd
 
-		case "y":
-			res, cmd := m.UpdateCurrent(msg)
-			m = res
-
-			return m, cmd
-
 		case "/":
 			text := m.TextInput.Value()
 
@@ -148,15 +142,10 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd1, cmd2, mode.Cmd("search"))
 
 		default:
-			var cmds []tea.Cmd
+			res, cmd := m.UpdateCurrent(msg)
+			m = res
 
-			for index, element := range m.Children {
-				res, cmd := element.Update(msg)
-				m.Children[index] = res.(T)
-				cmds = append(cmds, cmd)
-			}
-
-			return m, tea.Batch(cmds...)
+			return m, tea.Batch(cmd)
 		}
 	}
 
