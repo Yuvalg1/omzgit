@@ -3,12 +3,12 @@ package files
 import (
 	"omzgit/git"
 	"omzgit/lib/list"
-	"omzgit/messages"
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
 	"omzgit/program/popups"
+	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -41,7 +41,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, tea.Batch(cmd, tick.Cmd(m.list.Children[m.list.ActiveRow].Roller.Offset))
 
-	case messages.RollerMsg:
+	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
 

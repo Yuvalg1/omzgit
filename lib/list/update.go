@@ -1,9 +1,9 @@
 package list
 
 import (
-	"omzgit/messages"
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
+	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -27,7 +27,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, tea.Batch(cmds...)
 
-	case messages.RollerMsg:
+	case roller.Msg:
 		res, cmd := m.Children[m.ActiveRow].Update(msg)
 		m.Children[m.ActiveRow] = res.(T)
 
