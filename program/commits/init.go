@@ -26,10 +26,7 @@ func InitialModel(width int, height int, title string) Model {
 		created := log.EmptyInitialModel(getWidth(width), name)
 		return &created
 	})
-	initialList.SetFilterFn(func(row log.Model, text string) bool {
-		return strings.Contains(strings.ToLower(row.Hash), strings.ToLower(text)) ||
-			strings.Contains(strings.ToLower(row.Desc.Name), strings.ToLower(text))
-	})
+	initialList.SetFilterFn(filterFn)
 
 	m := Model{
 		list: initialList,
@@ -38,9 +35,6 @@ func InitialModel(width int, height int, title string) Model {
 		height: getHeight(height),
 	}
 
-	m.list.SetGetContentFn(func() []log.Model {
-		return getCommitLogs(m.width)
-	})
 	return m
 }
 
@@ -57,7 +51,7 @@ func (m Model) CokeCmd() tea.Cmd {
 	)
 }
 
-func getCommitLogs(width int) []log.Model {
+func (m Model) getCommitLogs() []log.Model {
 	output, err := git.Exec("log", `--pretty=format:%h%n%D%n%s`)
 	if err != nil {
 		return []log.Model{}
@@ -67,22 +61,33 @@ func getCommitLogs(width int) []log.Model {
 
 	var logs []log.Model
 	commits := strings.Split(output, "\n")
+	index := 0
 
-	for i := 0; i < len(commits); i += 3 {
-		branchesStr := commits[i+1]
+	for len(logs) < m.list.NewSize() && index < len(commits) {
+		branchesStr := commits[index+1]
 		branchesStr = strings.TrimPrefix(branchesStr, "HEAD -> ")
 
-		hash := commits[i]
+		hash := commits[index]
 		branches := []string{}
 		if len(branchesStr) > 0 {
 			branches = strings.Split(branchesStr, ", ")
 		}
-		desc := commits[i+2]
+		desc := commits[index+2]
 
-		logs = append(logs, log.InitialModel(width, hash, branches, desc, strings.TrimSpace(head)))
+		log := log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head))
+
+		if filterFn(log, m.list.TextInput.Value()) {
+			logs = append(logs, log)
+		}
+		index += 3
 	}
 
 	return logs
+}
+
+func filterFn(row log.Model, text string) bool {
+	return strings.Contains(strings.ToLower(row.Hash), strings.ToLower(text)) ||
+		strings.Contains(strings.ToLower(row.Desc.Name), strings.ToLower(text))
 }
 
 func getWidth(width int) int {

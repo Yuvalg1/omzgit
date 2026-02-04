@@ -9,9 +9,10 @@ type Model[T tea.Model] struct {
 	Children  []T
 	ActiveRow int
 
+	Page int
+
 	createChildFn func(name string) *T
 	filterFn      func(row T, text string) bool
-	getContentFn  func() []T
 
 	TextInput textinput.Model
 	emptyMsg  string
@@ -27,6 +28,8 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 	return Model[T]{
 		Children:  children,
 		ActiveRow: initialActive,
+
+		Page: 0,
 
 		createChildFn: func(name string) *T { return nil },
 		filterFn: func(row T, text string) bool {
@@ -88,6 +91,6 @@ func (m *Model[T]) SetFilterFn(fn func(row T, text string) bool) {
 	m.filterFn = fn
 }
 
-func (m *Model[T]) SetGetContentFn(fn func() []T) {
-	m.getContentFn = fn
+func (m Model[T]) NewSize() int {
+	return (m.Page + 1) * (m.height - 1)
 }

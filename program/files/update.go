@@ -16,17 +16,15 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
-		m.list.SetContent(GetFilesChanged(m.width))
+		m.list.SetContent(m.GetFilesChanged())
+		m.list.GetCurrent().Active = true
 
-		res, cmd := m.list.Update(msg)
-		m.list = res.(list.Model[row.Model])
+		m.diffs = getDiffs(m.list.Children, m.width, m.height)
 
-		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
-
-		return m, cmd
+		return m, nil
 
 	case tick.Msg:
-		m.list.SetContent(GetFilesChanged(m.width))
+		m.list.SetContent(m.GetFilesChanged())
 
 		current := m.list.GetCurrent()
 
@@ -48,14 +46,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case tea.WindowSizeMsg:
-		var cmds []tea.Cmd
-
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
 		msg.Width = getWidth(msg.Width)
 		msg.Height = getHeight(msg.Height)
 
+		var cmds []tea.Cmd
 		for index, element := range m.diffs {
 			res, cmd := element.Update(msg)
 			m.diffs[index] = res.(diff.Model)
@@ -73,6 +70,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.list.TextInput.Focused() {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[row.Model])
+
 			return m, cmd
 		}
 
@@ -134,7 +132,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 
 		case "esc", "/":
-			m.list.SetContent(GetFilesChanged(m.width))
+			m.list.SetContent(m.GetFilesChanged())
 
 			res1, cmd1 := m.list.Update(msg)
 			m.list = res1.(list.Model[row.Model])

@@ -17,12 +17,10 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
-		m.list.SetContent(getCommitLogs(m.width))
+		m.list.SetContent(m.getCommitLogs())
+		m.list.GetCurrent().Active = true
 
-		res, cmd := m.list.Update(msg)
-		m.list = res.(list.Model[log.Model])
-
-		return m, cmd
+		return m, m.CokeCmd()
 
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
@@ -46,6 +44,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.list.TextInput.Focused() {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[log.Model])
+
 			return m, cmd
 		}
 
@@ -86,7 +85,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
 		case "esc", "/":
-			m.list.SetContent(getCommitLogs(m.width))
+			m.list.SetContent(m.getCommitLogs())
 
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[log.Model])

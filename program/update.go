@@ -46,24 +46,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cokeline = res.(cokeline.Model)
 		return m, cmd
 
-	case roller.Msg:
-		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res
-
-		return m, cmd
-
-	case tick.Msg, refresh.Msg:
+	case tick.Msg, refresh.Msg, roller.Msg, popups.Msg, api.Msg, spinner.TickMsg:
 		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res1
 
 		res2, cmd2 := m.Popup.Update(msg)
 		m.Popup = res2.(popups.Model[popups.InnerModel])
 		return m, tea.Batch(cmd1, cmd2)
-
-	case popups.Msg, api.Msg, spinner.TickMsg:
-		res, cmd := m.Popup.Update(msg)
-		m.Popup = res.(popups.Model[popups.InnerModel])
-		return m, cmd
 
 	case mode.Msg:
 		m.mode = msg.Mode
