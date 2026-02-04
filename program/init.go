@@ -1,7 +1,6 @@
 package program
 
 import (
-	"omzgit/messages"
 	"omzgit/popups/alert"
 	"omzgit/popups/async"
 	"omzgit/popups/commit"
@@ -73,12 +72,6 @@ func (m Model) Init() tea.Cmd {
 	cmds = append(cmds, m.Popup.Init())
 
 	return tea.Batch(cmds...)
-}
-
-func (m Model) ModeCmd(mode string) tea.Cmd {
-	return func() tea.Msg {
-		return messages.ModeMsg{Mode: mode}
-	}
 }
 
 func getWidth(width int) int {

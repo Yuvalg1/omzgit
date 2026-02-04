@@ -1,7 +1,6 @@
 package pointers
 
 import (
-	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/popups/commit"
 	"omzgit/popups/discard"
@@ -9,8 +8,6 @@ import (
 	"omzgit/popups/reset"
 	"omzgit/program"
 	"omzgit/roller"
-
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 var (
@@ -20,9 +17,6 @@ var (
 
 	_ messages.Refresher = (*input.Model)(nil)
 
-	_ messages.Moderer = (*list.Model[tea.Model])(nil)
-
-	_ messages.Moderer   = (*program.Model)(nil)
 	_ messages.Refresher = (*program.Model)(nil)
 
 	_ messages.Refresher = (*reset.Model)(nil)

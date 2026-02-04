@@ -7,6 +7,7 @@ import (
 	"omzgit/git"
 	"omzgit/messages"
 	"omzgit/messages/api"
+	"omzgit/messages/mode"
 	"omzgit/messages/tick"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
@@ -63,7 +64,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Popup = res.(popups.Model[popups.InnerModel])
 		return m, cmd
 
-	case messages.ModeMsg:
+	case mode.Msg:
 		m.mode = msg.Mode
 		return m, nil
 
@@ -100,7 +101,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "g":
-			return m, m.ModeCmd("goto")
+			return m, mode.Cmd("goto")
 
 		case "l":
 			return m, popups.Cmd("async", "", "pulling", func() tea.Cmd {
