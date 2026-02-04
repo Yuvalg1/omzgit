@@ -108,11 +108,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "c":
 			return m, popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
 
-		case "d":
-			res, cmd := m.list.UpdateCurrent(msg)
-			m.list = res
-			return m, cmd
-
 		case "D":
 			return m, popups.Cmd("discard", "discard", "All Files", func() tea.Cmd {
 				git.Exec("reset", "--hard")
