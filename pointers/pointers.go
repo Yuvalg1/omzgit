@@ -3,7 +3,6 @@ package pointers
 import (
 	"omzgit/lib/list"
 	"omzgit/messages"
-	"omzgit/popups/async"
 	"omzgit/popups/commit"
 	"omzgit/popups/discard"
 	"omzgit/popups/input"
@@ -17,8 +16,6 @@ import (
 )
 
 var (
-	_ messages.Apier = (*async.Model)(nil)
-
 	_ messages.Cokerer = (*branches.Model)(nil)
 
 	_ messages.Refresher = (*commit.Model)(nil)

@@ -1,7 +1,7 @@
 package async
 
 import (
-	"omzgit/messages"
+	"omzgit/messages/api"
 	"omzgit/program/popups"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -14,9 +14,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.callbackFn = msg.Fn.(func() tea.Cmd)
 		m.title = msg.Name
 		m.visible = true
-		return m, tea.Batch(m.spinner.Tick, m.ApiCmd())
+		return m, tea.Batch(m.spinner.Tick, api.Cmd(m.callbackFn()))
 
-	case messages.ApiMsg:
+	case api.Msg:
 		m.visible = false
 		return m, msg.Response
 

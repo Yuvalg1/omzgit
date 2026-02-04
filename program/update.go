@@ -6,6 +6,7 @@ import (
 
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/messages/api"
 	"omzgit/messages/tick"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
@@ -57,7 +58,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Popup = res2.(popups.Model[popups.InnerModel])
 		return m, tea.Batch(cmd1, cmd2)
 
-	case popups.Msg, messages.ApiMsg, spinner.TickMsg:
+	case popups.Msg, api.Msg, spinner.TickMsg:
 		res, cmd := m.Popup.Update(msg)
 		m.Popup = res.(popups.Model[popups.InnerModel])
 		return m, cmd
