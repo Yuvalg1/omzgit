@@ -6,6 +6,7 @@ import (
 	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/program/popups"
 
@@ -24,7 +25,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.RefreshMsg:
+	case refresh.Msg:
 		m.Active = true
 
 		return m, nil

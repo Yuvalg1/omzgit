@@ -8,6 +8,7 @@ import (
 	"omzgit/messages"
 	"omzgit/messages/api"
 	"omzgit/messages/mode"
+	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
@@ -51,7 +52,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case tick.Msg, messages.RefreshMsg:
+	case tick.Msg, refresh.Msg:
 		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res1
 
@@ -186,12 +187,6 @@ func handlePick(m *Model, key string, msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.cokeline = res2.(cokeline.Model)
 
 	return m, tea.Batch(cmd1, cmd2)
-}
-
-func (m Model) RefreshCmd() tea.Cmd {
-	return func() tea.Msg {
-		return messages.RefreshMsg{}
-	}
 }
 
 func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {

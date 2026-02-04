@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"omzgit/git"
+	"omzgit/messages/refresh"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -35,7 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.visible = false
 
-			return m, m.RefreshCmd()
+			return m, refresh.Cmd()
 
 		case "ctrl+c", "q":
 			return m, tea.Quit

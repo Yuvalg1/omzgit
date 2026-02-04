@@ -3,13 +3,14 @@ package branch
 import (
 	"omzgit/clipboard"
 	"omzgit/messages"
+	"omzgit/messages/refresh"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case *messages.RefreshMsg:
+	case refresh.Msg:
 		m.Active = true
 		return m, nil
 

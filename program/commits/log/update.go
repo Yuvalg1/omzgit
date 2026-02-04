@@ -4,6 +4,7 @@ import (
 	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/messages/refresh"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,7 +20,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case messages.RefreshMsg:
+	case refresh.Msg:
 		m.Active = true
 
 		return m, nil
@@ -52,7 +53,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if err != nil {
 				popups.Cmd("alert", "cherry pick error", output, func() {})
 			}
-			return m, m.RefreshCmd()
+			return m, refresh.Cmd()
 
 		default:
 			return m, nil
