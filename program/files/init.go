@@ -6,8 +6,8 @@ import (
 
 	"omzgit/git"
 	"omzgit/lib/list"
-	"omzgit/messages"
 	"omzgit/messages/tick"
+	"omzgit/program/cokeline"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
 
@@ -23,18 +23,15 @@ type Model struct {
 }
 
 func (m Model) CokeCmd() tea.Cmd {
-	return func() tea.Msg {
-		parts := m.getCurrentSplit()
-		path := parts[len(parts)-1]
+	parts := m.getCurrentSplit()
+	path := parts[len(parts)-1]
 
-		return messages.CokeMsg{
-			Center: path,
-			Right: fmt.Sprintf(
-				"%d/%d", m.list.ActiveRow+1, len(m.list.Children)),
-
-			Primary: len(m.list.Children) > 0 && m.list.Children[m.list.ActiveRow].Staged,
-		}
-	}
+	return cokeline.Cmd(
+		path,
+		fmt.Sprintf(
+			"%d/%d", m.list.ActiveRow+1, len(m.list.Children)),
+		len(m.list.Children) > 0 && m.list.Children[m.list.ActiveRow].Staged,
+	)
 }
 
 func InitialModel(width int, height int) Model {

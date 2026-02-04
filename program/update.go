@@ -39,7 +39,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, tea.Batch(cmds...)
 
-	case messages.CokeMsg:
+	case cokeline.Msg:
 		res, cmd := m.cokeline.Update(msg)
 		m.cokeline = res.(cokeline.Model)
 		return m, cmd

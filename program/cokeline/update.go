@@ -1,14 +1,12 @@
 package cokeline
 
 import (
-	"omzgit/messages"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.CokeMsg:
+	case Msg:
 		m.Center = msg.Center
 		m.Right = msg.Right
 

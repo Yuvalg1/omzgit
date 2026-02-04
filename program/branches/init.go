@@ -6,8 +6,8 @@ import (
 
 	"omzgit/git"
 	"omzgit/lib/list"
-	"omzgit/messages"
 	"omzgit/program/branches/branch"
+	"omzgit/program/cokeline"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -61,14 +61,11 @@ func getHeight(height int) int {
 }
 
 func (m Model) CokeCmd() tea.Cmd {
-	return func() tea.Msg {
-		return messages.CokeMsg{
-			Center: m.list.Children[m.list.ActiveRow].Roller.Name,
-			Right:  fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
-
-			Primary: m.list.Children[m.list.ActiveRow].Current,
-		}
-	}
+	return cokeline.Cmd(
+		m.list.Children[m.list.ActiveRow].Roller.Name,
+		fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
+		m.list.Children[m.list.ActiveRow].Current,
+	)
 }
 
 func getBranches(width int, remote bool) []branch.Model {

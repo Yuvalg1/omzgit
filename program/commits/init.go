@@ -6,7 +6,7 @@ import (
 
 	"omzgit/git"
 	"omzgit/lib/list"
-	"omzgit/messages"
+	"omzgit/program/cokeline"
 	"omzgit/program/commits/log"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -49,14 +49,12 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) CokeCmd() tea.Cmd {
-	return func() tea.Msg {
-		return messages.CokeMsg{
-			Center: m.list.Children[m.list.ActiveRow].Hash,
-			Right:  fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
+	return cokeline.Cmd(
+		m.list.Children[m.list.ActiveRow].Hash,
+		fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
 
-			Primary: m.list.Children[m.list.ActiveRow].Current,
-		}
-	}
+		m.list.Children[m.list.ActiveRow].Current,
+	)
 }
 
 func getCommitLogs(width int) []log.Model {

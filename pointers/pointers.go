@@ -8,21 +8,15 @@ import (
 	"omzgit/popups/input"
 	"omzgit/popups/reset"
 	"omzgit/program"
-	"omzgit/program/branches"
-	"omzgit/program/files"
 	"omzgit/roller"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 var (
-	_ messages.Cokerer = (*branches.Model)(nil)
-
 	_ messages.Refresher = (*commit.Model)(nil)
 
 	_ messages.Refresher = (*discard.Model)(nil)
-
-	_ messages.Cokerer = (*files.Model)(nil)
 
 	_ messages.Refresher = (*input.Model)(nil)
 
