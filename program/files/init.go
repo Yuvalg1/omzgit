@@ -3,7 +3,6 @@ package files
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"omzgit/git"
 	"omzgit/lib/list"
@@ -21,13 +20,6 @@ type Model struct {
 
 	height int
 	width  int
-}
-
-func (m Model) TickCmd() tea.Cmd {
-	return func() tea.Msg {
-		time.Sleep(10 * time.Second)
-		return tick.Msg{RollOffset: m.list.Children[m.list.ActiveRow].Roller.Offset}
-	}
 }
 
 func (m Model) CokeCmd() tea.Cmd {
