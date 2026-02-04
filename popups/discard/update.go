@@ -1,7 +1,7 @@
 package discard
 
 import (
-	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -13,7 +13,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Height = getHeight(msg.Height)
 		return m, nil
 
-	case messages.PopupMsg:
+	case popups.Msg:
 		m.CallbackFn = msg.Fn.(func() tea.Cmd)
 		m.Name = msg.Name
 		m.visible = true

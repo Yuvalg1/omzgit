@@ -3,7 +3,7 @@ package commit
 import (
 	"omzgit/clipboard"
 	"omzgit/git"
-	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -17,7 +17,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = getHeight(msg.Height)
 		return m, nil
 
-	case messages.PopupMsg:
+	case popups.Msg:
 		m.visible = true
 		return m, nil
 
@@ -46,7 +46,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, m.RefreshCmd()
 				}
 
-				return m, m.PopupCmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
+				return m, popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
 
 			default:
 				res, cmd := m.textinput.Update(msg)
@@ -100,7 +100,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, m.RefreshCmd()
 			}
 
-			return m, m.PopupCmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
+			return m, popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
 
 		case "esc":
 			m.visible = false

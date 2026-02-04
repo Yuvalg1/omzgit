@@ -56,7 +56,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Popup = res2.(popups.Model[popups.InnerModel])
 		return m, tea.Batch(cmd1, cmd2)
 
-	case messages.PopupMsg, messages.ApiMsg, spinner.TickMsg:
+	case popups.Msg, messages.ApiMsg, spinner.TickMsg:
 		res, cmd := m.Popup.Update(msg)
 		m.Popup = res.(popups.Model[popups.InnerModel])
 		return m, cmd
@@ -88,40 +88,40 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch keypress := msg.String(); keypress {
 		case "f":
-			return m, m.PopupCmd("async", "", "fetching", func() tea.Cmd {
+			return m, popups.Cmd("async", "", "fetching", func() tea.Cmd {
 				output, err := git.Exec("fetch")
 				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Fetch Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Fetch Error", output, func() tea.Cmd { return nil })
 			})
 
 		case "g":
 			return m, m.ModeCmd("goto")
 
 		case "l":
-			return m, m.PopupCmd("async", "", "pulling", func() tea.Cmd {
+			return m, popups.Cmd("async", "", "pulling", func() tea.Cmd {
 				output, err := git.Exec("pull")
 				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
 			})
 
 		case "L":
-			return m, m.PopupCmd("async", "", "rebase pulling", func() tea.Cmd {
+			return m, popups.Cmd("async", "", "rebase pulling", func() tea.Cmd {
 				output, err := git.Exec("pull", "--rebase")
 				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Rebase Pull Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Rebase Pull Error", output, func() tea.Cmd { return nil })
 			})
 
 		case "p":
-			return m, m.PopupCmd("async", "", "pushing", func() tea.Cmd {
+			return m, popups.Cmd("async", "", "pushing", func() tea.Cmd {
 				_, err := git.Exec("push")
 				if err == nil {
 					return nil
@@ -129,15 +129,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-				return m.PopupCmd("discard", "upstream push", strings.TrimSpace(output), func() tea.Cmd {
-					return m.PopupCmd("async", "", "upstream pushing", func() tea.Cmd {
+				return popups.Cmd("discard", "upstream push", strings.TrimSpace(output), func() tea.Cmd {
+					return popups.Cmd("async", "", "upstream pushing", func() tea.Cmd {
 						output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
 						output, err := git.Exec("push", "--set-upstream", "origin", strings.TrimSpace(output))
 						if err == nil {
 							return nil
 						}
-						return m.PopupCmd("alert", "Upstream Error", strings.TrimSpace(output), func() tea.Cmd { return nil })
+						return popups.Cmd("alert", "Upstream Error", strings.TrimSpace(output), func() tea.Cmd { return nil })
 					})
 				})
 			})
@@ -145,14 +145,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "P":
 			output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
-			return m, m.PopupCmd("discard", "force push", strings.TrimSpace(output), func() tea.Cmd {
-				return m.PopupCmd("async", "", "force pushing", func() tea.Cmd {
+			return m, popups.Cmd("discard", "force push", strings.TrimSpace(output), func() tea.Cmd {
+				return popups.Cmd("async", "", "force pushing", func() tea.Cmd {
 					output, err := git.Exec("push", "--force")
 					if err == nil {
 						return nil
 					}
 
-					return m.PopupCmd("alert", "Force Push Error", strings.TrimSpace(output), func() tea.Cmd {
+					return popups.Cmd("alert", "Force Push Error", strings.TrimSpace(output), func() tea.Cmd {
 						return nil
 					})
 				})
@@ -196,7 +196,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	switch keypress := msg.String(); keypress {
 	case "a":
-		return m, m.PopupCmd("async", "", "opening actions", func() tea.Cmd {
+		return m, popups.Cmd("async", "", "opening actions", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)
 			remote = strings.TrimSuffix(remote, ".git")
@@ -220,7 +220,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case "i":
-		return m, m.PopupCmd("async", "", "creating issue", func() tea.Cmd {
+		return m, popups.Cmd("async", "", "creating issue", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)
 			remote = strings.TrimSuffix(remote, ".git")
@@ -232,7 +232,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		})
 
 	case "p":
-		return m, m.PopupCmd("async", "", "creating pr", func() tea.Cmd {
+		return m, popups.Cmd("async", "", "creating pr", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)
 			remote = strings.TrimSuffix(remote, ".git")

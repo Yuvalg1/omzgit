@@ -18,7 +18,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, tea.Batch(cmds...)
 
-	case messages.PopupMsg:
+	case Msg:
 		m.current = msg.Type
 
 		res, cmd := m.Popups[m.current].Update(msg)

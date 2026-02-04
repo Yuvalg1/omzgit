@@ -4,6 +4,7 @@ import (
 	"omzgit/clipboard"
 	"omzgit/git"
 	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -49,7 +50,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+p":
 			output, err := git.Exec("cherry-pick", m.Hash)
 			if err != nil {
-				m.PopupCmd("alert", "cherry pick error", output, func() {})
+				popups.Cmd("alert", "cherry pick error", output, func() {})
 			}
 			return m, m.RefreshCmd()
 

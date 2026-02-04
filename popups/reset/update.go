@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"omzgit/git"
-	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -16,7 +16,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = getHeight(msg.Height)
 		return m, nil
 
-	case messages.PopupMsg:
+	case popups.Msg:
 		m.visible = true
 		m.hash = msg.Verb
 		m.name = msg.Name
@@ -31,7 +31,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "h", "m", "s":
 			output, err := git.Exec("reset", m.options[keypress[0]], m.name)
 			if err != nil {
-				return m, m.PopupCmd("alert", "reset", strings.TrimSpace(output), func() {})
+				return m, popups.Cmd("alert", "reset", strings.TrimSpace(output), func() {})
 			}
 			m.visible = false
 

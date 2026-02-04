@@ -52,16 +52,6 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) PopupCmd(pType string, placeholder string, title string, fn func() tea.Cmd) tea.Cmd {
-	return func() tea.Msg {
-		return messages.PopupMsg{
-			Name: title,
-			Type: pType,
-			Verb: placeholder,
-		}
-	}
-}
-
 func (m Model) RefreshCmd() tea.Cmd {
 	return func() tea.Msg {
 		return messages.RefreshMsg{}
@@ -88,7 +78,7 @@ func (m Model) getCommitString() []string {
 		}
 	}
 
-	if (m.textinput.Value() != "") {
+	if m.textinput.Value() != "" {
 		commitStrings = append(commitStrings, m.commitMessageType, m.textinput.Value())
 	}
 

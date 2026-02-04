@@ -2,6 +2,7 @@ package async
 
 import (
 	"omzgit/messages"
+	"omzgit/program/popups"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -9,7 +10,7 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case messages.PopupMsg:
+	case popups.Msg:
 		m.callbackFn = msg.Fn.(func() tea.Cmd)
 		m.title = msg.Name
 		m.visible = true

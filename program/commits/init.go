@@ -59,17 +59,6 @@ func (m Model) CokeCmd() tea.Cmd {
 	}
 }
 
-func (m Model) PopupCmd(pType string, placeholder string, title string, fn any) tea.Cmd {
-	return func() tea.Msg {
-		return messages.PopupMsg{
-			Fn:   fn,
-			Name: title,
-			Type: pType,
-			Verb: placeholder,
-		}
-	}
-}
-
 func getCommitLogs(width int) []log.Model {
 	output, err := git.Exec("log", `--pretty=format:%h%n%D%n%s`)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"omzgit/lib/list"
 	"omzgit/messages"
 	"omzgit/program/branches/branch"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -56,14 +57,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 
 		case "b":
-			return m, m.PopupCmd("input", "Name", "Enter A new Branch Name", func(name string) {
+			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) {
 				git.Exec("checkout", "-b", name)
 			})
 
 		case "c":
 			output, err := git.Exec("checkout", m.list.GetCurrent().Roller.Name)
 			if err != nil {
-				return m, m.PopupCmd("alert", "checkout error", output, func(name string) {})
+				return m, popups.Cmd("alert", "checkout error", output, func(name string) {})
 			}
 
 			current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
@@ -76,10 +77,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "C":
-			return m, m.PopupCmd("discard", "force checkout", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
+			return m, popups.Cmd("discard", "force checkout", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Roller.Name)
 				if err != nil {
-					return m.PopupCmd("alert", "checkout error", output, func(name string) {})
+					return popups.Cmd("alert", "checkout error", output, func(name string) {})
 				}
 
 				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
@@ -93,23 +94,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "d":
-			return m, m.PopupCmd("discard", "delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
+			return m, popups.Cmd("discard", "delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Roller.Name)
 				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Delete Error", output, func(name string) {})
+				return popups.Cmd("alert", "Delete Error", output, func(name string) {})
 			})
 
 		case "D":
-			return m, m.PopupCmd("discard", "force delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
+			return m, popups.Cmd("discard", "force delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("branch", "-D", m.list.GetCurrent().Roller.Name)
 				if err == nil {
 					return nil
 				}
 
-				return m.PopupCmd("alert", "Force Delete Error", output, func(name string) {})
+				return popups.Cmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
 		case "o":

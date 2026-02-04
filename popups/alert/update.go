@@ -2,7 +2,7 @@ package alert
 
 import (
 	"omzgit/clipboard"
-	"omzgit/messages"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -14,7 +14,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Height = getHeight(msg.Height)
 		return m, nil
 
-	case messages.PopupMsg:
+	case popups.Msg:
 		m.error = msg.Name
 		m.visible = true
 		m.verb = msg.Verb
