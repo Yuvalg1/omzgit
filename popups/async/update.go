@@ -14,7 +14,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.callbackFn = msg.Fn.(func() tea.Cmd)
 		m.title = msg.Name
 		m.visible = true
-		return m, tea.Batch(m.spinner.Tick, api.Cmd(m.callbackFn()))
+		return m, tea.Batch(m.spinner.Tick, api.Cmd(m.callbackFn))
 
 	case api.Msg:
 		m.visible = false
