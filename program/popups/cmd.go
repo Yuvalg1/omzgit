@@ -9,7 +9,7 @@ type Msg struct {
 	Verb string
 }
 
-func Cmd(pType string, name string, verb string, fn any) tea.Cmd {
+func Cmd(pType string, verb string, name string, fn any) tea.Cmd {
 	return func() tea.Msg {
 		return Msg{
 			Type: pType,
