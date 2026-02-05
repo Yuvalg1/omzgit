@@ -161,7 +161,8 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd2 := move(m, msg, curr, 0)
 
 			m.TextInput.Focus()
-			return m, tea.Batch(cmd1, cmd2, mode.Cmd("search"))
+			m.Page = 0
+			return m, tea.Batch(cmd1, cmd2, mode.Cmd("search"), refresh.Cmd())
 
 		default:
 			res, cmd := m.UpdateCurrent(msg)
