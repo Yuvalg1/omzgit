@@ -1,4 +1,4 @@
-package logs
+package commits
 
 import (
 	"slices"
@@ -7,7 +7,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
-	"omzgit/program/logs/log"
+	"omzgit/program/commits/log"
 	"omzgit/program/popups"
 	"omzgit/roller"
 

@@ -21,8 +21,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "b":
 			m.Left = "Branches"
-		case "l":
-			m.Left = "Logs"
+		case "c":
+			m.Left = "Commits"
 		case "f":
 			m.Left = "Files"
 		default:
