@@ -196,8 +196,8 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case "b":
 		return handlePick(m, "Branches", msg)
-	case "c":
-		return handlePick(m, "Commits", msg)
+	case "l":
+		return handlePick(m, "Logs", msg)
 	case "f":
 		return handlePick(m, "Files", msg)
 
