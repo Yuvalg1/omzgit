@@ -6,8 +6,8 @@ import (
 
 	"omzgit/program"
 	"omzgit/program/branches"
+	"omzgit/program/commits"
 	"omzgit/program/files"
-	"omzgit/program/logs"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/term"
@@ -20,7 +20,7 @@ func main() {
 		[]program.ExtendedModel{
 			{Title: "Files", Tab: files.InitialModel(width, height)},
 			{Title: "Branches", Tab: branches.InitialModel(width, height, "Branches")},
-			{Title: "Logs", Tab: logs.InitialModel(width, height, "Logs")},
+			{Title: "Commits", Tab: commits.InitialModel(width, height, "Commits")},
 		},
 		width,
 		height,

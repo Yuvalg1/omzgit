@@ -15,7 +15,7 @@ var partStyle = lipgloss.NewStyle().
 
 var colorTones = map[string][]lipgloss.Color{
 	"Branches": {colors.Purple, colors.Yellow, colors.Blue},
-	"Logs":     {colors.Aqua, colors.Purple, colors.Yellow},
+	"Commits":  {colors.Aqua, colors.Purple, colors.Yellow},
 	"Files":    {colors.Yellow, colors.Green, colors.Red},
 }
 

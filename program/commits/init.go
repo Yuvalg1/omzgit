@@ -1,4 +1,4 @@
-package logs
+package commits
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/program/cokeline"
-	"omzgit/program/logs/log"
+	"omzgit/program/commits/log"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -20,7 +20,7 @@ type Model struct {
 }
 
 func InitialModel(width int, height int, title string) Model {
-	initialList := list.InitialModel(getHeight(height), []log.Model{log.EmptyInitialModel(getWidth(width), "No logs found")}, 0, "No Logs Found")
+	initialList := list.InitialModel(getHeight(height), []log.Model{log.EmptyInitialModel(getWidth(width), "No commits found")}, 0, "No Commits Found")
 
 	initialList.SetCreateChild(func(name string) *log.Model {
 		created := log.EmptyInitialModel(getWidth(width), name)
@@ -60,19 +60,19 @@ func (m Model) getCommitLogs() []log.Model {
 	head, _ := git.Exec("rev-parse", "--short", "HEAD")
 
 	var logs []log.Model
-	commitLogs := strings.Split(output, "\n")
+	commits := strings.Split(output, "\n")
 	index := 0
 
-	for len(logs) < m.list.NewSize() && index < len(commitLogs) {
-		branchesStr := commitLogs[index+1]
+	for len(logs) < m.list.NewSize() && index < len(commits) {
+		branchesStr := commits[index+1]
 		branchesStr = strings.TrimPrefix(branchesStr, "HEAD -> ")
 
-		hash := commitLogs[index]
+		hash := commits[index]
 		branches := []string{}
 		if len(branchesStr) > 0 {
 			branches = strings.Split(branchesStr, ", ")
 		}
-		desc := commitLogs[index+2]
+		desc := commits[index+2]
 
 		log := log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head))
 
