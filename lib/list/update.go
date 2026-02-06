@@ -22,7 +22,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		var cmds []tea.Cmd
 
-		if m.height != previousHeight {
+		if m.height > previousHeight {
 			cmds = append(cmds, refresh.Cmd())
 		}
 
@@ -72,7 +72,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.TextInput.Update(msg)
 			m.TextInput = res
 
-			return m, tea.Batch(cmd, refresh.Cmd())
+			return m, tea.Batch(cmd, m.debounceCmd(refresh.Msg{}))
 		}
 
 		switch keypress := msg.String(); keypress {

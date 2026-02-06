@@ -1,6 +1,9 @@
 package list
 
 import (
+	"time"
+
+	"github.com/bep/debounce"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -13,6 +16,7 @@ type Model[T tea.Model] struct {
 
 	createChildFn func(name string) *T
 	filterFn      func(row T, text string) bool
+	debounceFn    func(f func())
 
 	TextInput textinput.Model
 	emptyMsg  string
@@ -35,8 +39,9 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 		filterFn: func(row T, text string) bool {
 			return true
 		},
-		TextInput: ti,
-		emptyMsg:  emptyMsg,
+		debounceFn: debounce.New(200 * time.Millisecond),
+		TextInput:  ti,
+		emptyMsg:   emptyMsg,
 
 		innerOffset: min(getHeight(height)-2, initialActive),
 		height:      getHeight(height),
@@ -93,4 +98,14 @@ func (m *Model[T]) SetFilterFn(fn func(row T, text string) bool) {
 
 func (m Model[T]) NewSize() int {
 	return (m.Page + 1) * (m.height - 1)
+}
+
+func (m Model[T]) debounceCmd(msg tea.Msg) tea.Cmd {
+	return func() tea.Msg {
+		channel := make(chan tea.Msg)
+		m.debounceFn(func() {
+			channel <- msg
+		})
+		return <-channel
+	}
 }
