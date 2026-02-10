@@ -88,6 +88,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "r":
+			if m.Conflict {
+				return m, nil
+			}
+
 			if m.Staged {
 				_, err := git.Exec("reset", "--", m.Roller.Name)
 				m.Staged = err != nil
