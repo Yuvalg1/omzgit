@@ -89,6 +89,10 @@ func (m Model) getBranches() []branch.Model {
 		index++
 	}
 
+	if m.list.TextInput.Value() != "" {
+		m.total = len(models)
+	}
+
 	return models
 }
 
