@@ -22,14 +22,7 @@ type Model struct {
 }
 
 func InitialModel(width int, height int, title string) Model {
-	initialList := list.InitialModel(getHeight(height), []branch.Model{branch.EmptyInitialModel(getWidth(width), getHeight(height), "No Branches Found", "")}, 0, "No Branches Found")
-
-	initialList.SetCreateChild(func(name string) *branch.Model {
-		created := branch.EmptyInitialModel(getWidth(width), getHeight(height), name, "")
-		return &created
-	})
-
-	initialList.SetFilterFn(filterFn)
+	initialList := list.InitialModel(getHeight(height), []branch.Model{}, 0, "No Branches Found")
 
 	m := Model{
 		list:   initialList,
@@ -38,6 +31,14 @@ func InitialModel(width int, height int, title string) Model {
 		width:  getWidth(width),
 		height: getHeight(height),
 	}
+
+	m.list.Children = []branch.Model{branch.EmptyInitialModel(m.width, getHeight(height), "No Branches Found", "")}
+	m.list.SetCreateChild(func(name string) *branch.Model {
+		created := branch.EmptyInitialModel(m.width, getHeight(height), name, "")
+		return &created
+	})
+
+	m.list.SetFilterFn(filterFn)
 
 	return m
 }

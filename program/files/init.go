@@ -38,23 +38,24 @@ func InitialModel(width int, height int) Model {
 	tWidth := getWidth(width)
 	tHeight := getHeight(height)
 
-	emptyRow := row.EmptyInitialModel("No Files Found", getWidth(width))
-	initialList := list.InitialModel(tHeight, []row.Model{emptyRow}, 0, "No Files Found")
-
-	initialList.SetCreateChild(func(name string) *row.Model {
-		created := row.EmptyInitialModel("No Files Found", getWidth(width))
-		return &created
-	})
+	initialList := list.InitialModel(tHeight, []row.Model{}, 0, "No Files Found")
 
 	initialList.SetFilterFn(filterFn)
 
 	m := Model{
 		list:  initialList,
-		diffs: []diff.Model{diff.InitialModel(emptyRow, tWidth, tHeight)},
+		diffs: []diff.Model{},
 
 		width:  tWidth,
 		height: tHeight,
 	}
+
+	emptyRow := row.EmptyInitialModel("No Files Found", m.width)
+	m.diffs = []diff.Model{diff.InitialModel(emptyRow, m.width, m.height)}
+	m.list.SetCreateChild(func(name string) *row.Model {
+		created := row.EmptyInitialModel("No Files Found", m.width)
+		return &created
+	})
 
 	return m
 }
