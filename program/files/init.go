@@ -17,6 +17,7 @@ import (
 type Model struct {
 	list  list.Model[row.Model]
 	diffs []diff.Model
+	total int
 
 	height int
 	width  int
@@ -28,8 +29,7 @@ func (m Model) CokeCmd() tea.Cmd {
 
 	return cokeline.Cmd(
 		path,
-		fmt.Sprintf(
-			"%d/%d", m.list.ActiveRow+1, len(m.list.Children)),
+		fmt.Sprintf("%d/%d", m.list.ActiveRow+1, m.total),
 		len(m.list.Children) > 0 && m.list.Children[m.list.ActiveRow].Staged,
 	)
 }
@@ -79,7 +79,7 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m Model) GetFilesChanged() []row.Model {
+func (m *Model) GetFilesChanged() []row.Model {
 	output, err := git.Exec("status", "--short", "--untracked-files=all")
 	if err != nil {
 		return []row.Model{row.EmptyInitialModel("a files error has occured", m.width)}
@@ -87,6 +87,8 @@ func (m Model) GetFilesChanged() []row.Model {
 
 	fileLogs := strings.Split(string(output), "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
+
+	m.total = len(fileLogs)
 
 	if len(fileLogs) == 0 {
 		return []row.Model{row.EmptyInitialModel("No Changes Made", m.width)}

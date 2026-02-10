@@ -16,6 +16,7 @@ type Model struct {
 	Title  string
 	list   list.Model[branch.Model]
 	remote bool
+	total  int
 
 	width  int
 	height int
@@ -57,12 +58,12 @@ func getHeight(height int) int {
 func (m Model) CokeCmd() tea.Cmd {
 	return cokeline.Cmd(
 		m.list.Children[m.list.ActiveRow].Roller.Name,
-		fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
+		fmt.Sprintf("%d/%d", m.list.ActiveRow+1, m.total),
 		m.list.Children[m.list.ActiveRow].Current,
 	)
 }
 
-func (m Model) getBranches() []branch.Model {
+func (m *Model) getBranches() []branch.Model {
 	args := []string{"branch"}
 
 	if m.remote {
@@ -76,6 +77,9 @@ func (m Model) getBranches() []branch.Model {
 
 	branches := strings.Split(string(output), "\n")
 	branches = branches[:len(branches)-1]
+
+	m.total = len(branches)
+
 	index := 0
 
 	var models []branch.Model

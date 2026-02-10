@@ -13,7 +13,8 @@ import (
 )
 
 type Model struct {
-	list list.Model[log.Model]
+	list  list.Model[log.Model]
+	total int
 
 	width  int
 	height int
@@ -45,13 +46,12 @@ func (m Model) Init() tea.Cmd {
 func (m Model) CokeCmd() tea.Cmd {
 	return cokeline.Cmd(
 		m.list.Children[m.list.ActiveRow].Hash,
-		fmt.Sprint(m.list.ActiveRow+1, "/", len(m.list.Children)),
-
+		fmt.Sprintf("%d/%d", m.list.ActiveRow+1, m.total),
 		m.list.Children[m.list.ActiveRow].Current,
 	)
 }
 
-func (m Model) getCommitLogs() []log.Model {
+func (m *Model) getCommitLogs() []log.Model {
 	output, err := git.Exec("log", `--pretty=format:%h%n%D%n%s`)
 	if err != nil {
 		return []log.Model{}
@@ -61,6 +61,9 @@ func (m Model) getCommitLogs() []log.Model {
 
 	var logs []log.Model
 	commits := strings.Split(output, "\n")
+
+	m.total = len(commits) / 3
+
 	index := 0
 
 	for len(logs) < m.list.NewSize() && index < len(commits) {
