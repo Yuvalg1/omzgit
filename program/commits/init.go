@@ -20,12 +20,7 @@ type Model struct {
 }
 
 func InitialModel(width int, height int, title string) Model {
-	initialList := list.InitialModel(getHeight(height), []log.Model{log.EmptyInitialModel(getWidth(width), "No commits found")}, 0, "No Commits Found")
-
-	initialList.SetCreateChild(func(name string) *log.Model {
-		created := log.EmptyInitialModel(getWidth(width), name)
-		return &created
-	})
+	initialList := list.InitialModel(getHeight(height), []log.Model{}, 0, "No Commits Found")
 	initialList.SetFilterFn(filterFn)
 
 	m := Model{
@@ -35,6 +30,11 @@ func InitialModel(width int, height int, title string) Model {
 		height: getHeight(height),
 	}
 
+	m.list.Children = []log.Model{log.EmptyInitialModel(m.width, "No commits found")}
+	m.list.SetCreateChild(func(name string) *log.Model {
+		created := log.EmptyInitialModel(m.width, name)
+		return &created
+	})
 	return m
 }
 
