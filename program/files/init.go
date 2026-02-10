@@ -108,6 +108,10 @@ func (m *Model) GetFilesChanged() []row.Model {
 		index++
 	}
 
+	if m.list.TextInput.Value() != "" {
+		m.total = len(rows)
+	}
+
 	return rows
 }
 

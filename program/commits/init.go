@@ -85,6 +85,10 @@ func (m *Model) getCommitLogs() []log.Model {
 		index += 3
 	}
 
+	if m.list.TextInput.Value() != "" {
+		m.total = len(logs)
+	}
+
 	return logs
 }
 
