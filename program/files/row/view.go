@@ -15,19 +15,27 @@ func (m Model) View() string {
 		Border(lipgloss.MarkdownBorder(), false, false, false, true).
 		BorderBackground(bg.C[0]).
 		BorderForeground(colors.GetColor(m.Active, gray.C[0], bg.C[2])).
-		Foreground(colors.GetColor(m.Staged, colors.Green, colors.Red)).
+		Foreground(getForeground(m.Conflict, m.Staged)).
 		Width(m.width - 1).
 		Render(m.status + " " +
-			getStrikethroughStyle(m.Active, m.Staged, m.status).Render(m.Roller.View()))
+			m.getStrikethroughStyle().Render(m.Roller.View()))
 }
 
-func getStrikethroughStyle(active bool, staged bool, status string) lipgloss.Style {
+func (m Model) getStrikethroughStyle() lipgloss.Style {
 	current := style.Bg.
-		Background(colors.GetColor(active, bg.C[2], bg.C[0])).
-		Foreground(colors.GetColor(staged, colors.Green, colors.Red))
-	if status == "D" {
+		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
+		Foreground(getForeground(m.Conflict, m.Staged))
+	if m.status == "D" {
 		return current.Strikethrough(true)
 	}
 
 	return current
+}
+
+func getForeground(conflict bool, staged bool) lipgloss.Color {
+	if conflict {
+		return colors.Orange
+	}
+
+	return colors.GetColor(staged, colors.Green, colors.Red)
 }

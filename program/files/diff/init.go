@@ -59,7 +59,7 @@ func getHeight(height int) int {
 func (m Model) getDiffStaged() string {
 	if m.Staged {
 		output, _ := git.Exec("diff", "--staged", m.path)
-		return string(output)
+		return output
 	}
 
 	file, err := os.Stat(m.path)

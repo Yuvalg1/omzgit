@@ -81,12 +81,12 @@ func getHeight(height int) int {
 }
 
 func (m *Model) GetFilesChanged() []row.Model {
-	output, err := git.Exec("status", "--short", "--untracked-files=all")
+	output, err := git.Exec("status", "--porcelain", "--untracked-files=all")
 	if err != nil {
 		return []row.Model{row.EmptyInitialModel("a files error has occured", m.width)}
 	}
 
-	fileLogs := strings.Split(string(output), "\n")
+	fileLogs := strings.Split(output, "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
 
 	m.total = len(fileLogs)

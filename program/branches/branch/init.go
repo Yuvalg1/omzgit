@@ -69,7 +69,7 @@ func (m Model) getLastUpdatedDate() string {
 	}
 
 	layout := "Mon Jan 2 15:04:05 2006 -0700"
-	parsedDate, err := time.Parse(layout, string(output)[:len(string(output))-1])
+	parsedDate, err := time.Parse(layout, output[:len(output)-1])
 	if err != nil {
 		return "---"
 	}
@@ -120,7 +120,7 @@ func (m Model) getBranchDiff() string {
 		return "0 | 0"
 	}
 
-	fields := strings.Fields(string(output))
+	fields := strings.Fields(output)
 	slices.Reverse(fields)
 	trimmed := strings.Join(fields, "|")
 	return trimmed

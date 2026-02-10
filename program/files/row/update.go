@@ -44,11 +44,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "a":
-			if !m.Staged {
+			if !m.Staged && !m.Conflict {
 				_, err := git.Exec("add", m.Roller.Name)
 				m.Staged = err == nil
 			}
-			return m, nil
+
+			var cmd tea.Cmd = nil
+
+			if m.Conflict {
+				cmd = popups.Cmd("discard", "add", m.Roller.Name, func() tea.Cmd {
+					git.Exec("add", m.Roller.Name)
+					return nil
+				})
+			}
+
+			return m, cmd
 
 		case "A":
 			m.Staged = true
@@ -78,6 +88,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "r":
+			if m.Conflict {
+				return m, nil
+			}
+
 			if m.Staged {
 				_, err := git.Exec("reset", "--", m.Roller.Name)
 				m.Staged = err != nil
