@@ -65,6 +65,10 @@ func getPath(fileStr string) string {
 }
 
 func getStatus(fileStr string) string {
+	if fileStr[:2] == "??" {
+		return "U"
+	}
+
 	staged := getStaged(fileStr)
 
 	if staged {
