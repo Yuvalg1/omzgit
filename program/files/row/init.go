@@ -1,6 +1,7 @@
 package row
 
 import (
+	"slices"
 	"strings"
 
 	"omzgit/roller"
@@ -8,22 +9,29 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+var (
+	staged    = []byte{'M', 'A', 'D', 'R', 'C', 'U'}
+	conflicts = []string{"DD", "AU", "UD", "UA", "DU", "AA", "UU"}
+)
+
 type Model struct {
 	Roller roller.Model
 	status string
 
-	Staged bool
-	Active bool
+	Staged   bool
+	Active   bool
+	Conflict bool
 
 	width int
 }
 
 func InitialModel(fileStr string, width int) Model {
 	return Model{
-		Active: false,
-		Staged: getAdded(fileStr),
-		Roller: roller.InitialModel(getWidth(width), getPath(fileStr)),
-		status: getStatus(fileStr),
+		Staged:   getStaged(fileStr),
+		Active:   false,
+		Conflict: slices.Contains(conflicts, fileStr[:2]),
+		Roller:   roller.InitialModel(getWidth(width), getPath(fileStr)),
+		status:   getStatus(fileStr),
 
 		width: getWidth(width),
 	}
@@ -48,8 +56,8 @@ func getWidth(width int) int {
 	return width / 2
 }
 
-func getAdded(fileStr string) bool {
-	return fileStr[0] == 'A' || fileStr[0] == 'M' || fileStr[0] == 'D' || fileStr[0] == 'R'
+func getStaged(fileStr string) bool {
+	return slices.Contains(staged, fileStr[0])
 }
 
 func getPath(fileStr string) string {
@@ -57,23 +65,11 @@ func getPath(fileStr string) string {
 }
 
 func getStatus(fileStr string) string {
-	firstTwoChars := fileStr[:2]
+	staged := getStaged(fileStr)
 
-	if strings.Contains(firstTwoChars, "A") {
-		return "A"
+	if staged {
+		return string(fileStr[0])
+	} else {
+		return string(fileStr[1])
 	}
-
-	if strings.Contains(firstTwoChars, "D") {
-		return "D"
-	}
-
-	if strings.Contains(firstTwoChars, "M") {
-		return "M"
-	}
-
-	if strings.Contains(firstTwoChars, "?") {
-		return "U"
-	}
-
-	return "?"
 }

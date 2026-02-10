@@ -76,7 +76,7 @@ func (m *Model) getBranches() []branch.Model {
 		return []branch.Model{}
 	}
 
-	branches := strings.Split(string(output), "\n")
+	branches := strings.Split(output, "\n")
 	branches = branches[:len(branches)-1]
 
 	m.total = len(branches)
