@@ -54,6 +54,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.Conflict {
 				cmd = popups.Cmd("discard", "add", m.Roller.Name, func() tea.Cmd {
 					git.Exec("add", m.Roller.Name)
+					m.Active = true
 					return nil
 				})
 			}
@@ -88,10 +89,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case "r":
-			if m.Conflict {
-				return m, nil
-			}
-
 			if m.Staged {
 				_, err := git.Exec("reset", "--", m.Roller.Name)
 				m.Staged = err != nil
