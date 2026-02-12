@@ -1,6 +1,8 @@
 package files
 
 import (
+	"slices"
+
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
@@ -85,23 +87,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
 
 		case "A":
-			git.Exec("add", "--all")
+			index := slices.IndexFunc(m.list.Children, func(row row.Model) bool { return row.Conflict })
 
-			var cmds []tea.Cmd
-			cmds = append(cmds, m.CokeCmd())
-
-			res, cmd := m.list.UpdateContent(msg)
-			m.list = res
-			cmds = append(cmds, cmd)
-
-			for index, element := range m.diffs {
-				res, cmd := element.Update(msg)
-				m.diffs[index] = res.(diff.Model)
-
-				cmds = append(cmds, cmd)
+			if index != -1 {
+				return m, popups.Cmd("discard", "add", "All Files", func() tea.Cmd {
+					git.Exec("add", "--all")
+					return m.updateChildren(msg)
+				})
 			}
 
-			return m, tea.Batch(cmds...)
+			return m, tea.Batch(m.updateChildren(msg), m.CokeCmd())
 
 		case "c":
 			return m, popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
@@ -115,8 +110,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "R":
 			git.Exec("reset")
 
-			var cmds []tea.Cmd
-			cmds = append(cmds, m.CokeCmd())
+			cmds := []tea.Cmd{m.CokeCmd()}
 
 			res, cmd := m.list.UpdateContent(msg)
 			m.list = res
@@ -156,4 +150,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+func (m *Model) updateChildren(msg tea.Msg) tea.Cmd {
+	cmds := []tea.Cmd{m.CokeCmd()}
+
+	res, cmd := m.list.UpdateContent(msg)
+	m.list = res
+	cmds = append(cmds, cmd)
+
+	for index, element := range m.diffs {
+		res, cmd := element.Update(msg)
+		m.diffs[index] = res.(diff.Model)
+
+		cmds = append(cmds, cmd)
+	}
+
+	return tea.Batch(cmds...)
 }
