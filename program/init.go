@@ -4,6 +4,7 @@ import (
 	"omzgit/popups/alert"
 	"omzgit/popups/async"
 	"omzgit/popups/commit"
+	"omzgit/popups/conflict"
 	"omzgit/popups/discard"
 	"omzgit/popups/input"
 	"omzgit/popups/reset"
@@ -49,6 +50,9 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 
 	initialReset := reset.InitialModel(getWidth(width), getHeight(height))
 	initialPopups.AddPopup("reset", initialReset)
+
+	initialConflict := conflict.InitialModel(getWidth(width), getHeight(height))
+	initialPopups.AddPopup("conflict", initialConflict)
 
 	return Model{
 		ActiveTab: "Files",
