@@ -39,7 +39,7 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 		filterFn: func(row T, text string) bool {
 			return true
 		},
-		debounceFn: debounce.New(200 * time.Millisecond),
+		debounceFn: debounce.New(300 * time.Millisecond),
 		TextInput:  ti,
 		emptyMsg:   emptyMsg,
 
