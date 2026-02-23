@@ -54,7 +54,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				git.Exec("checkout", "-b", name)
 			})
 
-		case "c":
+		case "c", "enter":
 			output, err := git.Exec("checkout", m.list.GetCurrent().Roller.Name)
 			if err != nil {
 				return m, popups.Cmd("alert", "checkout error", output, func(name string) {})
