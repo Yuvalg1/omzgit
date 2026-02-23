@@ -37,7 +37,7 @@ func (m Model) getContentDimensions() lipgloss.Style {
 		BorderBackground(bg.C[0])
 
 	if m.width > CUTOFF {
-		return lipgloss.NewStyle().Width(m.width/2 - 2).Height(m.height - 1).Inherit(borderStyle)
+		return lipgloss.NewStyle().Width(m.width/2 - 2).Height(m.height - 2).Inherit(borderStyle)
 	}
 
 	return lipgloss.NewStyle().Width(m.width - 2).Height(m.height/2 - 1).Inherit(borderStyle)

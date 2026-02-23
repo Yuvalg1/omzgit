@@ -23,6 +23,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+
+		case "esc":
+			m.visible = false
+			return m, nil
+
 		default:
 			return m, nil
 		}

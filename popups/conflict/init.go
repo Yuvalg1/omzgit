@@ -36,9 +36,9 @@ func getContent(path string) string {
 }
 
 func getWidth(width int) int {
-	return max(width-12, 0)
+	return width
 }
 
 func getHeight(height int) int {
-	return max(height-12, 0)
+	return height
 }
