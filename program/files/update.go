@@ -89,7 +89,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "A":
 			index := slices.IndexFunc(m.list.Children, func(row row.Model) bool { return row.Conflict })
 
-			if index != -1 {
+			if index == -1 {
+				git.Exec("add", "--all")
+			} else {
 				return m, popups.Cmd("discard", "add", "All Files", func() tea.Cmd {
 					git.Exec("add", "--all")
 					return m.updateChildren(msg)
