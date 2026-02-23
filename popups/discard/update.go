@@ -27,7 +27,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.visible = false
 			return m, nil
 
-		case "y", "Y":
+		case "y", "Y", "enter":
 			callbackCmd := m.CallbackFn()
 			if callbackCmd != nil {
 				return m, callbackCmd
