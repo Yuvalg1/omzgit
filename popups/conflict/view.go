@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	CUTOFF       = 40
+	CUTOFF       = 50
 	contentStyle = lipgloss.NewStyle().
 			Border(lipgloss.NormalBorder(), false, true, true).
 			BorderBackground(bg.C[0]).
@@ -44,7 +44,6 @@ func (m Model) getOurContent(width int, height int) string {
 
 	ourStyle := lipgloss.NewStyle().
 		BorderForeground(colors.Orange).
-		Foreground(colors.Orange).
 		Height(height - 1).
 		Width(width - 2).
 		Inherit(contentStyle)
@@ -62,7 +61,6 @@ func (m Model) getTheirContent(width int, height int) string {
 
 	theirStyle := lipgloss.NewStyle().
 		BorderForeground(colors.Aqua).
-		Foreground(colors.Aqua).
 		Height(height - 1).
 		Width(width - 2).
 		Inherit(contentStyle)
