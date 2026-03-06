@@ -40,5 +40,5 @@ func getWidth(width int) int {
 }
 
 func getHeight(height int) int {
-	return height
+	return height - 2
 }
