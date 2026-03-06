@@ -66,13 +66,11 @@ func (m *Model) getContent() { // inConflict is needed for malformed files
 		if strings.HasPrefix(element, "=======") {
 			inOurs = false
 			inTheirs = true
-			m.ours += element + "\n"
 		}
 
 		if strings.HasPrefix(element, ">>>>>>>") {
 			inOurs = false
 			inTheirs = false
-			m.theirs += element + "\n"
 		}
 
 		if !inOurs && !inTheirs {
