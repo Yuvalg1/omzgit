@@ -75,6 +75,11 @@ func (m *Model) getContent() { // inConflict is needed for malformed files
 			m.theirs += element + "\n"
 		}
 
+		if !inOurs && !inTheirs {
+			m.ours += element + "\n"
+			m.theirs += element + "\n"
+		}
+
 		if inOurs {
 			m.ours += element + "\n"
 		}
