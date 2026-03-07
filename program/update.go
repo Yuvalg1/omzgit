@@ -10,6 +10,7 @@ import (
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
+	"omzgit/popups/help"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
 	"omzgit/roller"
@@ -57,7 +58,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case mode.Msg:
 		m.mode = msg.Mode
-		return m, nil
+
+		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
+		m.Tabs[m.ActiveTab] = res
+		return m, cmd
 
 	case tea.KeyMsg:
 		current := m.Popup.GetCurrent()
@@ -233,6 +237,9 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			git.ExecNoOutput("web--browse", url)
 			return nil
 		})
+
+	case "?":
+		return m, popups.Cmd("help", "", "", func() []env.Option { return help.GetEnvOptions(env.Goto) })
 
 	default:
 		return m, nil

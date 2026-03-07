@@ -24,16 +24,8 @@ func (m Model) View() string {
 		lipgloss.NewStyle().Width(m.width-1-lipgloss.Width(title)).AlignHorizontal(lipgloss.Right).Render(rest))
 }
 
-func getColor(current bool) lipgloss.Color {
-	if current {
-		return colors.Yellow
-	}
-
-	return colors.Blue
-}
-
 func (m Model) getTitleStyle() lipgloss.Style {
-	color := getColor(m.Current)
+	color := colors.GetColor(m.Current, colors.Yellow, colors.Blue)
 
 	if m.Active {
 		return lipgloss.NewStyle().Foreground(color).Background(bg.C[2])

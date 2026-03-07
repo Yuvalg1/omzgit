@@ -7,6 +7,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
+	"omzgit/popups/help"
 	"omzgit/program/branches/branch"
 	"omzgit/program/popups"
 	"omzgit/roller"
@@ -117,6 +118,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.Children[m.list.ActiveRow].Active = true
 
 			return m, m.CokeCmd()
+
+		case "?":
+			return m, popups.Cmd("help", "", "", func() []env.Option {
+				return append(help.GetEnvOptions(env.Branches), help.GetEnvOptions(env.Program)...)
+			})
 
 		case env.Branches.Refresh.Msg, env.Branches.Search.Msg:
 			m.list.SetContent(m.getBranches())

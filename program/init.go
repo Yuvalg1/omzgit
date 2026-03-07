@@ -6,6 +6,7 @@ import (
 	"omzgit/popups/commit"
 	"omzgit/popups/conflict"
 	"omzgit/popups/discard"
+	"omzgit/popups/help"
 	"omzgit/popups/input"
 	"omzgit/popups/reset"
 	"omzgit/program/cokeline"
@@ -53,6 +54,9 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 
 	initialConflict := conflict.InitialModel(getWidth(width), getHeight(height))
 	initialPopups.AddPopup("conflict", initialConflict)
+
+	initialHelp := help.InitialModel(getWidth(width), getHeight(height))
+	initialPopups.AddPopup("help", initialHelp)
 
 	return Model{
 		ActiveTab: "Files",
