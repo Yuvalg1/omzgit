@@ -76,9 +76,6 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-		case "enter":
-			return m, nil
-
 		case "esc":
 			m.TextInput.SetValue("")
 

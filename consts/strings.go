@@ -22,5 +22,5 @@ func PadTitle(title string, width int) string {
 	padding := width - len(title) - 4
 	parity := len(title) % 2
 
-	return "┌" + strings.Repeat("─", padding/2) + " " + title + " " + strings.Repeat("─", padding/2+parity) + "┐" + "\n"
+	return "┌" + strings.Repeat("─", padding/2+width%2) + " " + title + " " + strings.Repeat("─", padding/2+parity) + "┐" + "\n"
 }
