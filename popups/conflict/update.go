@@ -1,6 +1,7 @@
 package conflict
 
 import (
+	"omzgit/popups/conflict/content"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,7 +20,29 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
-		return m, nil
+		if m.width > CUTOFF {
+			msg.Width = m.getOurAxis()
+			msg.Height = m.height - 1
+		} else {
+			msg.Width = m.width
+			msg.Height = m.getOurAxis()
+		}
+
+		res1, cmd1 := m.ours.Update(msg)
+		m.ours = res1.(content.Model)
+
+		if m.width > CUTOFF {
+			msg.Width = m.getTheirAxis()
+			msg.Height = m.height - 1
+		} else {
+			msg.Width = m.width
+			msg.Height = m.getTheirAxis()
+		}
+
+		res2, cmd2 := m.theirs.Update(msg)
+		m.theirs = res2.(content.Model)
+
+		return m, tea.Batch(cmd1, cmd2)
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
@@ -31,7 +54,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		default:
-			return m, nil
+			res1, cmd1 := m.ours.Update(msg)
+			m.ours = res1.(content.Model)
+
+			res2, cmd2 := m.theirs.Update(msg)
+			m.theirs = res2.(content.Model)
+
+			return m, tea.Batch(cmd1, cmd2)
 		}
 	}
 

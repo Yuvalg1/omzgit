@@ -8,32 +8,21 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var (
-	CUTOFF       = 50
-	contentStyle = lipgloss.NewStyle().
-			Border(lipgloss.NormalBorder(), false, true, true).
-			BorderBackground(bg.C[0]).
-			Background(bg.C[0])
-)
+var contentStyle = lipgloss.NewStyle().
+	Border(lipgloss.NormalBorder(), false, true, true).
+	BorderBackground(bg.C[0]).
+	Background(bg.C[0])
 
 func (m Model) View() string {
 	if m.width > CUTOFF {
-		our := getOurAxis(m.width)
-		their := getTheirAxis(m.width)
-		inverse := getInverseAxis(m.height - 1)
-
 		return lipgloss.JoinHorizontal(lipgloss.Top,
-			m.getOurContent(our, inverse),
-			m.getTheirContent(their, inverse),
+			m.getOurContent(m.getOurAxis(), m.height-1),
+			m.getTheirContent(m.getTheirAxis(), m.height-1),
 		)
 	} else {
-		our := getOurAxis(m.height - 2)
-		their := getTheirAxis(m.height - 2)
-		inverse := getInverseAxis(m.width)
-
 		return lipgloss.JoinVertical(lipgloss.Top,
-			m.getOurContent(inverse, our),
-			m.getTheirContent(inverse, their))
+			m.getOurContent(m.width, m.getOurAxis()),
+			m.getTheirContent(m.width, m.getTheirAxis()))
 	}
 }
 
@@ -50,7 +39,7 @@ func (m Model) getOurContent(width int, height int) string {
 
 	return startStyle.Render(
 		consts.PadTitle("ours", width) +
-			ourStyle.Render(m.ours),
+			ourStyle.Render(m.ours.View()),
 	)
 }
 
@@ -67,18 +56,6 @@ func (m Model) getTheirContent(width int, height int) string {
 
 	return endStyle.Render(
 		consts.PadTitle("theirs", width) +
-			theirStyle.Render(m.theirs),
+			theirStyle.Render(m.theirs.View()),
 	)
-}
-
-func getOurAxis(size int) int {
-	return size/2 + 1
-}
-
-func getTheirAxis(size int) int {
-	return size/2 - (size+1)%2
-}
-
-func getInverseAxis(size int) int {
-	return size
 }

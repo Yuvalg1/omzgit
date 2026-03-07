@@ -66,7 +66,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "enter":
-			m.Active = !m.Active
 			return m, popups.Cmd("conflict", "", m.Roller.Name, func() tea.Cmd { return nil })
 
 		case "j", "k", "down", "up", "g", "G", "/", "esc":
