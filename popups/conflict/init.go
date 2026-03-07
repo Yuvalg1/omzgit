@@ -105,16 +105,19 @@ func (m *Model) getContent() { // inConflict is needed for malformed files
 		if strings.HasPrefix(element, "<<<<<<< HEAD") {
 			inOurs = true
 			inTheirs = false
+			continue
 		}
 
 		if strings.HasPrefix(element, "=======") {
 			inOurs = false
 			inTheirs = true
+			continue
 		}
 
 		if strings.HasPrefix(element, ">>>>>>>") {
 			inOurs = false
 			inTheirs = false
+			continue
 		}
 
 		if !inOurs && !inTheirs {
