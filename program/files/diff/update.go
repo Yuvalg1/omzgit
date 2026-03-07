@@ -24,7 +24,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			m.Staged = true
-			m.content = m.getDiffStaged()
+			m.content = m.getDiff()
 			return m, nil
 
 		case "r", "R":
@@ -32,11 +32,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			m.Staged = false
-			m.content = m.getDiffStaged()
+			m.content = m.getDiff()
 			return m, nil
 
 		case "j", "k", "up", "down":
-			m.content = m.getDiffStaged()
+			m.content = m.getDiff()
 			return m, nil
 
 		default:
