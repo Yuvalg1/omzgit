@@ -1,8 +1,6 @@
 package diff
 
 import (
-	"os"
-
 	"omzgit/git"
 	"omzgit/program/files/row"
 
@@ -38,7 +36,7 @@ func InitialModel(row row.Model, width int, height int) Model {
 	}
 
 	if row.Active {
-		m.content = m.getDiffStaged()
+		m.content = m.getDiff()
 	}
 
 	return m
@@ -56,25 +54,12 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m Model) getDiffStaged() string {
+func (m Model) getDiff() string {
 	if m.Staged {
 		output, _ := git.Exec("diff", "--staged", m.path)
 		return output
 	}
 
-	file, err := os.Stat(m.path)
-	if err != nil {
-		return "Unstaged File has been deleted."
-	}
-
-	if file.Size() > 100*1000 { // bigger than 100kb
-		return "File size is too big to render."
-	}
-
-	data, err := os.ReadFile(m.path)
-	if err != nil {
-		return "a file reading error has occured"
-	}
-
-	return string(data)
+	output, _ := git.Exec("diff", m.path)
+	return output
 }
