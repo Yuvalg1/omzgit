@@ -113,16 +113,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "O":
 			if m.Conflict {
 				git.Exec("checkout", "--ours", m.Roller.Name)
-				_, err := git.Exec("add", m.Roller.Name)
-				m.Staged = err == nil
+				return m, refresh.Cmd()
 			}
 			return m, nil
 
 		case "T":
 			if m.Conflict {
 				git.Exec("checkout", "--theirs", m.Roller.Name)
-				_, err := git.Exec("add", m.Roller.Name)
-				m.Staged = err == nil
+				return m, refresh.Cmd()
 			}
 			return m, nil
 
