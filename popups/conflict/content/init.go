@@ -5,19 +5,28 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type Conflict struct {
+	Row    int
+	Length int
+}
+
 type Model struct {
-	Content  viewport.Model
-	ours     bool
-	conflict int
+	Content   viewport.Model
+	ours      bool
+	conflicts []Conflict
+
+	activeConflict int
 }
 
 func InitialModel(width int, height int, ours bool) Model {
 	viewport := viewport.New(getWidth(width), getHeight(height))
 
 	return Model{
-		Content:  viewport,
-		ours:     ours,
-		conflict: -1,
+		Content:   viewport,
+		ours:      ours,
+		conflicts: []Conflict{},
+
+		activeConflict: 0,
 	}
 }
 
@@ -35,4 +44,8 @@ func getHeight(height int) int {
 
 func (m *Model) SetContent(content string) {
 	m.Content.SetContent(content)
+}
+
+func (m *Model) AppendConflict(conflict Conflict) {
+	m.conflicts = append(m.conflicts, conflict)
 }

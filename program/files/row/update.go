@@ -66,7 +66,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "enter":
-			return m, popups.Cmd("conflict", "", m.Roller.Name, func() tea.Cmd { return nil })
+			if m.Conflict {
+				return m, popups.Cmd("conflict", "", m.Roller.Name, func() tea.Cmd { return nil })
+			}
+
+			if m.Staged {
+				_, err := git.Exec("reset", "--", m.Roller.Name)
+				m.Staged = err != nil
+			} else {
+				_, err := git.Exec("add", m.Roller.Name)
+				m.Staged = err == nil
+			}
+
+			return m, nil
 
 		case "j", "k", "down", "up", "g", "G", "/", "esc":
 			m.Active = !m.Active
