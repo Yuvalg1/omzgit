@@ -1,6 +1,7 @@
 package discard
 
 import (
+	"omzgit/env"
 	"omzgit/messages/refresh"
 	"omzgit/program/popups"
 
@@ -23,7 +24,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "esc", "n", "N":
+		case "n", "N", "esc":
 			m.visible = false
 			return m, nil
 
@@ -35,7 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.visible = false
 			return m, refresh.Cmd()
 
-		case "ctrl+c", "q":
+		case env.Quit.CtrlC.Msg, env.Quit.Quit.Msg:
 			return m, tea.Quit
 
 		default:

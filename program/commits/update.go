@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strconv"
 
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
@@ -49,7 +50,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-		case "c":
+		case env.Commits.Checkout.Msg:
 			output, err := git.Exec("checkout", m.list.GetCurrent().Hash)
 			if err != nil {
 				return m, popups.Cmd("alert", "Alert!", output, func(name string) {})
@@ -64,7 +65,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.Children[m.list.ActiveRow].Current = true
 			return m, nil
 
-		case "C":
+		case env.Commits.CheckoutForce.Msg:
 			return m, popups.Cmd("discard", "force checkout", m.list.GetCurrent().Hash, func() tea.Cmd {
 				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Hash)
 				if err != nil {
@@ -81,10 +82,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return nil
 			})
 
-		case "r":
+		case env.Commits.Reset.Msg:
 			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
-		case "esc", "/":
+		case env.Commits.Refresh.Msg, env.Commits.Search.Msg:
 			m.list.SetContent(m.getCommitLogs())
 
 			res, cmd := m.list.Update(msg)

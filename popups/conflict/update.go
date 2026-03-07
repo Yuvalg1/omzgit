@@ -1,6 +1,7 @@
 package conflict
 
 import (
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
 	"omzgit/popups/conflict/content"
@@ -55,13 +56,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.visible = false
 			return m, nil
 
-		case "O":
+		case env.Files.Ours.Msg:
 			git.Exec("checkout", "--ours", m.path)
 			git.Exec("add", m.path)
 			m.visible = false
 			return m, refresh.Cmd()
 
-		case "T":
+		case env.Files.Theirs.Msg:
 			git.Exec("checkout", "--theirs", m.path)
 			git.Exec("add", m.path)
 			m.visible = false
