@@ -2,6 +2,7 @@ package commit
 
 import (
 	"omzgit/clipboard"
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
 	"omzgit/program/popups"
@@ -25,10 +26,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if m.textinput.Focused() {
 			switch msg.String() {
-			case "ctrl+c":
+			case env.Quit.CtrlC.Msg:
 				return m, tea.Quit
 
-			case "esc":
+			case env.Quit.Quit.Msg:
 				m.textinput.Blur()
 				return m, nil
 

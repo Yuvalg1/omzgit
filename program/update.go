@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/api"
 	"omzgit/messages/mode"
@@ -80,7 +81,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-		case "f":
+		case env.Program.Fetch.Msg:
 			return m, popups.Cmd("async", "", "fetching", func() tea.Cmd {
 				output, err := git.Exec("fetch")
 				if err == nil {
@@ -90,10 +91,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Fetch Error", output, func() tea.Cmd { return nil })
 			})
 
-		case "g":
+		case env.Program.Goto.Msg:
 			return m, mode.Cmd("goto")
 
-		case "l":
+		case env.Program.Pull.Msg:
 			return m, popups.Cmd("async", "", "pulling", func() tea.Cmd {
 				output, err := git.Exec("pull")
 				if err == nil {
@@ -103,7 +104,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
 			})
 
-		case "L":
+		case env.Program.RebasePull.Msg:
 			return m, popups.Cmd("async", "", "rebase pulling", func() tea.Cmd {
 				output, err := git.Exec("pull", "--rebase")
 				if err == nil {
@@ -113,7 +114,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Rebase Pull Error", output, func() tea.Cmd { return nil })
 			})
 
-		case "p":
+		case env.Program.Push.Msg:
 			return m, popups.Cmd("async", "", "pushing", func() tea.Cmd {
 				_, err := git.Exec("push")
 				if err == nil {
@@ -135,7 +136,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				})
 			})
 
-		case "P":
+		case env.Program.PushForce.Msg:
 			output, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 
 			return m, popups.Cmd("discard", "force push", strings.TrimSpace(output), func() tea.Cmd {
@@ -151,7 +152,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				})
 			})
 
-		case "ctrl+c", "q":
+		case env.Program.CtrlC.Msg, env.Program.Quit.Msg:
 			return m, tea.Quit
 
 		default:
@@ -165,7 +166,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func handlePick(m *Model, key string, msg tea.Msg) (tea.Model, tea.Cmd) {
-	escMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("esc")}
+	escMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(env.Refresh.Msg)}
 
 	m.ActiveTab = key
 
@@ -182,7 +183,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	m.mode = ""
 
 	switch keypress := msg.String(); keypress {
-	case "a":
+	case env.Goto.Actions.Msg:
 		return m, popups.Cmd("async", "", "opening actions", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)
@@ -194,19 +195,19 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return nil
 		})
 
-	case "b":
+	case env.Goto.Branches.Msg:
 		return handlePick(m, "Branches", msg)
-	case "c":
+	case env.Goto.Commits.Msg:
 		return handlePick(m, "Commits", msg)
-	case "f":
+	case env.Goto.Files.Msg:
 		return handlePick(m, "Files", msg)
 
-	case "g":
+	case env.Goto.Top.Msg:
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res
 		return m, cmd
 
-	case "i":
+	case env.Goto.Issues.Msg:
 		return m, popups.Cmd("async", "", "creating issue", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)
@@ -218,7 +219,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return nil
 		})
 
-	case "p":
+	case env.Goto.Prs.Msg:
 		return m, popups.Cmd("async", "", "creating pr", func() tea.Cmd {
 			remote, _ := git.Exec("remote", "get-url", "origin")
 			remote = strings.TrimSpace(remote)

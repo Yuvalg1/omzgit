@@ -2,6 +2,7 @@ package log
 
 import (
 	"omzgit/clipboard"
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
 	"omzgit/program/popups"
@@ -32,11 +33,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "enter":
-			m.Active = true
-			return m, nil
-
-		case "j", "k", "down", "up", "g", "G", "/", "esc":
+		case env.Commits.Down.Msg, env.Commits.Up.AltMsg, env.Commits.Down.Msg, env.Commits.Down.AltMsg, env.Goto.Top.Msg, env.Commits.Bottom.Msg, env.Commits.Search.Msg, env.Commits.Refresh.Msg:
 			m.Active = !m.Active
 			res, cmd := m.Desc.Update(msg)
 
@@ -44,11 +41,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, cmd
 
-		case "y":
+		case env.Commits.Yank.Msg:
 			clipboard.Copy(m.Hash)
 			return m, nil
 
-		case "ctrl+p":
+		case env.Commits.CherryPick.Msg:
 			output, err := git.Exec("cherry-pick", m.Hash)
 			if err != nil {
 				popups.Cmd("alert", "cherry pick error", output, func() {})

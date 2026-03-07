@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"omzgit/clipboard"
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
@@ -43,7 +44,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "a":
+		case env.Files.Add.Msg:
 			if !m.Staged && !m.Conflict {
 				_, err := git.Exec("add", m.Roller.Name)
 				m.Staged = err == nil
@@ -61,11 +62,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, cmd
 
-		case "A":
+		case env.Files.AddAll.Msg:
 			m.Staged = true
 			return m, nil
 
-		case "enter":
+		case env.Files.Enter.Msg:
 			if m.Conflict {
 				return m, popups.Cmd("conflict", "", m.Roller.Name, func() tea.Cmd { return nil })
 			}
@@ -80,7 +81,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, nil
 
-		case "j", "k", "down", "up", "g", "G", "/", "esc":
+		case env.Files.Down.Msg, env.Files.Down.AltMsg, env.Files.Up.Msg, env.Files.Up.AltMsg, env.Goto.Top.Msg, env.Files.Bottom.Msg, env.Files.Search.Msg, env.Files.Refresh.Msg:
 			m.Active = !m.Active
 
 			res, cmd := m.Roller.Update(msg)
@@ -88,7 +89,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, cmd
 
-		case "d":
+		case env.Files.Discard.Msg:
 			parts := strings.Split(m.Roller.Name, "/")
 			return m, popups.Cmd("discard", "discard", "'"+parts[len(parts)-1]+"'", func() tea.Cmd {
 				if m.Staged {
@@ -99,18 +100,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return nil
 			})
 
-		case "r":
+		case env.Files.Reset.Msg:
 			if m.Staged {
 				_, err := git.Exec("reset", "--", m.Roller.Name)
 				m.Staged = err != nil
 			}
 			return m, nil
 
-		case "R":
+		case env.Files.ResetAll.Msg:
 			m.Staged = false
 			return m, nil
 
-		case "O":
+		case env.Files.Ours.Msg:
 			if m.Conflict {
 				git.Exec("checkout", "--ours", m.Roller.Name)
 				git.Exec("add", m.Roller.Name)
@@ -118,7 +119,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "T":
+		case env.Files.Theirs.Msg:
 			if m.Conflict {
 				git.Exec("checkout", "--theirs", m.Roller.Name)
 				git.Exec("add", m.Roller.Name)
@@ -126,7 +127,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "y":
+		case env.Files.Yank.Msg:
 			clipboard.Copy(m.Roller.Name)
 			return m, nil
 

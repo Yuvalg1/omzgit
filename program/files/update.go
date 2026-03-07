@@ -3,6 +3,7 @@ package files
 import (
 	"slices"
 
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
@@ -77,16 +78,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-		case "a", "r":
-			res1, cmd1 := m.list.UpdateCurrent(msg)
-			m.list = res1
-
-			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
-			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
-
-			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
-
-		case "A":
+		case env.Files.AddAll.Msg:
 			index := slices.IndexFunc(m.list.Children, func(row row.Model) bool { return row.Conflict })
 
 			if index == -1 {
@@ -100,16 +92,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(m.updateChildren(msg), m.CokeCmd())
 
-		case "c":
+		case env.Files.Commit.Msg:
 			return m, popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
 
-		case "D":
+		case env.Files.DiscardAll.Msg:
 			return m, popups.Cmd("discard", "discard", "All Files", func() tea.Cmd {
 				git.Exec("reset", "--hard")
 				return nil
 			})
 
-		case "R":
+		case env.Files.ResetAll.Msg:
 			git.Exec("reset")
 
 			cmds := []tea.Cmd{m.CokeCmd()}
@@ -127,7 +119,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(cmds...)
 
-		case "esc", "/":
+		case env.Files.Refresh.Msg, env.Files.Search.Msg:
 			m.list.SetContent(m.GetFilesChanged())
 
 			res1, cmd1 := m.list.Update(msg)

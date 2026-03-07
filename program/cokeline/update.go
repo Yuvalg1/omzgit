@@ -1,6 +1,8 @@
 package cokeline
 
 import (
+	"omzgit/env"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -19,11 +21,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "b":
+		case env.Goto.Branches.Msg:
 			m.Left = "Branches"
-		case "c":
+		case env.Goto.Commits.Msg:
 			m.Left = "Commits"
-		case "f":
+		case env.Goto.Files.Msg:
 			m.Left = "Files"
 		default:
 			return m, nil

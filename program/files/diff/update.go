@@ -1,6 +1,8 @@
 package diff
 
 import (
+	"omzgit/env"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -18,7 +20,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 
-		case "a", "A":
+		case env.Files.Add.Msg, env.Files.AddAll.Msg:
 			if m.Staged {
 				return m, nil
 			}
@@ -27,7 +29,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.content = m.getDiff()
 			return m, nil
 
-		case "r", "R":
+		case env.Files.Reset.Msg, env.Files.ResetAll.Msg:
 			if !m.Staged {
 				return m, nil
 			}
@@ -35,7 +37,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.content = m.getDiff()
 			return m, nil
 
-		case "j", "k", "up", "down":
+		case env.Files.Up.Msg, env.Files.Up.AltMsg, env.Files.Down.Msg, env.Files.Down.AltMsg:
 			m.content = m.getDiff()
 			return m, nil
 

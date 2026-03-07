@@ -2,6 +2,7 @@ package branch
 
 import (
 	"omzgit/clipboard"
+	"omzgit/env"
 	"omzgit/messages/refresh"
 	"omzgit/roller"
 
@@ -30,13 +31,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "enter":
+		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg:
 			m.Active = true
 			m.lastUpdated = m.getLastUpdatedDate()
 			m.diff = m.getBranchDiff()
 			return m, nil
 
-		case "j", "k", "down", "up", "g", "G", "/", "esc":
+		case env.Branches.Down.Msg, env.Branches.Down.AltMsg, env.Branches.Up.Msg, env.Branches.Up.AltMsg, env.Goto.Top.Msg, env.Branches.Bottom.Msg, env.Branches.Search.Msg, env.Branches.Refresh.Msg:
 			m.Active = !m.Active
 			m.lastUpdated = m.getLastUpdatedDate()
 			m.diff = m.getBranchDiff()
@@ -47,7 +48,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, cmd
 
-		case "y":
+		case env.Branches.Yank.Msg:
 			clipboard.Copy(m.Roller.Name)
 			return m, nil
 

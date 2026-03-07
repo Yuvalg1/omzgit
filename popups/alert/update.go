@@ -2,6 +2,7 @@ package alert
 
 import (
 	"omzgit/clipboard"
+	"omzgit/env"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -22,10 +23,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
-		case "ctrl+c", "q":
+		case env.Alert.CtrlC.Msg, env.Alert.Quit.Msg:
 			return m, tea.Quit
 
-		case "y":
+		case env.Alert.Yank.Msg:
 			clipboard.Copy(m.error)
 			m.visible = false
 			return m, nil

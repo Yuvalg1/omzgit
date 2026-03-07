@@ -3,6 +3,7 @@ package branches
 import (
 	"slices"
 
+	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
@@ -49,12 +50,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch keypress := msg.String(); keypress {
 
-		case "b":
+		case env.Branches.CheckoutB.Msg:
 			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) {
 				git.Exec("checkout", "-b", name)
 			})
 
-		case "c", "enter":
+		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg:
 			output, err := git.Exec("checkout", m.list.GetCurrent().Roller.Name)
 			if err != nil {
 				return m, popups.Cmd("alert", "checkout error", output, func(name string) {})
@@ -69,7 +70,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.Children[m.list.ActiveRow].Current = true
 			return m, nil
 
-		case "C":
+		case env.Branches.CheckoutForce.Msg:
 			return m, popups.Cmd("discard", "force checkout", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Roller.Name)
 				if err != nil {
@@ -86,7 +87,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return nil
 			})
 
-		case "d":
+		case env.Branches.Delete.Msg:
 			return m, popups.Cmd("discard", "delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Roller.Name)
 				if err == nil {
@@ -96,7 +97,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Delete Error", output, func(name string) {})
 			})
 
-		case "D":
+		case env.Branches.DeleteForce.Msg:
 			return m, popups.Cmd("discard", "force delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("branch", "-D", m.list.GetCurrent().Roller.Name)
 				if err == nil {
@@ -106,7 +107,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
-		case "o":
+		case env.Branches.Origin.Msg:
 			m.list.TextInput.SetValue("")
 
 			m.remote = !m.remote
@@ -117,7 +118,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, m.CokeCmd()
 
-		case "esc", "/":
+		case env.Branches.Refresh.Msg, env.Branches.Search.Msg:
 			m.list.SetContent(m.getBranches())
 
 			res, cmd := m.list.Update(msg)
