@@ -8,6 +8,7 @@ import (
 	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
+	"omzgit/popups/help"
 	"omzgit/program/commits/log"
 	"omzgit/program/popups"
 	"omzgit/roller"
@@ -84,6 +85,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case env.Commits.Reset.Msg:
 			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
+
+		case "?":
+			return m, popups.Cmd("help", "", "", func() []env.Option {
+				return append(help.GetEnvOptions(env.Commits), help.GetEnvOptions(env.Program)...)
+			})
 
 		case env.Commits.Refresh.Msg, env.Commits.Search.Msg:
 			m.list.SetContent(m.getCommitLogs())

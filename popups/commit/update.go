@@ -29,7 +29,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case env.Quit.CtrlC.Msg:
 				return m, tea.Quit
 
-			case env.Quit.Quit.Msg:
+			case "esc":
 				m.textinput.Blur()
 				return m, nil
 

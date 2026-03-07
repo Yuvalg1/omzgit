@@ -2,8 +2,6 @@ package list
 
 import (
 	"omzgit/default/style"
-
-	"github.com/charmbracelet/lipgloss"
 )
 
 func (m Model[T]) View() string {
@@ -32,5 +30,5 @@ func (m Model[T]) getTextInput() string {
 		return ""
 	}
 
-	return lipgloss.NewStyle().Render("Search " + m.TextInput.View())
+	return "Search " + m.TextInput.View()
 }

@@ -8,6 +8,7 @@ import (
 	"omzgit/lib/list"
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
+	"omzgit/popups/help"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
 	"omzgit/program/popups"
@@ -131,6 +132,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
 
 			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
+
+		case "?":
+			return m, popups.Cmd("help", "", "", func() []env.Option {
+				return append(help.GetEnvOptions(env.Files), help.GetEnvOptions(env.Program)...)
+			})
 
 		default:
 			res1, cmd1 := m.list.Update(msg)
