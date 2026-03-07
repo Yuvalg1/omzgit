@@ -60,6 +60,13 @@ func (m Model) getDiff() string {
 		return output
 	}
 
-	output, _ := git.Exec("diff", m.path)
+	_, err := git.Exec("ls-files", "--error-unmatch", m.path)
+
+	if err == nil {
+		output, _ := git.Exec("diff", "--", m.path)
+		return output
+	}
+
+	output, _ := git.Exec("diff", "--no-index", "/dev/null", m.path)
 	return output
 }
