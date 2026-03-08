@@ -1,7 +1,11 @@
 package list
 
 import (
+	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
 	"omzgit/default/style"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 func (m Model[T]) View() string {
@@ -22,7 +26,15 @@ func (m Model[T]) View() string {
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
 
-	return style.Bg.Height(m.height).Render(m.mode + m.getTextInput() + "\n" + fileStrings)
+	modeStyle := lipgloss.NewStyle().Background(gray.C[2]).Foreground(bg.C[0])
+	endStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(gray.C[2])
+
+	mode := m.mode
+	if mode != "" {
+		mode = " " + mode + " " + endStyle.Render("")
+	}
+
+	return style.Bg.Height(m.height).Render(modeStyle.Render(mode) + style.Bg.Render(m.getTextInput()) + "\n" + fileStrings)
 }
 
 func (m Model[T]) getTextInput() string {
