@@ -154,7 +154,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			m.TextInput.Focus()
 			m.Page = 0
-			return m, tea.Batch(cmd1, cmd2, mode.Cmd("Search"), refresh.Cmd())
+			return m, tea.Batch(cmd1, cmd2, mode.Cmd("SEARCH"), refresh.Cmd())
 
 		default:
 			res, cmd := m.UpdateCurrent(msg)

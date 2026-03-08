@@ -32,10 +32,20 @@ func (m Model) View() string {
 		Padding(0, 1).
 		Render(m.Left)
 
+	firstConnector := lipgloss.NewStyle().
+		Background(colorTones[m.Left][0]).
+		Foreground(bg.C[3]).
+		Render("")
+
 	right := lipgloss.NewStyle().
 		Background(gray.C[1]).
 		Padding(0, 1).
 		Render(m.Right)
+
+	secondConnector := lipgloss.NewStyle().
+		Background(bg.C[3]).
+		Foreground(gray.C[1]).
+		Render("")
 
 	center := lipgloss.NewStyle().
 		Align(lipgloss.Center).
@@ -43,12 +53,21 @@ func (m Model) View() string {
 		Bold(true).
 		Foreground(colorTones[m.Left][semitone]).
 		Padding(0, 1).
-		Width(m.width - lipgloss.Width(left) - lipgloss.Width(right)).
-		Render(consts.TrimRight(m.Center, m.width-lipgloss.Width(left)-lipgloss.Width(right)-2))
+		Width(m.width -
+			lipgloss.Width(left) -
+			lipgloss.Width(firstConnector) -
+			lipgloss.Width(secondConnector) -
+			lipgloss.Width(right)).
+		Render(consts.TrimRight(m.Center,
+			m.width-
+				lipgloss.Width(left)-
+				lipgloss.Width(firstConnector)-
+				lipgloss.Width(secondConnector)-
+				lipgloss.Width(right)-2))
 
 	return lipgloss.NewStyle().
 		Width(m.width).
 		Height(1).
 		Padding(0, 0, 1).
-		Render(left + center + right)
+		Render(left + firstConnector + center + secondConnector + right)
 }

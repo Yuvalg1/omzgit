@@ -82,7 +82,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return pickTab(&m, msg)
 		}
 
-		if m.mode == "Search" {
+		if m.mode == "SEARCH" {
 			res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 			m.Tabs[m.ActiveTab] = res
 			return m, cmd

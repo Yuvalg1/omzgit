@@ -41,9 +41,12 @@ func (m Model) View() string {
 }
 
 func (m Model) renderBranchName() string {
-	return lipgloss.NewStyle().
+	cornerStyle := lipgloss.NewStyle().
+		Background(bg.C[0]).
+		Foreground(colors.Aqua)
+
+	return cornerStyle.Render("") + lipgloss.NewStyle().
 		Background(colors.Aqua).
-		Padding(0, 1).
 		Foreground(bg.C[0]).
-		Render(consts.TrimRight(m.tip, min(len(m.tip), m.width/2-4)))
+		Render(consts.TrimRight(m.tip, min(len(m.tip), m.width/2-4))+" ")
 }

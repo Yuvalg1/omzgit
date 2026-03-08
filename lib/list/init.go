@@ -29,6 +29,7 @@ type Model[T tea.Model] struct {
 func InitialModel[T tea.Model](height int, children []T, initialActive int, emptyMsg string) Model[T] {
 	ti := textinput.New()
 	ti.CharLimit = 20
+	ti.Prompt = ""
 
 	return Model[T]{
 		Children:  children,
