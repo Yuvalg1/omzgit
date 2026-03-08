@@ -22,7 +22,7 @@ func (m Model[T]) View() string {
 
 	fileStrings = fileStrings[:max(len(fileStrings)-1, 0)]
 
-	return style.Bg.Height(m.height).Render(m.getTextInput() + "\n" + fileStrings)
+	return style.Bg.Height(m.height).Render(m.mode + m.getTextInput() + "\n" + fileStrings)
 }
 
 func (m Model[T]) getTextInput() string {
@@ -30,5 +30,5 @@ func (m Model[T]) getTextInput() string {
 		return ""
 	}
 
-	return "Search " + m.TextInput.View()
+	return " " + m.TextInput.View()
 }

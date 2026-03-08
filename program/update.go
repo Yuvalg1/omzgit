@@ -59,9 +59,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case mode.Msg:
 		m.mode = msg.Mode
 
-		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res
-		return m, cmd
+		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
+		m.Tabs[m.ActiveTab] = res1
+
+		res2, cmd2 := m.Popup.Update(msg)
+		m.Popup = res2.(popups.Model[popups.InnerModel])
+
+		return m, tea.Batch(cmd1, cmd2)
 
 	case tea.KeyMsg:
 		current := m.Popup.GetCurrent()
@@ -74,11 +78,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 		}
 
-		if m.mode == "goto" {
+		if m.mode == "GOTO" {
 			return pickTab(&m, msg)
 		}
 
-		if m.mode == "search" {
+		if m.mode == "Search" {
 			res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 			m.Tabs[m.ActiveTab] = res
 			return m, cmd
@@ -96,7 +100,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case env.Program.Goto.Msg:
-			return m, mode.Cmd("goto")
+			return m, mode.Cmd("GOTO")
 
 		case env.Program.Pull.Msg:
 			return m, popups.Cmd("async", "", "pulling", func() tea.Cmd {
@@ -180,12 +184,10 @@ func handlePick(m *Model, key string, msg tea.Msg) (tea.Model, tea.Cmd) {
 	res2, cmd2 := m.cokeline.Update(msg)
 	m.cokeline = res2.(cokeline.Model)
 
-	return m, tea.Batch(cmd1, cmd2)
+	return m, tea.Batch(cmd1, cmd2, mode.Cmd(""))
 }
 
 func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	m.mode = ""
-
 	switch keypress := msg.String(); keypress {
 	case env.Goto.Actions.Msg:
 		return m, popups.Cmd("async", "", "opening actions", func() tea.Cmd {
@@ -196,7 +198,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			url := fmt.Sprintf("%s/actions", remote)
 
 			git.ExecNoOutput("web--browse", url)
-			return nil
+			return mode.Cmd("")
 		})
 
 	case env.Goto.Branches.Msg:
@@ -209,7 +211,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case env.Goto.Top.Msg:
 		res, cmd := m.Tabs[m.ActiveTab].Update(msg)
 		m.Tabs[m.ActiveTab] = res
-		return m, cmd
+		return m, tea.Batch(cmd, mode.Cmd(""))
 
 	case env.Goto.Issues.Msg:
 		return m, popups.Cmd("async", "", "creating issue", func() tea.Cmd {
@@ -220,7 +222,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			url := fmt.Sprintf("%s/issues/new", remote)
 
 			git.ExecNoOutput("web--browse", url)
-			return nil
+			return mode.Cmd("")
 		})
 
 	case env.Goto.Prs.Msg:
@@ -235,13 +237,13 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			url := fmt.Sprintf("%s/compare/%s?expand=1", remote, branch)
 
 			git.ExecNoOutput("web--browse", url)
-			return nil
+			return mode.Cmd("")
 		})
 
 	case "?":
 		return m, popups.Cmd("help", "", "", func() []env.Option { return help.GetEnvOptions(env.Goto) })
 
 	default:
-		return m, nil
+		return m, mode.Cmd("")
 	}
 }

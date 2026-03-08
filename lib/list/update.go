@@ -10,12 +10,6 @@ import (
 
 func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case refresh.Msg:
-		res, cmd := m.UpdateCurrent(msg)
-		m = res
-
-		return m, cmd
-
 	case tea.WindowSizeMsg:
 		previousHeight := m.height
 		m.height = getHeight(msg.Height)
@@ -38,6 +32,10 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Children[m.ActiveRow] = res.(T)
 
 		return m, cmd
+
+	case mode.Msg:
+		m.mode = msg.Mode
+		return m, nil
 
 	case tea.KeyMsg:
 		if m.TextInput.Focused() {
@@ -63,10 +61,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.SetContent(m.Children)
 				m.TextInput.Blur()
 
-				res, cmd := m.Children[0].Update(msg)
-				m.Children[0] = res.(T)
-
-				return m, tea.Batch(cmd, mode.Cmd(""))
+				return m, mode.Cmd("")
 			}
 
 			res, cmd := m.TextInput.Update(msg)
@@ -159,7 +154,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			m.TextInput.Focus()
 			m.Page = 0
-			return m, tea.Batch(cmd1, cmd2, mode.Cmd("search"), refresh.Cmd())
+			return m, tea.Batch(cmd1, cmd2, mode.Cmd("Search"), refresh.Cmd())
 
 		default:
 			res, cmd := m.UpdateCurrent(msg)

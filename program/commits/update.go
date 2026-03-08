@@ -7,6 +7,7 @@ import (
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
+	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/popups/help"
 	"omzgit/program/commits/log"
@@ -40,6 +41,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
 
+		return m, cmd
+
+	case mode.Msg:
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[log.Model])
 		return m, cmd
 
 	case tea.KeyMsg:
