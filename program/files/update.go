@@ -6,6 +6,7 @@ import (
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
+	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/popups/help"
@@ -69,6 +70,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 
 		return m, tea.Batch(cmds...)
+
+	case mode.Msg:
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[row.Model])
+		return m, cmd
 
 	case tea.KeyMsg:
 		if m.list.TextInput.Focused() {

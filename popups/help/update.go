@@ -3,6 +3,7 @@ package help
 import (
 	"omzgit/env"
 	"omzgit/lib/list"
+	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/popups/help/option"
 	"omzgit/program/popups"
@@ -42,6 +43,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		res, cmd := m.list.UpdateCurrent(msg)
 		m.list = res
 
+		return m, cmd
+
+	case mode.Msg:
+		res, cmd := m.list.Update(msg)
+		m.list = res.(list.Model[option.Model])
 		return m, cmd
 
 	case tea.KeyMsg:

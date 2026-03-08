@@ -20,6 +20,7 @@ type Model[T tea.Model] struct {
 
 	TextInput textinput.Model
 	emptyMsg  string
+	mode      string
 
 	innerOffset int
 	height      int
