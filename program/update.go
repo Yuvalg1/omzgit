@@ -6,16 +6,12 @@ import (
 
 	"omzgit/env"
 	"omzgit/git"
-	"omzgit/messages/api"
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
-	"omzgit/messages/tick"
 	"omzgit/popups/help"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
-	"omzgit/roller"
 
-	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -47,14 +43,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		res, cmd := m.cokeline.Update(msg)
 		m.cokeline = res.(cokeline.Model)
 		return m, cmd
-
-	case tick.Msg, refresh.Msg, roller.Msg, popups.Msg, api.Msg, spinner.TickMsg:
-		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
-		m.Tabs[m.ActiveTab] = res1
-
-		res2, cmd2 := m.Popup.Update(msg)
-		m.Popup = res2.(popups.Model[popups.InnerModel])
-		return m, tea.Batch(cmd1, cmd2)
 
 	case mode.Msg:
 		m.mode = msg.Mode
@@ -168,17 +156,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Tabs[m.ActiveTab] = res
 			return m, cmd
 		}
-	}
+	default:
+		res1, cmd1 := m.Tabs[m.ActiveTab].Update(msg)
+		m.Tabs[m.ActiveTab] = res1
 
-	return m, nil
+		res2, cmd2 := m.Popup.Update(msg)
+		m.Popup = res2.(popups.Model[popups.InnerModel])
+		return m, tea.Batch(cmd1, cmd2)
+	}
 }
 
 func handlePick(m *Model, key string, msg tea.Msg) (tea.Model, tea.Cmd) {
-	escMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(env.Refresh.Msg)}
-
 	m.ActiveTab = key
 
-	res1, cmd1 := m.Tabs[m.ActiveTab].Update(escMsg)
+	res1, cmd1 := m.Tabs[m.ActiveTab].Update(refresh.Msg{})
 	m.Tabs[m.ActiveTab] = res1
 
 	res2, cmd2 := m.cokeline.Update(msg)

@@ -19,10 +19,8 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
-		m.list.SetContent(m.getBranches())
-		m.list.GetCurrent().Active = true
-
-		return m, nil
+		snapshot := m.getSnapshot()
+		return m, list.Cmd(func() []branch.Model { return getBranches(snapshot) }, m.list.ActiveRow, "", m.CokeCmd())
 
 	case tea.WindowSizeMsg:
 		m.width = getWidth(msg.Width)
@@ -35,6 +33,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list = res.(list.Model[branch.Model])
 
 		return m, cmd
+
+	case list.Msg[branch.Model]:
+		m.list.Children = msg.Children
+		m.total = msg.Total
+		m.total = len(m.list.Children)
+		m.list.ActiveRow = msg.Active
+		m.list.Children[m.list.ActiveRow].Active = true
+
+		res, cmd := m.list.Update(msg.Msg)
+		m.list = res.(list.Model[branch.Model])
+
+		return m, tea.Batch(cmd, msg.Cmd)
 
 	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
@@ -116,14 +126,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case env.Branches.Origin.Msg:
 			m.list.TextInput.SetValue("")
-
 			m.remote = !m.remote
-			m.list.SetContent(m.getBranches())
 
-			m.list.ActiveRow = min(m.list.ActiveRow, len(m.list.Children))
-			m.list.Children[m.list.ActiveRow].Active = true
-
-			return m, m.CokeCmd()
+			snapshot := m.getSnapshot()
+			return m, list.Cmd(func() []branch.Model { return getBranches(snapshot) }, m.list.ActiveRow, msg, m.CokeCmd())
 
 		case "?":
 			return m, popups.Cmd("help", "", "", func() []env.Option {
@@ -131,7 +137,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case env.Branches.Refresh.Msg, env.Branches.Search.Msg:
-			m.list.SetContent(m.getBranches())
+			m.list.SetContent(getBranches(m.getSnapshot()))
+			m.total = len(m.list.Children)
 
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])

@@ -80,7 +80,7 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m *Model) GetFilesChanged() []row.Model {
+func GetFilesChanged(m snapshot) []row.Model {
 	output, err := git.Exec("status", "--porcelain", "--untracked-files=all")
 	if err != nil {
 		return []row.Model{row.EmptyInitialModel("a files error has occured", m.width)}
@@ -89,8 +89,6 @@ func (m *Model) GetFilesChanged() []row.Model {
 	fileLogs := strings.Split(output, "\n")
 	fileLogs = fileLogs[:len(fileLogs)-1]
 
-	m.total = len(fileLogs)
-
 	if len(fileLogs) == 0 {
 		return []row.Model{row.EmptyInitialModel("No Changes Made", m.width)}
 	}
@@ -98,18 +96,18 @@ func (m *Model) GetFilesChanged() []row.Model {
 	var rows []row.Model
 	index := 0
 
-	for len(rows) < m.list.NewSize() && index < len(fileLogs) {
+	for len(rows) < m.listNewSize && index < len(fileLogs) {
 		row := row.InitialModel(fileLogs[index], m.width)
 
-		if filterFn(row, m.list.TextInput.Value()) {
+		if filterFn(row, m.listTextInputValue) {
 			rows = append(rows, row)
 		}
 
 		index++
 	}
 
-	if m.list.TextInput.Value() != "" {
-		m.total = len(rows)
+	if len(rows) == 0 {
+		rows = append(rows, row.EmptyInitialModel("No Changes Made", m.width))
 	}
 
 	return rows
@@ -131,4 +129,26 @@ func (m Model) getCurrentSplit() []string {
 
 func filterFn(row row.Model, text string) bool {
 	return strings.Contains(strings.ToLower(row.Roller.Name), strings.ToLower(text))
+}
+
+type snapshot struct {
+	total int
+
+	listNewSize        int
+	listTextInputValue string
+
+	width  int
+	height int
+}
+
+func (m Model) getSnapshot() snapshot {
+	return snapshot{
+		total: m.total,
+
+		listNewSize:        m.list.NewSize(),
+		listTextInputValue: m.list.TextInput.Value(),
+
+		width:  m.width,
+		height: m.height,
+	}
 }

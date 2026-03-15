@@ -44,7 +44,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "enter":
 				output, err := git.Exec(m.getCommitString()...)
 				if err == nil {
-					m = InitialModel(m.width, m.height, "commit")
+					m.visible = false
 					return m, refresh.Cmd()
 				}
 
@@ -98,7 +98,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			output, err := git.Exec(m.getCommitString()...)
 			if err == nil {
-				m = InitialModel(m.width, m.height, "commit")
+				m.visible = false
 				return m, refresh.Cmd()
 			}
 

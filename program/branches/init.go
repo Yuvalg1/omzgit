@@ -64,7 +64,7 @@ func (m Model) CokeCmd() tea.Cmd {
 	)
 }
 
-func (m *Model) getBranches() []branch.Model {
+func getBranches(m snapshot) []branch.Model {
 	args := []string{"branch"}
 
 	if m.remote {
@@ -79,23 +79,21 @@ func (m *Model) getBranches() []branch.Model {
 	branches := strings.Split(output, "\n")
 	branches = branches[:len(branches)-1]
 
-	m.total = len(branches)
-
 	index := 0
 
 	var models []branch.Model
-	for len(models) < m.list.NewSize() && index < len(branches) {
+	for len(models) < m.listNewSize && index < len(branches) {
 		branch := branch.InitialModel(m.width, branches[index], getDefaultBranch())
 
-		if filterFn(branch, m.list.TextInput.Value()) {
+		if filterFn(branch, m.listTextInputValue) {
 			models = append(models, branch)
 		}
 
 		index++
 	}
 
-	if m.list.TextInput.Value() != "" {
-		m.total = len(models)
+	if len(models) == 0 {
+		models = append(models, branch.EmptyInitialModel(m.width, getHeight(m.height), "No Branches Found", ""))
 	}
 
 	return models
@@ -112,4 +110,28 @@ func getDefaultBranch() string {
 
 func filterFn(branch branch.Model, text string) bool {
 	return strings.Contains(strings.ToLower(branch.Roller.Name), strings.ToLower(text))
+}
+
+type snapshot struct {
+	remote bool
+	total  int
+
+	listNewSize        int
+	listTextInputValue string
+
+	width  int
+	height int
+}
+
+func (m Model) getSnapshot() snapshot {
+	return snapshot{
+		remote: m.remote,
+		total:  m.total,
+
+		listNewSize:        m.list.NewSize(),
+		listTextInputValue: m.list.TextInput.Value(),
+
+		width:  m.width,
+		height: m.height,
+	}
 }

@@ -60,7 +60,6 @@ func getHeight(height int) int {
 
 func (m *Model[T]) SetContent(children []T) {
 	m.Children = children
-	m.Children = m.getFilteredChildren()
 
 	if len(m.Children) == 0 {
 		m.Children = append(m.Children, *m.createChildFn(m.emptyMsg))
