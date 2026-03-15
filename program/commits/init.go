@@ -51,7 +51,7 @@ func (m Model) CokeCmd() tea.Cmd {
 	)
 }
 
-func (m *Model) getCommitLogs() []log.Model {
+func getCommitLogs(m snapshot) []log.Model {
 	output, err := git.Exec("log", `--pretty=format:%h%n%D%n%s`)
 	if err != nil {
 		return []log.Model{}
@@ -62,11 +62,9 @@ func (m *Model) getCommitLogs() []log.Model {
 	var logs []log.Model
 	commits := strings.Split(output, "\n")
 
-	m.total = len(commits) / 3
-
 	index := 0
 
-	for len(logs) < m.list.NewSize() && index < len(commits) {
+	for len(logs) < m.listNewSize && index < len(commits) {
 		branchesStr := commits[index+1]
 		branchesStr = strings.TrimPrefix(branchesStr, "HEAD -> ")
 
@@ -79,14 +77,14 @@ func (m *Model) getCommitLogs() []log.Model {
 
 		log := log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head))
 
-		if filterFn(log, m.list.TextInput.Value()) {
+		if filterFn(log, m.listTextInputValue) {
 			logs = append(logs, log)
 		}
 		index += 3
 	}
 
-	if m.list.TextInput.Value() != "" {
-		m.total = len(logs)
+	if len(logs) == 0 {
+		logs = append(logs, log.EmptyInitialModel(m.width, "No Changes Made"))
 	}
 
 	return logs
@@ -103,4 +101,26 @@ func getWidth(width int) int {
 
 func getHeight(height int) int {
 	return height - 2
+}
+
+type snapshot struct {
+	total int
+
+	listNewSize        int
+	listTextInputValue string
+
+	width  int
+	height int
+}
+
+func (m Model) getSnapshot() snapshot {
+	return snapshot{
+		total: m.total,
+
+		listNewSize:        m.list.NewSize(),
+		listTextInputValue: m.list.TextInput.Value(),
+
+		width:  m.width,
+		height: m.height,
+	}
 }

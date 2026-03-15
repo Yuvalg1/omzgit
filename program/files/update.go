@@ -21,28 +21,24 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case refresh.Msg:
-		m.list.SetContent(m.GetFilesChanged())
-		m.list.GetCurrent().Active = true
+		snapshot := m.getSnapshot()
+		return m, list.Cmd(func() []row.Model { return GetFilesChanged(snapshot) }, m.list.ActiveRow, "", m.CokeCmd())
 
+	case list.Msg[row.Model]:
+		m.list.Children = msg.Children
+		m.total = msg.Total
+		m.list.ActiveRow = msg.Active
+		m.list.Children[m.list.ActiveRow].Active = true
 		m.diffs = getDiffs(m.list.Children, m.width, m.height)
 
-		return m, nil
+		res, cmd := m.list.Update(msg.Msg)
+		m.list = res.(list.Model[row.Model])
+
+		return m, tea.Batch(cmd, msg.Cmd)
 
 	case tick.Msg:
-		m.list.SetContent(m.GetFilesChanged())
-
-		current := m.list.GetCurrent()
-
-		if current == nil {
-			return m, tick.Cmd(m.list.Children[m.list.ActiveRow].Roller.Offset)
-		}
-
-		res, cmd := m.list.UpdateCurrent(msg)
-		m.list = res
-
-		m.diffs[m.list.ActiveRow] = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
-
-		return m, tea.Batch(cmd, tick.Cmd(m.list.Children[m.list.ActiveRow].Roller.Offset))
+		snapshot := m.getSnapshot()
+		return m, list.Cmd(func() []row.Model { return GetFilesChanged(snapshot) }, m.list.ActiveRow, "", tick.Cmd(m.list.Children[m.list.ActiveRow].Roller.Offset))
 
 	case roller.Msg:
 		res, cmd := m.list.UpdateCurrent(msg)
@@ -127,7 +123,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 
 		case env.Files.Refresh.Msg, env.Files.Search.Msg:
-			m.list.SetContent(m.GetFilesChanged())
+			m.list.SetContent(GetFilesChanged(m.getSnapshot()))
+			m.total = len(m.list.Children)
 
 			res1, cmd1 := m.list.Update(msg)
 			m.list = res1.(list.Model[row.Model])
