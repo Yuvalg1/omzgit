@@ -48,7 +48,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.TextInput.Blur()
 				m.TextInput.SetValue("")
 
-				return m, mode.Cmd("")
+				return m, tea.Batch(refresh.Cmd(), mode.Cmd(""))
 
 			case "down":
 				m.TextInput.SetCursor(len(m.TextInput.Value()))
@@ -78,7 +78,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.Children[m.ActiveRow].Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'g'}})
 			m.Children[m.ActiveRow] = res.(T)
 
-			return m, cmd
+			return m, tea.Batch(cmd, refresh.Cmd())
 
 		case "g":
 			curr := m.ActiveRow
