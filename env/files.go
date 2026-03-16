@@ -16,6 +16,8 @@ type files struct {
 	Up     Option
 	Down   Option
 	Bottom Option
+	PgUp   Option
+	PgDown Option
 
 	Refresh Option
 	Search  Option
@@ -67,6 +69,14 @@ var Files = files{
 		Description: "checkouts --theirs changes in case of conflict",
 	},
 
+	PgUp: Option{
+		Msg:         "pgup",
+		Description: "scrolls up one line in file diff",
+	},
+	PgDown: Option{
+		Msg:         "pgdown",
+		Description: "scrolls down one line in file diff",
+	},
 	Up: Option{
 		Msg:         "up",
 		Description: "highlights previous file",

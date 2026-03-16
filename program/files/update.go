@@ -29,7 +29,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.total = msg.Total
 		m.list.ActiveRow = msg.Active
 		m.list.Children[m.list.ActiveRow].Active = true
-		m.diffs = getDiffs(m.list.Children, m.width, m.height)
+		m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
 		res, cmd := m.list.Update(msg.Msg)
 		m.list = res.(list.Model[row.Model])
@@ -53,19 +53,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		msg.Width = getWidth(msg.Width)
 		msg.Height = getHeight(msg.Height)
 
-		var cmds []tea.Cmd
-		for index, element := range m.diffs {
-			res, cmd := element.Update(msg)
-			m.diffs[index] = res.(diff.Model)
-
-			cmds = append(cmds, cmd)
-		}
+		m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
 		res, cmd := m.list.Update(msg)
 		m.list = res.(list.Model[row.Model])
-		cmds = append(cmds, cmd)
 
-		return m, tea.Batch(cmds...)
+		return m, cmd
 
 	case mode.Msg:
 		res, cmd := m.list.Update(msg)
@@ -107,48 +100,42 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Files.ResetAll.Msg:
 			git.Exec("reset")
 
-			cmds := []tea.Cmd{m.CokeCmd()}
+			res1, cmd1 := m.list.UpdateContent(msg)
+			m.list = res1
 
-			res, cmd := m.list.UpdateContent(msg)
-			m.list = res
-			cmds = append(cmds, cmd)
+			res2, cmd2 := m.diff.Update(msg)
+			m.diff = res2.(diff.Model)
 
-			for index, element := range m.diffs {
-				res, cmd := element.Update(msg)
-				m.diffs[index] = res.(diff.Model)
-
-				cmds = append(cmds, cmd)
-			}
-
-			return m, tea.Batch(cmds...)
+			return m, tea.Batch(cmd1, cmd2)
 
 		case env.Files.Refresh.Msg, env.Files.Search.Msg:
 			m.list.SetContent(GetFilesChanged(m.getSnapshot()))
 			m.total = len(m.list.Children)
 
-			res1, cmd1 := m.list.Update(msg)
-			m.list = res1.(list.Model[row.Model])
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[row.Model])
 
-			m.diffs = getDiffs(m.list.Children, m.width, m.height)
+			m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
-			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
-			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
-
-			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
+			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "?":
 			return m, popups.Cmd("help", "", "", func() []env.Option {
 				return append(help.GetEnvOptions(env.Files), help.GetEnvOptions(env.Program)...)
 			})
 
+		case env.Files.PgDown.Msg, env.Files.PgUp.Msg:
+			res, cmd := m.diff.Update(msg)
+			m.diff = res.(diff.Model)
+			return m, cmd
+
 		default:
-			res1, cmd1 := m.list.Update(msg)
-			m.list = res1.(list.Model[row.Model])
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[row.Model])
 
-			res2, cmd2 := m.diffs[m.list.ActiveRow].Update(msg)
-			m.diffs[m.list.ActiveRow] = res2.(diff.Model)
+			m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
 
-			return m, tea.Batch(cmd1, cmd2, m.CokeCmd())
+			return m, tea.Batch(cmd, m.CokeCmd())
 		}
 	}
 
@@ -156,18 +143,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) updateChildren(msg tea.Msg) tea.Cmd {
-	cmds := []tea.Cmd{m.CokeCmd()}
+	res1, cmd1 := m.list.UpdateContent(msg)
+	m.list = res1
 
-	res, cmd := m.list.UpdateContent(msg)
-	m.list = res
-	cmds = append(cmds, cmd)
+	res2, cmd2 := m.diff.Update(msg)
+	m.diff = res2.(diff.Model)
 
-	for index, element := range m.diffs {
-		res, cmd := element.Update(msg)
-		m.diffs[index] = res.(diff.Model)
-
-		cmds = append(cmds, cmd)
-	}
-
-	return tea.Batch(cmds...)
+	return tea.Batch(cmd1, cmd2)
 }

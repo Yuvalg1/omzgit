@@ -14,5 +14,5 @@ func (m Model) View() string {
 		BorderForeground(bg.C[4]).
 		Height(m.height).Width(0).Render("")
 
-	return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), middle, m.diffs[m.list.ActiveRow].View())
+	return lipgloss.JoinHorizontal(lipgloss.Top, m.list.View(), middle, m.diff.View())
 }
