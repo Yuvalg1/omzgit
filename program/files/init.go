@@ -16,7 +16,7 @@ import (
 
 type Model struct {
 	list  list.Model[row.Model]
-	diffs []diff.Model
+	diff  diff.Model
 	total int
 
 	height int
@@ -43,15 +43,16 @@ func InitialModel(width int, height int) Model {
 	initialList.SetFilterFn(filterFn)
 
 	m := Model{
-		list:  initialList,
-		diffs: []diff.Model{},
+		list: initialList,
+		diff: diff.Model{},
 
 		width:  tWidth,
 		height: tHeight,
 	}
 
 	emptyRow := row.EmptyInitialModel("No Files Found", m.width)
-	m.diffs = []diff.Model{diff.InitialModel(emptyRow, m.width, m.height)}
+	m.list.Children = []row.Model{emptyRow}
+	m.diff = diff.InitialModel(emptyRow, m.width, m.height)
 	m.list.SetCreateChild(func(name string) *row.Model {
 		created := row.EmptyInitialModel("No Files Found", m.width)
 		return &created
@@ -111,16 +112,6 @@ func GetFilesChanged(m snapshot) []row.Model {
 	}
 
 	return rows
-}
-
-func getDiffs(files []row.Model, width int, height int) []diff.Model {
-	var diffs []diff.Model
-
-	for _, element := range files {
-		diffs = append(diffs, diff.InitialModel(element, width, height))
-	}
-
-	return diffs
 }
 
 func (m Model) getCurrentSplit() []string {
