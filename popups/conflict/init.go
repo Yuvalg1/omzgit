@@ -67,7 +67,7 @@ func (m Model) GetVisible() bool {
 	return m.visible
 }
 
-func (m *Model) getContent() { // inConflict is needed for malformed files
+func (m *Model) getContent() {
 	if m.width > CUTOFF {
 		m.ours = content.InitialModel(m.getOurAxis(), m.height-1, true)
 		m.theirs = content.InitialModel(m.getTheirAxis(), m.height-1, false)

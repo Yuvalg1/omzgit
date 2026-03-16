@@ -29,7 +29,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.total = msg.Total
 		m.list.ActiveRow = msg.Active
 		m.list.Children[m.list.ActiveRow].Active = true
-		m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
+
+		width, height := m.getDiffAxis()
+		m.diff = diff.InitialModel(*m.list.GetCurrent(), width, height)
 
 		res, cmd := m.list.Update(msg.Msg)
 		m.list = res.(list.Model[row.Model])
@@ -50,10 +52,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
-		msg.Width = getWidth(msg.Width)
-		msg.Height = getHeight(msg.Height)
+		dWidth, dHeight := m.getDiffAxis()
+		m.diff = diff.InitialModel(*m.list.GetCurrent(), dWidth, dHeight)
 
-		m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
+		lWidth, lHeight := m.getFilesAxis()
+		msg.Width = lWidth
+		msg.Height = lHeight
 
 		res, cmd := m.list.Update(msg)
 		m.list = res.(list.Model[row.Model])
@@ -115,7 +119,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[row.Model])
 
-			m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
+			width, height := m.getDiffAxis()
+			m.diff = diff.InitialModel(*m.list.GetCurrent(), width, height)
 
 			return m, tea.Batch(cmd, m.CokeCmd())
 
@@ -133,7 +138,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[row.Model])
 
-			m.diff = diff.InitialModel(*m.list.GetCurrent(), m.width, m.height)
+			width, height := m.getDiffAxis()
+			m.diff = diff.InitialModel(*m.list.GetCurrent(), width, height)
 
 			return m, tea.Batch(cmd, m.CokeCmd())
 		}

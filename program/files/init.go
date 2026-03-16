@@ -14,6 +14,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+var CUTOFF = 50
+
 type Model struct {
 	list  list.Model[row.Model]
 	diff  diff.Model
@@ -35,10 +37,7 @@ func (m Model) CokeCmd() tea.Cmd {
 }
 
 func InitialModel(width int, height int) Model {
-	tWidth := getWidth(width)
-	tHeight := getHeight(height)
-
-	initialList := list.InitialModel(tHeight, []row.Model{}, 0, "No Files Found")
+	initialList := list.InitialModel(getHeight(height), []row.Model{}, 0, "No Files Found")
 
 	initialList.SetFilterFn(filterFn)
 
@@ -46,8 +45,8 @@ func InitialModel(width int, height int) Model {
 		list: initialList,
 		diff: diff.Model{},
 
-		width:  tWidth,
-		height: tHeight,
+		width:  getWidth(width),
+		height: getHeight(height),
 	}
 
 	emptyRow := row.EmptyInitialModel("No Files Found", m.width)
@@ -79,6 +78,20 @@ func getWidth(width int) int {
 
 func getHeight(height int) int {
 	return height - 2
+}
+
+func (m Model) getFilesAxis() (int, int) {
+	if m.width > CUTOFF {
+		return m.width / 2, m.height
+	}
+	return m.width, m.height / 2
+}
+
+func (m Model) getDiffAxis() (int, int) {
+	if m.width > CUTOFF {
+		return m.width/2 - (m.width+1)%2, m.height
+	}
+	return m.width, m.height/2 - (m.height+1)%2
 }
 
 func GetFilesChanged(m snapshot) []row.Model {
@@ -133,13 +146,14 @@ type snapshot struct {
 }
 
 func (m Model) getSnapshot() snapshot {
+	width, height := m.getFilesAxis()
 	return snapshot{
 		total: m.total,
 
 		listNewSize:        m.list.NewSize(),
 		listTextInputValue: m.list.TextInput.Value(),
 
-		width:  m.width,
-		height: m.height,
+		width:  width,
+		height: height,
 	}
 }

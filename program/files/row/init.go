@@ -53,7 +53,7 @@ func (m Model) Init() tea.Cmd {
 }
 
 func getWidth(width int) int {
-	return width / 2
+	return width
 }
 
 func getStaged(fileStr string) bool {
