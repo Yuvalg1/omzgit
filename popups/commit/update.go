@@ -43,8 +43,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "enter":
 				output, err := git.Exec(m.getCommitString()...)
+				m.textinput.Blur()
+				m.moreOptions = false
+				m.commitMessageType = "-m"
+
 				if err == nil {
 					m.visible = false
+					m.textinput.SetValue("")
 					return m, refresh.Cmd()
 				}
 
