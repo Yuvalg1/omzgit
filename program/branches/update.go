@@ -38,7 +38,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.Children = msg.Children
 		m.total = msg.Total
 		m.total = len(m.list.Children)
-		m.list.ActiveRow = msg.Active
+		m.list.ActiveRow = min(len(m.list.Children)-1, msg.Active)
 		m.list.Children[m.list.ActiveRow].Active = true
 
 		res, cmd := m.list.Update(msg.Msg)
