@@ -27,10 +27,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "n":
 			m.index = (m.index + 1) % m.sum
+			m.Refresh()
 			return m, nil
 
 		case "N":
 			m.index = (m.index - 1 + m.sum) % m.sum
+			m.Refresh()
 			return m, nil
 
 		case "pgdown":
