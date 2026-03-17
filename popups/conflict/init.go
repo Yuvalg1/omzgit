@@ -106,6 +106,7 @@ func (m *Model) getContent() {
 			m.theirs.Append(theirChunk)
 
 			ourChunk = chunk.InitialModel(true, false, "", true, ourWidth)
+			theirChunk = chunk.InitialModel(false, false, "", false, ourWidth)
 
 			continue
 		}
@@ -115,8 +116,6 @@ func (m *Model) getContent() {
 			inTheirs = true
 
 			m.ours.Append(ourChunk)
-
-			ourChunk = chunk.InitialModel(false, false, "", true, ourWidth)
 			theirChunk = chunk.InitialModel(true, false, "", false, theirWidth)
 
 			continue
