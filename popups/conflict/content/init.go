@@ -1,6 +1,8 @@
 package content
 
 import (
+	"fmt"
+
 	"omzgit/popups/conflict/chunk"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -46,8 +48,8 @@ func (m *Model) Append(chunk chunk.Model) {
 func (m *Model) Refresh() {
 	content := ""
 
-	for _, element := range m.conflicts {
-		content += element.View()
+	for index, element := range m.conflicts {
+		content += fmt.Sprintf("%d", index) + element.View()
 	}
 	m.Content.SetContent(content)
 }
