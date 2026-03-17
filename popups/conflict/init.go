@@ -104,7 +104,7 @@ func (m *Model) getContent() {
 			m.theirs.Append(theirChunk)
 
 			ourChunk = chunk.InitialModel(true, true, ourWidth)
-			theirChunk = chunk.InitialModel(false, false, ourWidth)
+			theirChunk = chunk.InitialModel(false, false, theirWidth)
 
 			continue
 		}
