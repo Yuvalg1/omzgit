@@ -1,19 +1,16 @@
 package content
 
 import (
+	"omzgit/popups/conflict/chunk"
+
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type Conflict struct {
-	Row    int
-	Length int
-}
-
 type Model struct {
 	Content   viewport.Model
 	ours      bool
-	conflicts []Conflict
+	conflicts []chunk.Model
 
 	activeConflict int
 }
@@ -24,7 +21,7 @@ func InitialModel(width int, height int, ours bool) Model {
 	return Model{
 		Content:   viewport,
 		ours:      ours,
-		conflicts: []Conflict{},
+		conflicts: []chunk.Model{},
 
 		activeConflict: 0,
 	}
@@ -42,10 +39,15 @@ func getHeight(height int) int {
 	return height - 1
 }
 
-func (m *Model) SetContent(content string) {
-	m.Content.SetContent(content)
+func (m *Model) Append(chunk chunk.Model) {
+	m.conflicts = append(m.conflicts, chunk)
 }
 
-func (m *Model) AppendConflict(conflict Conflict) {
-	m.conflicts = append(m.conflicts, conflict)
+func (m Model) Refresh() {
+	content := ""
+
+	for _, element := range m.conflicts {
+		content += element.View()
+	}
+	m.Content.SetContent(content)
 }
