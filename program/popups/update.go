@@ -3,6 +3,7 @@ package popups
 import (
 	"omzgit/messages/api"
 	"omzgit/messages/mode"
+	"omzgit/popups/conflict/content"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -27,7 +28,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmd
 
-	case api.Msg:
+	case api.Msg, mode.Msg, content.Msg:
 		res, cmd := m.Popups[m.current].Update(msg)
 		m.Popups[m.current] = res.(T)
 
@@ -40,11 +41,6 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		}
 		return m, nil
-
-	case mode.Msg:
-		res, cmd := m.Popups[m.current].Update(msg)
-		m.Popups[m.current] = res.(T)
-		return m, cmd
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {

@@ -4,20 +4,17 @@ import (
 	"os"
 	"strings"
 
-	"omzgit/default/colors"
-	"omzgit/default/colors/bg"
+	"omzgit/popups/conflict/chunk"
 	"omzgit/popups/conflict/content"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 var CUTOFF = 50
 
 type Model struct {
-	path     string
-	visible  bool
-	conflict int
+	path    string
+	visible bool
 
 	ours   content.Model
 	theirs content.Model
@@ -29,8 +26,6 @@ type Model struct {
 func InitialModel(width int, height int) Model {
 	return Model{
 		visible: false,
-		ours:    content.InitialModel(width, height, true),
-		theirs:  content.InitialModel(width, height, false),
 
 		width:  width,
 		height: height,
@@ -68,39 +63,129 @@ func (m Model) GetVisible() bool {
 }
 
 func (m *Model) getContent() {
+	m.ours.Content.SetContent("")
+	m.theirs.Content.SetContent("")
+
 	ourWidth, ourHeight := m.getOurAxis()
 	m.ours = content.InitialModel(ourWidth, ourHeight, true)
 
 	theirWidth, theirHeight := m.getTheirAxis()
 	m.theirs = content.InitialModel(theirWidth, theirHeight, false)
 
-	ourContent := ""
-	theirContent := ""
-
 	file, err := os.Stat(m.path)
 	if err != nil {
-		ourContent = "An error has occured when reading file contents."
-		theirContent = "please try again later, or perhaps another file."
+		m.ours.Content.SetContent("An error has occured when reading file contents.")
+		m.theirs.Content.SetContent("please try again later, or perhaps another file.")
+		return
 	}
 
 	if file.Size() > 100*1000 { // bigger than 100kb
-		ourContent = "File size is too big to render."
-		theirContent = "Yeah, what ours said"
+		m.ours.Content.SetContent("File size is too big to render.")
+		m.theirs.Content.SetContent("Yeah, what ours said")
+		return
 	}
 
-	data, err := os.ReadFile(m.path)
+	data, _ := os.ReadFile(m.path)
 	rows := strings.Split(string(data), "\n")
+	rows = rows[:len(rows)-1]
+
+	ourChunk := chunk.InitialModel(false, true, ourWidth)
+	theirChunk := chunk.InitialModel(false, false, theirWidth)
 
 	inOurs := false
 	inTheirs := false
 
-	ourRowStyle := lipgloss.NewStyle().Width(m.ours.Content.Width)
-	theirRowStyle := lipgloss.NewStyle().Width(m.theirs.Content.Width)
-	greenStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Green)
-	redStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Red)
+	for _, element := range rows {
+		if strings.HasPrefix(element, "<<<<<<< HEAD") {
+			inOurs = true
+			inTheirs = false
+
+			m.ours.Append(ourChunk)
+			m.theirs.Append(theirChunk)
+
+			ourChunk = chunk.InitialModel(true, true, ourWidth)
+			theirChunk = chunk.InitialModel(false, false, theirWidth)
+
+			continue
+		}
+
+		if strings.HasPrefix(element, "=======") {
+			inOurs = false
+			inTheirs = true
+
+			m.ours.Append(ourChunk)
+			theirChunk = chunk.InitialModel(true, false, theirWidth)
+
+			continue
+		}
+
+		if strings.HasPrefix(element, ">>>>>>>") {
+			inOurs = false
+			inTheirs = false
+
+			m.theirs.Append(theirChunk)
+
+			ourChunk = chunk.InitialModel(false, true, ourWidth)
+			theirChunk = chunk.InitialModel(false, false, theirWidth)
+
+			continue
+		}
+
+		if !inOurs && !inTheirs {
+			ourChunk.Append(element)
+			theirChunk.Append(element)
+		}
+
+		if inOurs {
+			ourChunk.Append(element)
+		}
+
+		if inTheirs {
+			theirChunk.Append(element)
+		}
+
+	}
+
+	if ourChunk.Content != "" {
+		m.ours.Append(ourChunk)
+	}
+
+	if theirChunk.Content != "" {
+		m.theirs.Append(theirChunk)
+	}
+
+	m.ours.Refresh()
+	m.theirs.Refresh()
+}
+
+func (m *Model) resolve(index int, ours bool) {
+	file, err := os.Stat(m.path)
+	if err != nil {
+		return
+	}
+
+	if file.Size() > 100*1000 { // bigger than 100kb
+		return
+	}
+
+	data, _ := os.ReadFile(m.path)
+	rows := strings.Split(string(data), "\n")
+	rows = rows[:len(rows)-1]
+
+	content := ""
+	conflict := -1
+
+	inOurs := false
+	inTheirs := false
 
 	for _, element := range rows {
 		if strings.HasPrefix(element, "<<<<<<< HEAD") {
+			conflict++
+
+			if conflict != index {
+				content += element + "\n"
+			}
+
 			inOurs = true
 			inTheirs = false
 			continue
@@ -109,29 +194,40 @@ func (m *Model) getContent() {
 		if strings.HasPrefix(element, "=======") {
 			inOurs = false
 			inTheirs = true
+
+			if conflict != index {
+				content += element + "\n"
+			}
+
 			continue
 		}
 
 		if strings.HasPrefix(element, ">>>>>>>") {
 			inOurs = false
 			inTheirs = false
+
+			if conflict != index {
+				content += element + "\n"
+			}
+
 			continue
 		}
 
 		if !inOurs && !inTheirs {
-			ourContent += ourRowStyle.Width(m.ours.Content.Width).Render(element) + "\n"
-			theirContent += theirRowStyle.Width(m.theirs.Content.Width).Render(element) + "\n"
+			content += element + "\n"
 		}
 
-		if inOurs {
-			ourContent += redStyle.Width(m.ours.Content.Width).Render(ourRowStyle.Render(element)) + "\n"
+		if inOurs && (conflict != index || ours) {
+			content += element + "\n"
 		}
 
-		if inTheirs {
-			theirContent += greenStyle.Width(m.theirs.Content.Width).Render(theirRowStyle.Render(element)) + "\n"
+		if inTheirs && (conflict != index || !ours) {
+			content += element + "\n"
 		}
-
 	}
-	m.ours.SetContent(ourContent)
-	m.theirs.SetContent(theirContent)
+
+	os.WriteFile(m.path, []byte(content), 0o644)
+	m.getContent()
+	m.ours.Refresh()
+	m.theirs.Refresh()
 }
