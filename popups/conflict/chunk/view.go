@@ -15,5 +15,5 @@ func (m Model) View() string {
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 		Foreground(colors.GetColor(m.Conflict, ourColor, gray.C[2])).
 		Width(m.width).
-		Render("AAAAA" + m.content)
+		Render(m.content)
 }
