@@ -55,7 +55,7 @@ func (m *Model) Refresh() {
 			sum++
 		}
 
-		if m.index-1 == sum {
+		if m.index == sum-1 {
 			element.Active = true
 		}
 		content += element.View() + "\n"
