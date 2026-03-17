@@ -39,8 +39,6 @@ func (m Model) CokeCmd() tea.Cmd {
 func InitialModel(width int, height int) Model {
 	initialList := list.InitialModel(getHeight(height), []row.Model{}, 0, "No Files Found")
 
-	initialList.SetFilterFn(filterFn)
-
 	m := Model{
 		list: initialList,
 		diff: diff.Model{},
@@ -111,10 +109,10 @@ func GetFilesChanged(m snapshot) []row.Model {
 	index := 0
 
 	for len(rows) < m.listNewSize && index < len(fileLogs) {
-		row := row.InitialModel(fileLogs[index], m.width)
+		path := getPath(fileLogs[index])
 
-		if filterFn(row, m.listTextInputValue) {
-			rows = append(rows, row)
+		if filterFn(path, m.listTextInputValue) {
+			rows = append(rows, row.InitialModel(fileLogs[index], m.width))
 		}
 
 		index++
@@ -131,8 +129,12 @@ func (m Model) getCurrentSplit() []string {
 	return strings.Split(m.list.GetCurrent().Roller.Name, "/")
 }
 
-func filterFn(row row.Model, text string) bool {
-	return strings.Contains(strings.ToLower(row.Roller.Name), strings.ToLower(text))
+func getPath(fileStr string) string {
+	return strings.Split(fileStr[2:], " ")[1]
+}
+
+func filterFn(path string, text string) bool {
+	return strings.Contains(path, strings.ToLower(text))
 }
 
 type snapshot struct {

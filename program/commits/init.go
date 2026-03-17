@@ -22,7 +22,6 @@ type Model struct {
 
 func InitialModel(width int, height int, title string) Model {
 	initialList := list.InitialModel(getHeight(height), []log.Model{}, 0, "No Commits Found")
-	initialList.SetFilterFn(filterFn)
 
 	m := Model{
 		list: initialList,
@@ -75,10 +74,8 @@ func getCommitLogs(m snapshot) []log.Model {
 		}
 		desc := commits[index+2]
 
-		log := log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head))
-
-		if filterFn(log, m.listTextInputValue) {
-			logs = append(logs, log)
+		if filterFn(hash, desc, m.listTextInputValue) {
+			logs = append(logs, log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head)))
 		}
 		index += 3
 	}
@@ -90,9 +87,9 @@ func getCommitLogs(m snapshot) []log.Model {
 	return logs
 }
 
-func filterFn(row log.Model, text string) bool {
-	return strings.Contains(strings.ToLower(row.Hash), strings.ToLower(text)) ||
-		strings.Contains(strings.ToLower(row.Desc.Name), strings.ToLower(text))
+func filterFn(hash string, desc string, text string) bool {
+	return strings.Contains(strings.ToLower(hash), strings.ToLower(text)) ||
+		strings.Contains(strings.ToLower(desc), strings.ToLower(text))
 }
 
 func getWidth(width int) int {

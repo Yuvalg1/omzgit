@@ -15,7 +15,6 @@ type Model[T tea.Model] struct {
 	Page int
 
 	createChildFn func(name string) *T
-	filterFn      func(row T, text string) bool
 	debounceFn    func(f func())
 
 	TextInput textinput.Model
@@ -38,12 +37,9 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 		Page: 0,
 
 		createChildFn: func(name string) *T { return nil },
-		filterFn: func(row T, text string) bool {
-			return true
-		},
-		debounceFn: debounce.New(300 * time.Millisecond),
-		TextInput:  ti,
-		emptyMsg:   emptyMsg,
+		debounceFn:    debounce.New(300 * time.Millisecond),
+		TextInput:     ti,
+		emptyMsg:      emptyMsg,
 
 		innerOffset: min(getHeight(height)-2, initialActive),
 		height:      getHeight(height),
@@ -91,10 +87,6 @@ func (m Model[T]) UpdateCurrent(msg tea.Msg) (Model[T], tea.Cmd) {
 
 func (m *Model[T]) SetCreateChild(createChildFn func(name string) *T) {
 	m.createChildFn = createChildFn
-}
-
-func (m *Model[T]) SetFilterFn(fn func(row T, text string) bool) {
-	m.filterFn = fn
 }
 
 func (m Model[T]) NewSize() int {
