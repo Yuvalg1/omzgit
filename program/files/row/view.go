@@ -39,3 +39,5 @@ func getForeground(conflict bool, staged bool) lipgloss.Color {
 
 	return colors.GetColor(staged, colors.Green, colors.Red)
 }
+
+func test1() {}

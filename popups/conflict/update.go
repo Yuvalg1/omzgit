@@ -23,24 +23,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = getWidth(msg.Width)
 		m.height = getHeight(msg.Height)
 
-		if m.width > CUTOFF {
-			msg.Width = m.getOurAxis()
-			msg.Height = m.height - 1
-		} else {
-			msg.Width = m.width
-			msg.Height = m.getOurAxis()
-		}
+		ourWidth, ourHeight := m.getOurAxis()
+		msg.Width = ourWidth
+		msg.Height = ourHeight
 
 		res1, cmd1 := m.ours.Update(msg)
 		m.ours = res1.(content.Model)
 
-		if m.width > CUTOFF {
-			msg.Width = m.getTheirAxis()
-			msg.Height = m.height - 1
-		} else {
-			msg.Width = m.width
-			msg.Height = m.getTheirAxis()
-		}
+		theirWidth, theirHeight := m.getTheirAxis()
+		msg.Width = theirWidth
+		msg.Height = theirHeight
 
 		res2, cmd2 := m.theirs.Update(msg)
 		m.theirs = res2.(content.Model)

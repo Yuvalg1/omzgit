@@ -14,15 +14,19 @@ var contentStyle = lipgloss.NewStyle().
 	Background(bg.C[0])
 
 func (m Model) View() string {
+	ourWidth, ourHeight := m.getOurAxis()
+	theirWidth, theirHeight := m.getTheirAxis()
+
 	if m.width > CUTOFF {
 		return lipgloss.JoinHorizontal(lipgloss.Top,
-			m.getOurContent(m.getOurAxis(), m.height-1),
-			m.getTheirContent(m.getTheirAxis(), m.height-1),
+			m.getOurContent(ourWidth, ourHeight),
+			m.getTheirContent(theirWidth, theirHeight),
 		)
 	} else {
 		return lipgloss.JoinVertical(lipgloss.Top,
-			m.getOurContent(m.width, m.getOurAxis()),
-			m.getTheirContent(m.width, m.getTheirAxis()))
+			m.getOurContent(ourWidth, ourHeight),
+			m.getTheirContent(theirWidth, theirHeight),
+		)
 	}
 }
 

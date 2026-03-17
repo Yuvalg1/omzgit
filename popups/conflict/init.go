@@ -49,18 +49,18 @@ func getHeight(height int) int {
 	return height - 2
 }
 
-func (m Model) getOurAxis() int {
+func (m Model) getOurAxis() (int, int) {
 	if m.width > CUTOFF {
-		return m.width/2 + 1
+		return m.width/2 + 1, m.height - 1
 	}
-	return m.height / 2
+	return m.width, m.height / 2
 }
 
-func (m Model) getTheirAxis() int {
+func (m Model) getTheirAxis() (int, int) {
 	if m.width > CUTOFF {
-		return m.width/2 - (m.width+1)%2
+		return m.width/2 - (m.width+1)%2, m.height - 1
 	}
-	return m.height/2 - (m.height+1)%2 - 1
+	return m.width, m.height/2 - (m.height+1)%2 - 1
 }
 
 func (m Model) GetVisible() bool {
@@ -68,13 +68,11 @@ func (m Model) GetVisible() bool {
 }
 
 func (m *Model) getContent() {
-	if m.width > CUTOFF {
-		m.ours = content.InitialModel(m.getOurAxis(), m.height-1, true)
-		m.theirs = content.InitialModel(m.getTheirAxis(), m.height-1, false)
-	} else {
-		m.ours = content.InitialModel(m.width, m.getOurAxis(), true)
-		m.theirs = content.InitialModel(m.width, m.getTheirAxis(), false)
-	}
+	ourWidth, ourHeight := m.getOurAxis()
+	m.ours = content.InitialModel(ourWidth, ourHeight, true)
+
+	theirWidth, theirHeight := m.getTheirAxis()
+	m.theirs = content.InitialModel(theirWidth, theirHeight, false)
 
 	ourContent := ""
 	theirContent := ""
@@ -98,8 +96,8 @@ func (m *Model) getContent() {
 
 	ourRowStyle := lipgloss.NewStyle().Width(m.ours.Content.Width)
 	theirRowStyle := lipgloss.NewStyle().Width(m.theirs.Content.Width)
-	greenStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Green).UnsetWidth()
-	redStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Red).UnsetWidth()
+	greenStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Green)
+	redStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Red)
 
 	for _, element := range rows {
 		if strings.HasPrefix(element, "<<<<<<< HEAD") {
@@ -121,16 +119,16 @@ func (m *Model) getContent() {
 		}
 
 		if !inOurs && !inTheirs {
-			ourContent += ourRowStyle.Render(element) + "\n"
-			theirContent += theirRowStyle.Render(element) + "\n"
+			ourContent += ourRowStyle.Width(m.ours.Content.Width).Render(element) + "\n"
+			theirContent += theirRowStyle.Width(m.theirs.Content.Width).Render(element) + "\n"
 		}
 
 		if inOurs {
-			ourContent += redStyle.Render(ourRowStyle.Render(element)) + "\n"
+			ourContent += redStyle.Width(m.ours.Content.Width).Render(ourRowStyle.Render(element)) + "\n"
 		}
 
 		if inTheirs {
-			theirContent += greenStyle.Render(theirRowStyle.Render(element)) + "\n"
+			theirContent += greenStyle.Width(m.theirs.Content.Width).Render(theirRowStyle.Render(element)) + "\n"
 		}
 
 	}
