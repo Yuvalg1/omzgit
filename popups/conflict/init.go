@@ -88,6 +88,7 @@ func (m *Model) getContent() {
 
 	data, err := os.ReadFile(m.path)
 	rows := strings.Split(string(data), "\n")
+	rows = rows[:len(rows)-1]
 
 	ourChunk := chunk.InitialModel(false, true, ourWidth)
 	theirChunk := chunk.InitialModel(false, false, theirWidth)
