@@ -14,11 +14,11 @@ type Model struct {
 	width int
 }
 
-func InitialModel(conflict bool, active bool, content string, ours bool, width int) Model {
+func InitialModel(conflict bool, ours bool, width int) Model {
 	return Model{
 		Conflict: conflict,
-		Active:   active,
-		content:  content,
+		Active:   false,
+		content:  "",
 		ours:     ours,
 
 		width: getWidth(width),

@@ -91,8 +91,8 @@ func (m *Model) getContent() {
 	data, err := os.ReadFile(m.path)
 	rows := strings.Split(string(data), "\n")
 
-	ourChunk := chunk.InitialModel(false, false, "", true, ourWidth)
-	theirChunk := chunk.InitialModel(false, false, "", false, theirWidth)
+	ourChunk := chunk.InitialModel(false, true, ourWidth)
+	theirChunk := chunk.InitialModel(false, false, theirWidth)
 
 	inOurs := false
 	inTheirs := false
@@ -105,8 +105,8 @@ func (m *Model) getContent() {
 			m.ours.Append(ourChunk)
 			m.theirs.Append(theirChunk)
 
-			ourChunk = chunk.InitialModel(true, false, "", true, ourWidth)
-			theirChunk = chunk.InitialModel(false, false, "", false, ourWidth)
+			ourChunk = chunk.InitialModel(true, true, ourWidth)
+			theirChunk = chunk.InitialModel(false, false, ourWidth)
 
 			continue
 		}
@@ -116,7 +116,7 @@ func (m *Model) getContent() {
 			inTheirs = true
 
 			m.ours.Append(ourChunk)
-			theirChunk = chunk.InitialModel(true, false, "", false, theirWidth)
+			theirChunk = chunk.InitialModel(true, false, theirWidth)
 
 			continue
 		}
@@ -127,8 +127,8 @@ func (m *Model) getContent() {
 
 			m.theirs.Append(theirChunk)
 
-			ourChunk = chunk.InitialModel(false, false, "", true, ourWidth)
-			theirChunk = chunk.InitialModel(false, false, "", false, theirWidth)
+			ourChunk = chunk.InitialModel(false, true, ourWidth)
+			theirChunk = chunk.InitialModel(false, false, theirWidth)
 
 			continue
 		}
