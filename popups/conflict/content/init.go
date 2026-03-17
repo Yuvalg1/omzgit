@@ -43,7 +43,7 @@ func (m *Model) Append(chunk chunk.Model) {
 	m.conflicts = append(m.conflicts, chunk)
 }
 
-func (m Model) Refresh() {
+func (m *Model) Refresh() {
 	content := ""
 
 	for _, element := range m.conflicts {
