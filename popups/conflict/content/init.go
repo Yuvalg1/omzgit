@@ -1,6 +1,8 @@
 package content
 
 import (
+	"strings"
+
 	"omzgit/popups/conflict/chunk"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -49,14 +51,18 @@ func (m *Model) Append(chunk chunk.Model) {
 func (m *Model) Refresh() {
 	content := ""
 	sum := 0
+	lines := 0
 
 	for _, element := range m.conflicts {
+		lines += len(strings.Split(element.Content, "\n"))
+
 		if element.Conflict {
 			sum++
 		}
 
-		if m.index == sum-1 {
+		if m.index == sum-1 && element.Conflict {
 			element.Active = true
+			m.Content.SetYOffset(lines)
 		}
 		content += element.View() + "\n"
 	}
