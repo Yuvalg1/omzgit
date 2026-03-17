@@ -26,12 +26,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "n":
-			m.index = (m.index + 1) % m.sum
+			if m.sum > 0 {
+				m.index = (m.index + 1) % m.sum
+			}
 			m.Refresh()
 			return m, nil
 
 		case "N":
-			m.index = (m.index - 1 + m.sum) % m.sum
+			if m.sum > 0 {
+				m.index = (m.index - 1 + m.sum) % m.sum
+			}
 			m.Refresh()
 			return m, nil
 
