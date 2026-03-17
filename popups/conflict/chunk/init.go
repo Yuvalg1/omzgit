@@ -2,7 +2,6 @@ package chunk
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -34,9 +33,7 @@ func (m *Model) SetContent(content string) {
 }
 
 func (m *Model) Append(row string) {
-	style := lipgloss.NewStyle().Width(m.width)
-
-	m.content += style.Render(row) + "\n"
+	m.content += row + "\n"
 }
 
 func getWidth(width int) int {
