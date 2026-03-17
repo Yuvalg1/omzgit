@@ -9,7 +9,7 @@ import (
 )
 
 func (m Model) View() string {
-	ourColor := colors.GetColor(m.ours, colors.Green, colors.Red)
+	ourColor := colors.GetColor(m.ours, colors.Red, colors.Green)
 
 	return lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).

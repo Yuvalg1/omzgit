@@ -13,9 +13,8 @@ import (
 var CUTOFF = 50
 
 type Model struct {
-	path     string
-	visible  bool
-	conflict int
+	path    string
+	visible bool
 
 	ours   content.Model
 	theirs content.Model

@@ -25,6 +25,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Content.ScrollUp(1)
 			return m, nil
 
+		case "n":
+			m.index = (m.index + 1) % m.sum
+			return m, nil
+
+		case "N":
+			m.index = (m.index - 1 + m.sum) % m.sum
+			return m, nil
+
 		case "pgdown":
 			m.Content.PageDown()
 			return m, nil

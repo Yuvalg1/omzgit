@@ -10,7 +10,9 @@ import (
 type Model struct {
 	Content   viewport.Model
 	ours      bool
+	index     int
 	conflicts []chunk.Model
+	sum       int
 
 	activeConflict int
 }
@@ -22,6 +24,7 @@ func InitialModel(width int, height int, ours bool) Model {
 		Content:   viewport,
 		ours:      ours,
 		conflicts: []chunk.Model{},
+		index:     -1,
 
 		activeConflict: 0,
 	}
@@ -45,9 +48,18 @@ func (m *Model) Append(chunk chunk.Model) {
 
 func (m *Model) Refresh() {
 	content := ""
+	sum := 0
 
 	for _, element := range m.conflicts {
+		if element.Conflict {
+			sum++
+		}
+
+		if m.index-1 == sum {
+			element.Active = true
+		}
 		content += element.View() + "\n"
 	}
+	m.sum = sum
 	m.Content.SetContent(content)
 }
