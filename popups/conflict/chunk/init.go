@@ -7,7 +7,7 @@ import (
 type Model struct {
 	Conflict bool
 	Active   bool
-	content  string
+	Content  string
 	ours     bool
 
 	width int
@@ -17,7 +17,7 @@ func InitialModel(conflict bool, ours bool, width int) Model {
 	return Model{
 		Conflict: conflict,
 		Active:   false,
-		content:  "",
+		Content:  "",
 		ours:     ours,
 
 		width: getWidth(width),
@@ -29,11 +29,11 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m *Model) SetContent(content string) {
-	m.content = content
+	m.Content = content
 }
 
 func (m *Model) Append(row string) {
-	m.content += row + "\n"
+	m.Content += row + "\n"
 }
 
 func getWidth(width int) int {

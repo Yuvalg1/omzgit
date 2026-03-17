@@ -145,8 +145,12 @@ func (m *Model) getContent() {
 		}
 
 	}
-	m.ours.Append(ourChunk)
-	m.theirs.Append(theirChunk)
+	if ourChunk.Content != "" {
+		m.ours.Append(ourChunk)
+	}
+	if theirChunk.Content != "" {
+		m.theirs.Append(theirChunk)
+	}
 
 	m.ours.Refresh()
 	m.theirs.Refresh()
