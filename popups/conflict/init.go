@@ -96,8 +96,8 @@ func (m *Model) getContent() {
 
 	ourRowStyle := lipgloss.NewStyle().Width(m.ours.Content.Width)
 	theirRowStyle := lipgloss.NewStyle().Width(m.theirs.Content.Width)
-	greenStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Green).UnsetWidth()
-	redStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Red).UnsetWidth()
+	greenStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Green)
+	redStyle := lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Red)
 
 	for _, element := range rows {
 		if strings.HasPrefix(element, "<<<<<<< HEAD") {
@@ -119,16 +119,16 @@ func (m *Model) getContent() {
 		}
 
 		if !inOurs && !inTheirs {
-			ourContent += ourRowStyle.Render(element) + "\n"
-			theirContent += theirRowStyle.Render(element) + "\n"
+			ourContent += ourRowStyle.Width(m.ours.Content.Width).Render(element) + "\n"
+			theirContent += theirRowStyle.Width(m.theirs.Content.Width).Render(element) + "\n"
 		}
 
 		if inOurs {
-			ourContent += redStyle.Render(ourRowStyle.Render(element)) + "\n"
+			ourContent += redStyle.Width(m.ours.Content.Width).Render(ourRowStyle.Render(element)) + "\n"
 		}
 
 		if inTheirs {
-			theirContent += greenStyle.Render(theirRowStyle.Render(element)) + "\n"
+			theirContent += greenStyle.Width(m.theirs.Content.Width).Render(theirRowStyle.Render(element)) + "\n"
 		}
 
 	}
