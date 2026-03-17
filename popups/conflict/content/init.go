@@ -47,7 +47,7 @@ func (m *Model) Refresh() {
 	content := ""
 
 	for _, element := range m.conflicts {
-		content += element.View() + "\n"
+		content += element.View()
 	}
 	m.Content.SetContent(content)
 }

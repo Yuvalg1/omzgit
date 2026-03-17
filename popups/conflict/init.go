@@ -27,8 +27,6 @@ type Model struct {
 func InitialModel(width int, height int) Model {
 	return Model{
 		visible: false,
-		ours:    content.InitialModel(width, height, true),
-		theirs:  content.InitialModel(width, height, false),
 
 		width:  width,
 		height: height,
