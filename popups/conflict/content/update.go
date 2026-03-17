@@ -35,6 +35,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Refresh()
 			return m, nil
 
+		case "o", "t":
+			return m, Cmd(m.index, m.ours)
+
 		case "pgdown":
 			m.Content.PageDown()
 			return m, nil

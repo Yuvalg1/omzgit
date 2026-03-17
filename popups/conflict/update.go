@@ -39,6 +39,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, tea.Batch(cmd1, cmd2)
 
+	case content.Msg:
+		m.resolve(msg.Index, msg.Ours)
+		m.ours.Refresh()
+		m.theirs.Refresh()
+		return m, nil
+
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "ctrl+c", "q":
@@ -59,6 +65,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			git.Exec("add", m.path)
 			m.visible = false
 			return m, refresh.Cmd()
+
+		case "o":
+			res, cmd := m.ours.Update(msg)
+			m.ours = res.(content.Model)
+			return m, cmd
+
+		case "t":
+			res, cmd := m.theirs.Update(msg)
+			m.theirs = res.(content.Model)
+			return m, cmd
 
 		default:
 			res1, cmd1 := m.ours.Update(msg)

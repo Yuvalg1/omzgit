@@ -85,7 +85,7 @@ func (m *Model) getContent() {
 		return
 	}
 
-	data, err := os.ReadFile(m.path)
+	data, _ := os.ReadFile(m.path)
 	rows := strings.Split(string(data), "\n")
 	rows = rows[:len(rows)-1]
 
@@ -145,13 +145,81 @@ func (m *Model) getContent() {
 		}
 
 	}
-	if ourChunk.Content != "" {
-		m.ours.Append(ourChunk)
-	}
-	if theirChunk.Content != "" {
-		m.theirs.Append(theirChunk)
+
+	m.ours.Refresh()
+	m.theirs.Refresh()
+}
+
+func (m *Model) resolve(index int, ours bool) {
+	file, err := os.Stat(m.path)
+	if err != nil {
+		return
 	}
 
+	if file.Size() > 100*1000 { // bigger than 100kb
+		return
+	}
+
+	data, _ := os.ReadFile(m.path)
+	rows := strings.Split(string(data), "\n")
+	rows = rows[:len(rows)-1]
+
+	content := ""
+	conflict := -1
+
+	inOurs := false
+	inTheirs := false
+
+	for _, element := range rows {
+		if strings.HasPrefix(element, "<<<<<<< HEAD") {
+			conflict++
+
+			if conflict != index {
+				content += element + "\n"
+			}
+
+			inOurs = true
+			inTheirs = false
+			continue
+		}
+
+		if strings.HasPrefix(element, "=======") {
+			inOurs = false
+			inTheirs = true
+
+			if conflict != index {
+				content += element + "\n"
+			}
+
+			continue
+		}
+
+		if strings.HasPrefix(element, ">>>>>>>") {
+			inOurs = false
+			inTheirs = false
+
+			if conflict != index {
+				content += element + "\n"
+			}
+
+			continue
+		}
+
+		if !inOurs && !inTheirs {
+			content += element + "\n"
+		}
+
+		if inOurs && (conflict != index || ours) {
+			content += element + "\n"
+		}
+
+		if inTheirs && (conflict != index || !ours) {
+			content += element + "\n"
+		}
+	}
+
+	os.WriteFile(m.path, []byte(content), 0o644)
+	m.getContent()
 	m.ours.Refresh()
 	m.theirs.Refresh()
 }
