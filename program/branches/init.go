@@ -39,8 +39,6 @@ func InitialModel(width int, height int, title string) Model {
 		return &created
 	})
 
-	m.list.SetFilterFn(filterFn)
-
 	return m
 }
 
@@ -83,10 +81,8 @@ func getBranches(m snapshot) []branch.Model {
 
 	var models []branch.Model
 	for len(models) < m.listNewSize && index < len(branches) {
-		branch := branch.InitialModel(m.width, branches[index], getDefaultBranch())
-
-		if filterFn(branch, m.listTextInputValue) {
-			models = append(models, branch)
+		if filterFn(branches[index][2:], m.listTextInputValue) {
+			models = append(models, branch.InitialModel(m.width, branches[index], getDefaultBranch()))
 		}
 
 		index++
@@ -108,8 +104,8 @@ func getDefaultBranch() string {
 	return output[:len(output)-1]
 }
 
-func filterFn(branch branch.Model, text string) bool {
-	return strings.Contains(strings.ToLower(branch.Roller.Name), strings.ToLower(text))
+func filterFn(branch string, text string) bool {
+	return strings.Contains(branch, strings.ToLower(text))
 }
 
 type snapshot struct {

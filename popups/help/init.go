@@ -37,8 +37,6 @@ func InitialModel(width int, height int) Model {
 		return &created
 	})
 
-	m.list.SetFilterFn(filterFn)
-
 	return m
 }
 

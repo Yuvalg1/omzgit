@@ -181,15 +181,3 @@ func move[T tea.Model](m Model[T], msg tea.Msg, curr int, next int) tea.Cmd {
 
 	return tea.Batch(cmd1, cmd2)
 }
-
-func (m Model[T]) getFilteredChildren() []T {
-	filteredChildren := []T{}
-
-	for _, element := range m.Children {
-		if m.filterFn(element, m.TextInput.Value()) {
-			filteredChildren = append(filteredChildren, element)
-		}
-	}
-
-	return filteredChildren
-}
