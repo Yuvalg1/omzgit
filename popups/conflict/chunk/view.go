@@ -11,6 +11,10 @@ import (
 func (m Model) View() string {
 	ourColor := colors.GetColor(m.ours, colors.Green, colors.Red)
 
+	if m.content == "" {
+		return ""
+	}
+
 	return lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 		Foreground(colors.GetColor(m.Conflict, ourColor, gray.C[2])).
