@@ -64,7 +64,7 @@ func (m *Model) Refresh() {
 			m.Content.SetYOffset(lines)
 		}
 		content += element.View() + "\n"
-		lines += strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")
+		lines += max(strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")-3, 0)
 	}
 	m.sum = sum
 	m.Content.SetContent(content)
