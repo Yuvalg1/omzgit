@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -54,17 +55,16 @@ func (m *Model) Refresh() {
 	lines := 0
 
 	for _, element := range m.conflicts {
-		lines += len(strings.Split(element.Content, "\n"))
-
 		if element.Conflict {
 			sum++
 		}
 
 		if m.index == sum-1 && element.Conflict {
 			element.Active = true
-			m.Content.SetYOffset(lines)
+			m.Content.SetYOffset(max(lines-3, 0))
 		}
 		content += element.View() + "\n"
+		lines += strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")
 	}
 	m.sum = sum
 	m.Content.SetContent(content)

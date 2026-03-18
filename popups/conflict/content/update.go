@@ -1,6 +1,8 @@
 package content
 
 import (
+	"omzgit/popups/conflict/chunk"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -10,7 +12,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Content.Width = getWidth(msg.Width)
 		m.Content.Height = getHeight(msg.Height)
 
-		return m, nil
+		msg.Width = getWidth(msg.Width)
+		msg.Height = getHeight(msg.Height)
+
+		cmds := []tea.Cmd{}
+		for index, element := range m.conflicts {
+			res, cmd := element.Update(msg)
+			m.conflicts[index] = res.(chunk.Model)
+			cmds = append(cmds, cmd)
+		}
+		m.Refresh()
+
+		return m, tea.Batch(cmds...)
 
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {

@@ -14,6 +14,6 @@ func (m Model) View() string {
 	return lipgloss.NewStyle().
 		Background(colors.GetColor(m.Active, bg.C[2], bg.C[0])).
 		Foreground(colors.GetColor(m.Conflict, ourColor, gray.C[2])).
-		Width(m.width).
+		Width(m.Width).
 		Render(m.Content[:len(m.Content)-1])
 }

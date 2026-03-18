@@ -10,7 +10,7 @@ type Model struct {
 	Content  string
 	ours     bool
 
-	width int
+	Width int
 }
 
 func InitialModel(conflict bool, ours bool, width int) Model {
@@ -20,7 +20,7 @@ func InitialModel(conflict bool, ours bool, width int) Model {
 		Content:  "",
 		ours:     ours,
 
-		width: getWidth(width),
+		Width: getWidth(width),
 	}
 }
 

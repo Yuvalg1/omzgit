@@ -1,8 +1,6 @@
 package branches
 
 import (
-	"slices"
-
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
@@ -66,62 +64,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-
 		case env.Branches.CheckoutB.Msg:
 			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) {
 				git.Exec("checkout", "-b", name)
-			})
-
-		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg:
-			output, err := git.Exec("checkout", m.list.GetCurrent().Roller.Name)
-			if err != nil {
-				return m, popups.Cmd("alert", "checkout error", output, func(name string) {})
-			}
-
-			current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
-
-			if current != -1 {
-				m.list.Children[current].Current = false
-			}
-
-			m.list.Children[m.list.ActiveRow].Current = true
-			return m, nil
-
-		case env.Branches.CheckoutForce.Msg:
-			return m, popups.Cmd("discard", "force checkout", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
-				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Roller.Name)
-				if err != nil {
-					return popups.Cmd("alert", "checkout error", output, func(name string) {})
-				}
-
-				current := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
-
-				if current != -1 {
-					m.list.Children[current].Current = false
-				}
-
-				m.list.Children[m.list.ActiveRow].Current = true
-				return nil
-			})
-
-		case env.Branches.Delete.Msg:
-			return m, popups.Cmd("discard", "delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
-				output, err := git.Exec("branch", "-d", m.list.GetCurrent().Roller.Name)
-				if err == nil {
-					return nil
-				}
-
-				return popups.Cmd("alert", "Delete Error", output, func(name string) {})
-			})
-
-		case env.Branches.DeleteForce.Msg:
-			return m, popups.Cmd("discard", "force delete", m.list.GetCurrent().Roller.Name, func() tea.Cmd {
-				output, err := git.Exec("branch", "-D", m.list.GetCurrent().Roller.Name)
-				if err == nil {
-					return nil
-				}
-
-				return popups.Cmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
 		case env.Branches.Origin.Msg:
