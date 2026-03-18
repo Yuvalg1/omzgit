@@ -68,8 +68,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
 		case "?":
-			return m, popups.Cmd("help", "", "", func() []env.Option {
-				return append(help.GetEnvOptions(env.Commits), help.GetEnvOptions(env.Program)...)
+			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+				return append(help.GetEnvOptions(env.Commits), help.GetEnvOptions(env.Program)...),
+					func() tea.Cmd {
+						return nil
+					}
 			})
 
 		case env.Commits.Refresh.Msg, env.Commits.Search.Msg:

@@ -5,6 +5,7 @@ import (
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
+	"omzgit/popups/help"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -136,6 +137,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "o":
 			m.moreOptions = true
 			return m, nil
+
+		case "?":
+			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+				return help.GetEnvOptions(env.Commit),
+					func() tea.Cmd {
+						return popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
+					}
+			})
 
 		case "y":
 			clipboard.Copy(m.textinput.Value())

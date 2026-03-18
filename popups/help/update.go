@@ -33,7 +33,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case popups.Msg:
-		m.defaultOptions = msg.Fn.(func() []env.Option)()
+		defaultOptions, callbackFn := msg.Fn.(func() ([]env.Option, func() tea.Cmd))()
+		m.defaultOptions = defaultOptions
+		m.callbackFn = callbackFn
 		m.list.SetContent(m.getOptions())
 		m.list.Children[m.list.ActiveRow].Active = true
 		m.visible = true
@@ -67,7 +69,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[option.Model])
 
-			return m, cmd
+			return m, tea.Batch(cmd, m.callbackFn())
 
 		case "/":
 			m.list.SetContent(m.getOptions())
