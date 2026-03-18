@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -54,7 +55,7 @@ func (m *Model) Refresh() {
 	lines := 0
 
 	for _, element := range m.conflicts {
-		lines += len(strings.Split(element.Content, "\n"))
+		lines += strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")
 
 		if element.Conflict {
 			sum++
