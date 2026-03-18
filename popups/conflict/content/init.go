@@ -55,8 +55,6 @@ func (m *Model) Refresh() {
 	lines := 0
 
 	for _, element := range m.conflicts {
-		lines += strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")
-
 		if element.Conflict {
 			sum++
 		}
@@ -66,6 +64,7 @@ func (m *Model) Refresh() {
 			m.Content.SetYOffset(lines)
 		}
 		content += element.View() + "\n"
+		lines += strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")
 	}
 	m.sum = sum
 	m.Content.SetContent(content)
