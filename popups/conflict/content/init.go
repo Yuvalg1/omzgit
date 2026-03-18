@@ -61,10 +61,10 @@ func (m *Model) Refresh() {
 
 		if m.index == sum-1 && element.Conflict {
 			element.Active = true
-			m.Content.SetYOffset(lines)
+			m.Content.SetYOffset(max(lines-3, 0))
 		}
 		content += element.View() + "\n"
-		lines += max(strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")-3, 0)
+		lines += strings.Count(lipgloss.NewStyle().Width(element.Width).Render(element.Content), "\n")
 	}
 	m.sum = sum
 	m.Content.SetContent(content)
