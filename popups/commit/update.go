@@ -49,6 +49,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				if m.options['a'] != "" {
 					git.ExecNoOutput(m.getCommitString()...)
+					m.options['a'] = ""
+					m.options['e'] = ""
+					m.options['E'] = ""
+					m.options['n'] = ""
+					m.options['y'] = ""
+
 					m.visible = false
 					return m, refresh.Cmd()
 				}
@@ -111,6 +117,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			if m.options['a'] != "" {
 				git.ExecNoOutput(m.getCommitString()...)
+				m.options['a'] = ""
+				m.options['e'] = ""
+				m.options['E'] = ""
+				m.options['n'] = ""
+				m.options['y'] = ""
+
 				m.visible = false
 				return m, refresh.Cmd()
 			}
