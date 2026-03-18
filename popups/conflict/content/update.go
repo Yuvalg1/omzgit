@@ -21,6 +21,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.conflicts[index] = res.(chunk.Model)
 			cmds = append(cmds, cmd)
 		}
+		m.Refresh()
 
 		return m, tea.Batch(cmds...)
 
