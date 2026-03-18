@@ -14,6 +14,7 @@ import (
 type Model struct {
 	list           list.Model[option.Model]
 	defaultOptions []env.Option
+	callbackFn     func() tea.Cmd
 	visible        bool
 	total          int
 

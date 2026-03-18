@@ -5,6 +5,7 @@ import (
 	"omzgit/git"
 	"omzgit/messages/refresh"
 	"omzgit/popups/conflict/content"
+	"omzgit/popups/help"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -50,31 +51,39 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
-		case "esc":
+		case env.Conflict.Back.Msg:
 			m.visible = false
 			return m, nil
 
-		case env.Files.Ours.Msg:
+		case env.Conflict.Ours.Msg:
 			git.Exec("checkout", "--ours", m.path)
 			git.Exec("add", m.path)
 			m.visible = false
 			return m, refresh.Cmd()
 
-		case env.Files.Theirs.Msg:
+		case env.Conflict.Theirs.Msg:
 			git.Exec("checkout", "--theirs", m.path)
 			git.Exec("add", m.path)
 			m.visible = false
 			return m, refresh.Cmd()
 
-		case "o":
+		case env.Conflict.Our.Msg:
 			res, cmd := m.ours.Update(msg)
 			m.ours = res.(content.Model)
 			return m, cmd
 
-		case "t":
+		case env.Conflict.Their.Msg:
 			res, cmd := m.theirs.Update(msg)
 			m.theirs = res.(content.Model)
 			return m, cmd
+
+		case "?":
+			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+				return help.GetEnvOptions(env.Conflict),
+					func() tea.Cmd {
+						return popups.Cmd("conflict", "", m.path, func() tea.Cmd { return nil })
+					}
+			})
 
 		default:
 			res1, cmd1 := m.ours.Update(msg)

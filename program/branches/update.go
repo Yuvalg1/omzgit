@@ -77,8 +77,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, list.Cmd(func() []branch.Model { return getBranches(snapshot) }, m.list.ActiveRow, msg, m.CokeCmd())
 
 		case "?":
-			return m, popups.Cmd("help", "", "", func() []env.Option {
-				return append(help.GetEnvOptions(env.Branches), help.GetEnvOptions(env.Program)...)
+			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+				return append(help.GetEnvOptions(env.Branches), help.GetEnvOptions(env.Program)...),
+					func() tea.Cmd {
+						return nil
+					}
 			})
 
 		case env.Branches.Refresh.Msg, env.Branches.Search.Msg:

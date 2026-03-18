@@ -125,8 +125,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case "?":
-			return m, popups.Cmd("help", "", "", func() []env.Option {
-				return append(help.GetEnvOptions(env.Files), help.GetEnvOptions(env.Program)...)
+			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+				return append(help.GetEnvOptions(env.Files), help.GetEnvOptions(env.Program)...),
+					func() tea.Cmd {
+						return nil
+					}
 			})
 
 		case env.Files.PgDown.Msg, env.Files.PgUp.Msg:

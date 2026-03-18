@@ -232,7 +232,12 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		})
 
 	case "?":
-		return m, popups.Cmd("help", "", "", func() []env.Option { return help.GetEnvOptions(env.Goto) })
+		return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+			return help.GetEnvOptions(env.Goto),
+				func() tea.Cmd {
+					return nil
+				}
+		})
 
 	default:
 		return m, mode.Cmd("")

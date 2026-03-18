@@ -3,6 +3,7 @@ package alert
 import (
 	"omzgit/clipboard"
 	"omzgit/env"
+	"omzgit/popups/help"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -25,6 +26,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case env.Alert.CtrlC.Msg, env.Alert.Quit.Msg:
 			return m, tea.Quit
+
+		case "?":
+			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
+				return help.GetEnvOptions(env.Alert),
+					func() tea.Cmd {
+						return popups.Cmd("alert", m.verb, m.error, func() tea.Cmd { return nil })
+					}
+			})
 
 		case env.Alert.Yank.Msg:
 			clipboard.Copy(m.error)
