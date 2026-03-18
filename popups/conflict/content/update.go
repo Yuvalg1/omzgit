@@ -12,6 +12,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Content.Width = getWidth(msg.Width)
 		m.Content.Height = getHeight(msg.Height)
 
+		msg.Width = getWidth(msg.Width)
+		msg.Height = getHeight(msg.Height)
+
 		cmds := []tea.Cmd{}
 		for index, element := range m.conflicts {
 			res, cmd := element.Update(msg)
