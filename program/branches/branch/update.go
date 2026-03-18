@@ -76,6 +76,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Force Delete Error", output, func(name string) {})
 			})
 
+		case env.Branches.Rebase.Msg:
+			return m, popups.Cmd("async", "", "rebasing", func() tea.Cmd {
+				output, err := git.Exec("rebase", m.Roller.Name)
+				if err == nil {
+					return nil
+				}
+
+				return popups.Cmd("alert", "Rebase Error", output, func() tea.Cmd { return nil })
+			})
+
+		case env.Branches.Merge.Msg:
+			return m, popups.Cmd("async", "", "merging", func() tea.Cmd {
+				output, err := git.Exec("merge", m.Roller.Name)
+				if err == nil {
+					return nil
+				}
+
+				return popups.Cmd("alert", "Merge Error", output, func() tea.Cmd { return nil })
+			})
+
 		case env.Branches.Down.Msg, env.Branches.Down.AltMsg, env.Branches.Up.Msg, env.Branches.Up.AltMsg, env.Goto.Top.Msg, env.Branches.Bottom.Msg, env.Branches.Search.Msg:
 			m.Active = !m.Active
 			m.lastUpdated = m.getLastUpdatedDate()

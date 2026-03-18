@@ -7,9 +7,12 @@ type branches struct {
 	Delete        Option
 	DeleteForce   Option
 	Origin        Option
-	Refresh       Option
-	Search        Option
-	Yank          Option
+	Rebase        Option
+	Merge         Option
+
+	Refresh Option
+	Search  Option
+	Yank    Option
 
 	Up     Option
 	Down   Option
@@ -42,6 +45,15 @@ var Branches = branches{
 		Msg:         "o",
 		Description: "switches between local and origin branches",
 	},
+	Rebase: Option{
+		Msg:         "r",
+		Description: "rebases to currently highlighted branch",
+	},
+	Merge: Option{
+		Msg:         "m",
+		Description: "merges to currently highlighted branch",
+	},
+
 	Refresh: Refresh,
 	Search:  Search,
 	Yank: Option{
