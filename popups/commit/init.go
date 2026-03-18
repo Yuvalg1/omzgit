@@ -29,13 +29,7 @@ func InitialModel(width int, height int, title string) Model {
 	ti.Width = getWidth(width) - 5
 
 	options := map[byte]string{}
-	options['a'] = ""
-	options['e'] = ""
-	options['E'] = ""
-	options['n'] = ""
-	options['y'] = ""
-
-	return Model{
+	m := Model{
 		commitMessageType: "-m",
 		moreOptions:       false,
 		options:           options,
@@ -45,6 +39,9 @@ func InitialModel(width int, height int, title string) Model {
 		width:  getWidth(width),
 		height: getHeight(height),
 	}
+
+	m.resetOptions()
+	return m
 }
 
 func (m Model) Init() tea.Cmd {
@@ -76,4 +73,12 @@ func (m Model) getCommitString() []string {
 	}
 
 	return commitStrings
+}
+
+func (m *Model) resetOptions() {
+	m.options['a'] = ""
+	m.options['e'] = ""
+	m.options['E'] = ""
+	m.options['n'] = ""
+	m.options['y'] = ""
 }

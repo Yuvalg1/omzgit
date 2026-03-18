@@ -43,12 +43,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 
 			case "enter":
-				output, err := git.Exec(m.getCommitString()...)
 				m.textinput.Blur()
 				m.moreOptions = false
 				m.commitMessageType = "-m"
 
+				if m.options['a'] != "" {
+					git.ExecNoOutput(m.getCommitString()...)
+					m.resetOptions()
+					m.visible = false
+					m.textinput.SetValue("")
+					return m, refresh.Cmd()
+				}
+
+				output, err := git.Exec(m.getCommitString()...)
+
 				if err == nil {
+					m.resetOptions()
 					m.visible = false
 					m.textinput.SetValue("")
 					return m, refresh.Cmd()
@@ -102,9 +112,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
+			if m.options['a'] != "" {
+				git.ExecNoOutput(m.getCommitString()...)
+				m.resetOptions()
+				m.visible = false
+				m.textinput.SetValue("")
+				return m, refresh.Cmd()
+			}
+
 			output, err := git.Exec(m.getCommitString()...)
 			if err == nil {
+				m.resetOptions()
 				m.visible = false
+				m.textinput.SetValue("")
 				return m, refresh.Cmd()
 			}
 
