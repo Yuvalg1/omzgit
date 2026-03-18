@@ -40,7 +40,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			m.Current = true
-			return m, nil
+			return m, refresh.Cmd()
 
 		case env.Commits.CheckoutForce.Msg:
 			return m, popups.Cmd("discard", "force checkout", m.Hash, func() tea.Cmd {
@@ -50,7 +50,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				m.Current = true
-				return nil
+				return refresh.Cmd()
 			})
 
 		case env.Commits.Up.Msg, env.Commits.Up.AltMsg, env.Commits.Down.Msg, env.Commits.Down.AltMsg, env.Goto.Top.Msg, env.Commits.Bottom.Msg, env.Commits.Search.Msg, env.Commits.Refresh.Msg:
