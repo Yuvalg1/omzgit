@@ -1,11 +1,9 @@
 package commits
 
 import (
-	"slices"
 	"strconv"
 
 	"omzgit/env"
-	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
@@ -66,38 +64,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch keypress := msg.String(); keypress {
-		case env.Commits.Checkout.Msg:
-			output, err := git.Exec("checkout", m.list.GetCurrent().Hash)
-			if err != nil {
-				return m, popups.Cmd("alert", "Alert!", output, func(name string) {})
-			}
-
-			current := slices.IndexFunc(m.list.Children, func(log log.Model) bool { return log.Current })
-
-			if current != -1 {
-				m.list.Children[current].Current = false
-			}
-
-			m.list.Children[m.list.ActiveRow].Current = true
-			return m, nil
-
-		case env.Commits.CheckoutForce.Msg:
-			return m, popups.Cmd("discard", "force checkout", m.list.GetCurrent().Hash, func() tea.Cmd {
-				output, err := git.Exec("checkout", "-f", m.list.GetCurrent().Hash)
-				if err != nil {
-					return popups.Cmd("alert", "checkout error", output, func(name string) {})
-				}
-
-				current := slices.IndexFunc(m.list.Children, func(log log.Model) bool { return log.Current })
-
-				if current != -1 {
-					m.list.Children[current].Current = false
-				}
-
-				m.list.Children[m.list.ActiveRow].Current = true
-				return nil
-			})
-
 		case env.Commits.Reset.Msg:
 			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
 
