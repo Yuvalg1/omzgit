@@ -1,6 +1,8 @@
 package branches
 
 import (
+	"slices"
+
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/lib/list"
@@ -68,6 +70,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) {
 				git.Exec("checkout", "-b", name)
 			})
+
+		case env.Branches.Checkout.Msg, env.Branches.CheckoutForce.Msg:
+			index := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
+
+			res, cmd := m.list.Update(msg)
+			m.list = res.(list.Model[branch.Model])
+
+			if index != -1 && index != m.list.ActiveRow && m.list.GetCurrent().Current {
+				m.list.Children[index].Current = false
+			}
+
+			return m, tea.Batch(cmd, m.CokeCmd())
 
 		case env.Branches.Origin.Msg:
 			m.list.TextInput.SetValue("")
