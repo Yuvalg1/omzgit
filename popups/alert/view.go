@@ -19,7 +19,13 @@ func (m Model) View() string {
 		BorderBackground(bg.C[0]).
 		BorderForeground(colors.Red).
 		Foreground(colors.Red).
-		Width(m.Width - 2)
+		Width(m.viewport.Width)
 
-	return titleStyle.Render(consts.PadTitle(m.verb, m.Width) + borderStyle.Render(m.error))
+	return titleStyle.Render(consts.PadTitle(m.verb, m.viewport.Width+2) + borderStyle.Render(m.viewport.View()))
+}
+
+func (m Model) getContentStyle() lipgloss.Style {
+	return lipgloss.
+		NewStyle().
+		Width(m.viewport.Width)
 }

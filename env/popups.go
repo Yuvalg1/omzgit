@@ -1,7 +1,11 @@
 package env
 
 type alert struct {
-	Yank Option
+	Yank   Option
+	Up     Option
+	Down   Option
+	PgUp   Option
+	PgDown Option
 
 	Quit  Option
 	CtrlC Option
@@ -11,6 +15,24 @@ var Alert = alert{
 	Yank: Option{
 		Msg:         "y",
 		Description: "yanks error message to clipboard",
+	},
+	Up: Option{
+		Msg:         "up",
+		Description: "scrolls up a row",
+		AltMsg:      "k",
+	},
+	Down: Option{
+		Msg:         "down",
+		Description: "scrolls down a row",
+		AltMsg:      "j",
+	},
+	PgUp: Option{
+		Msg:         "pgup",
+		Description: "scrolls up a page",
+	},
+	PgDown: Option{
+		Msg:         "pgdown",
+		Description: "scrolls down a page",
 	},
 
 	Quit:  Quit.Quit,
