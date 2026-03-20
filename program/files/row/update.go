@@ -96,7 +96,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					_, err := git.Exec("reset", "--", m.Roller.Name)
 					m.Staged = err != nil
 				}
-				git.Exec("restore", m.Roller.Name)
+				_, err := git.Exec("ls-files", "--error-unmatch", m.Roller.Name)
+				if err == nil {
+					git.Exec("restore", m.Roller.Name)
+				} else {
+					git.Exec("clean", "-f", m.Roller.Name)
+				}
 				return nil
 			})
 
