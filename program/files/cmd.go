@@ -1,0 +1,3 @@
+package files
+
+func test() {}
