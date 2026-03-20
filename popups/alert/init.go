@@ -1,26 +1,29 @@
 package alert
 
 import (
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	error   string
-	visible bool
-	verb    string
+	error    string
+	viewport viewport.Model
+	visible  bool
+	verb     string
 
-	Width  int
-	Height int
+	maxHeight int
 }
 
 func InitialModel(width int, height int) Model {
-	return Model{
-		error:   "",
-		visible: false,
-		verb:    "",
+	viewport := viewport.New(getWidth(width), getHeight(height))
 
-		Width:  getWidth(width),
-		Height: getHeight(height),
+	return Model{
+		error:    "",
+		viewport: viewport,
+		visible:  false,
+		verb:     "",
+
+		maxHeight: getHeight(height),
 	}
 }
 
@@ -29,11 +32,11 @@ func (m Model) Init() tea.Cmd {
 }
 
 func getHeight(height int) int {
-	return 5
+	return height - 8
 }
 
 func getWidth(width int) int {
-	return min(34, width-2)
+	return max(width-12+width%2, 0)
 }
 
 func (m Model) GetVisible() bool {
