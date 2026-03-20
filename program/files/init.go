@@ -105,7 +105,8 @@ func GetFilesChanged(m snapshot) []row.Model {
 		return []row.Model{row.EmptyInitialModel("No Changes Made", m.width)}
 	}
 
-	var rows []row.Model
+	rows := []row.Model{}
+	modified := []row.Model{}
 	index := 0
 
 	for len(rows) < m.listNewSize && index < len(fileLogs) {
@@ -115,9 +116,13 @@ func GetFilesChanged(m snapshot) []row.Model {
 			rows = append(rows, row.InitialModel(fileLogs[index], m.width))
 		}
 
+		if filterFn(path, m.listTextInputValue) && fileLogs[index][0] != ' ' && fileLogs[index][1] == 'M' {
+			modified = append(modified, row.InitialModel(" "+fileLogs[index][1:], m.width))
+		}
 		index++
 	}
 
+	rows = append(rows, modified...)
 	if len(rows) == 0 {
 		rows = append(rows, row.EmptyInitialModel("No Changes Made", m.width))
 	}

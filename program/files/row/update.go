@@ -60,7 +60,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				})
 			}
 
-			return m, cmd
+			return m, tea.Batch(cmd, refresh.Cmd())
 
 		case env.Files.AddAll.Msg:
 			m.Staged = true
@@ -119,7 +119,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Files.Ours.Msg:
 			if m.Conflict {
 				git.Exec("checkout", "--ours", m.Roller.Name)
-				git.Exec("add", m.Roller.Name)
 				return m, refresh.Cmd()
 			}
 			return m, nil
@@ -127,7 +126,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Files.Theirs.Msg:
 			if m.Conflict {
 				git.Exec("checkout", "--theirs", m.Roller.Name)
-				git.Exec("add", m.Roller.Name)
 				return m, refresh.Cmd()
 			}
 			return m, nil
