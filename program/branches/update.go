@@ -2,6 +2,7 @@ package branches
 
 import (
 	"slices"
+	"strings"
 
 	"omzgit/env"
 	"omzgit/git"
@@ -35,6 +36,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case list.Msg[branch.Model]:
+		current, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
+		m.current = strings.TrimSpace(current)
+
 		m.list.Children = msg.Children
 		m.total = msg.Total
 		m.total = len(m.list.Children)
@@ -77,6 +81,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res, cmd := m.list.Update(msg)
 			m.list = res.(list.Model[branch.Model])
 
+			current, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
+			m.current = strings.TrimSpace(current)
+
 			if index != -1 && index != m.list.ActiveRow && m.list.GetCurrent().Current {
 				m.list.Children[index].Current = false
 			}
@@ -99,6 +106,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			})
 
 		case env.Branches.Refresh.Msg, env.Branches.Search.Msg:
+			current, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
+			m.current = strings.TrimSpace(current)
 			m.list.SetContent(getBranches(m.getSnapshot()))
 			m.total = len(m.list.Children)
 
