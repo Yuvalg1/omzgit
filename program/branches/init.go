@@ -13,21 +13,24 @@ import (
 )
 
 type Model struct {
-	Title  string
-	list   list.Model[branch.Model]
-	remote bool
-	total  int
+	Title   string
+	list    list.Model[branch.Model]
+	remote  bool
+	total   int
+	current string
 
 	width  int
 	height int
 }
 
 func InitialModel(width int, height int, title string) Model {
+	current, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
 	initialList := list.InitialModel(getHeight(height), []branch.Model{}, 0, "No Branches Found")
 
 	m := Model{
-		list:   initialList,
-		remote: false,
+		list:    initialList,
+		remote:  false,
+		current: strings.TrimSpace(current),
 
 		width:  getWidth(width),
 		height: getHeight(height),
@@ -56,9 +59,9 @@ func getHeight(height int) int {
 
 func (m Model) CokeCmd() tea.Cmd {
 	return cokeline.Cmd(
-		m.list.Children[m.list.ActiveRow].Roller.Name,
+		m.current,
 		fmt.Sprintf("%d/%d", m.list.ActiveRow+1, m.total),
-		m.list.Children[m.list.ActiveRow].Current,
+		true,
 	)
 }
 
