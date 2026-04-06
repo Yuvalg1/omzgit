@@ -31,7 +31,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.Children[m.list.ActiveRow].Active = true
 
 		width, height := m.getDiffAxis()
-		m.diff = diff.InitialModel(*m.list.GetCurrent(), width, height)
+		m.diff = m.diff.Reset(*m.list.GetCurrent(), width, height)
 
 		res, cmd := m.list.Update(msg.Msg)
 		m.list = res.(list.Model[row.Model])
@@ -53,7 +53,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = getHeight(msg.Height)
 
 		dWidth, dHeight := m.getDiffAxis()
-		m.diff = diff.InitialModel(*m.list.GetCurrent(), dWidth, dHeight)
+		m.diff = m.diff.Reset(*m.list.GetCurrent(), dWidth, dHeight)
 
 		lWidth, lHeight := m.getFilesAxis()
 		msg.Width = lWidth
