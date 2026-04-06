@@ -36,6 +36,18 @@ func InitialModel(row row.Model, width int, height int) Model {
 	return m
 }
 
+func (m *Model) Reset(row row.Model, width int, height int) Model {
+	m.viewport.Width = getWidth(width)
+	m.viewport.Height = getHeight(height)
+
+	m.path = row.Roller.Name
+	m.Staged = row.Staged
+
+	m.viewport.SetContent(m.getDiff())
+
+	return *m
+}
+
 func (m Model) Init() tea.Cmd {
 	return nil
 }
