@@ -225,7 +225,7 @@ func (m *Model) resolve(index int, command string) {
 			content += element + "\n"
 		}
 
-		if inTheirs && (conflict != index || !pickTheirs) {
+		if inTheirs && (conflict != index || pickTheirs) {
 			content += element + "\n"
 		}
 	}
