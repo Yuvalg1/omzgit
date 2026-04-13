@@ -13,6 +13,12 @@ import (
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case refresh.Msg:
+		m.resetOptions()
+		m.visible = false
+		m.textinput.SetValue("")
+		return m, nil
+
 	case tea.WindowSizeMsg:
 		m.textinput.Width = getWidth(msg.Width) - 5
 
@@ -48,23 +54,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.commitMessageType = "-m"
 
 				if m.options['a'] != "" {
-					git.ExecNoOutput(m.getCommitString()...)
-					m.resetOptions()
-					m.visible = false
-					m.textinput.SetValue("")
-					return m, refresh.Cmd()
+					return m, popups.Cmd("async", "", "amend committing", func() tea.Cmd {
+						git.ExecNoOutput(m.getCommitString()...)
+						return refresh.Cmd()
+					})
 				}
 
-				output, err := git.Exec(m.getCommitString()...)
+				return m, popups.Cmd("async", "", "committing", func() tea.Cmd {
+					output, err := git.Exec(m.getCommitString()...)
 
-				if err == nil {
-					m.resetOptions()
-					m.visible = false
-					m.textinput.SetValue("")
-					return m, refresh.Cmd()
-				}
+					if err == nil {
+						return refresh.Cmd()
+					}
 
-				return m, popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
+					return popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
+				})
 
 			default:
 				res, cmd := m.textinput.Update(msg)
@@ -114,17 +118,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			if m.options['a'] != "" {
 				git.ExecNoOutput(m.getCommitString()...)
-				m.resetOptions()
-				m.visible = false
-				m.textinput.SetValue("")
 				return m, refresh.Cmd()
 			}
 
 			output, err := git.Exec(m.getCommitString()...)
 			if err == nil {
-				m.resetOptions()
-				m.visible = false
-				m.textinput.SetValue("")
 				return m, refresh.Cmd()
 			}
 
