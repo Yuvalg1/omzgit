@@ -38,10 +38,10 @@ func (m Model) renderLetter(letter string) string {
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
 		Bold(true).
-		Foreground(colors.Aqua).
+		Foreground(colors.Red).
 		Render(string(letter) + " ")
 }
 
 func (m Model) renderTitle(letter string) string {
-	return lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Aqua).Render(m.options[letter].Desc)
+	return lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Orange).Render(m.options[letter].Desc)
 }
