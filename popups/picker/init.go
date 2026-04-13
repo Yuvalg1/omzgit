@@ -12,7 +12,7 @@ import (
 
 type Pick struct {
 	Desc     string
-	Callback func(path string) tea.Cmd
+	Callback func() tea.Cmd
 }
 
 type Model struct {
@@ -52,7 +52,7 @@ func (m Model) GetVisible() bool {
 
 func GetPick(command ...string) Pick {
 	return Pick{
-		Desc: command[1], Callback: func(path string) tea.Cmd {
+		Desc: command[1], Callback: func() tea.Cmd {
 			output, err := git.Exec(command...)
 			if err != nil {
 				return popups.Cmd("alert", command[0], strings.TrimSpace(output), func() {})

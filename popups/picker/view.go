@@ -4,6 +4,7 @@ import (
 	"omzgit/consts"
 	"omzgit/default/colors"
 	"omzgit/default/colors/bg"
+	"omzgit/default/colors/gray"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -11,11 +12,13 @@ import (
 func (m Model) View() string {
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
+		Foreground(colors.Yellow).
 		Render(consts.PadTitle("more options", m.width) +
 
 			lipgloss.NewStyle().
 				Background(bg.C[0]).
 				BorderBackground(bg.C[0]).
+				BorderForeground(colors.Yellow).
 				Border(lipgloss.NormalBorder(), false, true, true).
 				Height(m.height).
 				Width(m.width-2).
@@ -38,10 +41,10 @@ func (m Model) renderLetter(letter string) string {
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
 		Bold(true).
-		Foreground(colors.Red).
+		Foreground(colors.Yellow).
 		Render(string(letter) + " ")
 }
 
 func (m Model) renderTitle(letter string) string {
-	return lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Orange).Render(m.options[letter].Desc)
+	return lipgloss.NewStyle().Background(bg.C[0]).Foreground(gray.C[2]).Render(m.options[letter].Desc)
 }

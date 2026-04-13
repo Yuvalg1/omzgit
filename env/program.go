@@ -1,15 +1,15 @@
 package env
 
 type program struct {
-	Esc        Option
-	Fetch      Option
-	Goto       Option
-	Pull       Option
-	RebasePull Option
-	Push       Option
-	PushForce  Option
-	CtrlC      Option
-	Quit       Option
+	Esc         Option
+	Fetch       Option
+	Goto        Option
+	Pull        Option
+	PullOptions Option
+	Push        Option
+	PushForce   Option
+	CtrlC       Option
+	Quit        Option
 }
 
 var Program = program{
@@ -25,9 +25,9 @@ var Program = program{
 		Msg:         "l",
 		Description: "pulls from remote",
 	},
-	RebasePull: Option{
+	PullOptions: Option{
 		Msg:         "L",
-		Description: "rebase pulls from remote",
+		Description: "more options for pulling",
 	},
 	Push: Option{
 		Msg:         "p",
