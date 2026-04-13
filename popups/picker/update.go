@@ -1,10 +1,6 @@
-package reset
+package picker
 
 import (
-	"strings"
-
-	"omzgit/git"
-	"omzgit/messages/refresh"
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,24 +15,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case popups.Msg:
 		m.visible = true
-		m.hash = msg.Verb
-		m.name = msg.Name
+		m.title = msg.Name
+		m.name = msg.Verb
+		m.options = msg.Fn.(func() map[string]Pick)()
 		return m, nil
 
 	case tea.KeyMsg:
+		if pick, ok := m.options[msg.String()]; ok {
+			m.visible = false
+			return m, pick.Callback(m.name)
+		}
 		switch keypress := msg.String(); keypress {
 		case "esc":
 			m.visible = false
 			return m, nil
-
-		case "h", "m", "s":
-			output, err := git.Exec("reset", m.options[keypress[0]], m.name)
-			if err != nil {
-				return m, popups.Cmd("alert", "reset", strings.TrimSpace(output), func() {})
-			}
-			m.visible = false
-
-			return m, refresh.Cmd()
 
 		case "ctrl+c", "q":
 			return m, tea.Quit

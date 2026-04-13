@@ -6,8 +6,11 @@ import (
 
 	"omzgit/git"
 	"omzgit/lib/list"
+	"omzgit/messages/refresh"
+	"omzgit/popups/picker"
 	"omzgit/program/cokeline"
 	"omzgit/program/commits/log"
+	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -98,4 +101,16 @@ func getWidth(width int) int {
 
 func getHeight(height int) int {
 	return height - 2
+}
+
+func getResetPick(command string) picker.Pick {
+	return picker.Pick{
+		Desc: command, Callback: func(path string) tea.Cmd {
+			output, err := git.Exec("reset", command, path)
+			if err != nil {
+				return popups.Cmd("alert", "reset", strings.TrimSpace(output), func() {})
+			}
+			return refresh.Cmd()
+		},
+	}
 }
