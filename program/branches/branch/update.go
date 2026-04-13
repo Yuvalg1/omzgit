@@ -5,6 +5,7 @@ import (
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
+	"omzgit/popups/picker"
 	"omzgit/program/popups"
 	"omzgit/roller"
 
@@ -86,6 +87,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Rebase Error", output, func() tea.Cmd { return nil })
 			})
 
+		case env.Branches.RebaseOptions.Msg:
+			return m, popups.Cmd("pick", m.Roller.Name, "choose a rebase option for "+m.Roller.Name, func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"a": picker.GetPick("rebase", "--abort"),
+					"c": picker.GetPick("rebase", "--continue"),
+				}
+			})
+
 		case env.Branches.Merge.Msg:
 			return m, popups.Cmd("async", "", "merging", func() tea.Cmd {
 				output, err := git.Exec("merge", m.Roller.Name)
@@ -94,6 +103,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				return popups.Cmd("alert", "Merge Error", output, func() tea.Cmd { return nil })
+			})
+
+		case env.Branches.MergeOptions.Msg:
+			return m, popups.Cmd("pick", m.Roller.Name, "choose a merge option for "+m.Roller.Name, func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"a": picker.GetPick("merge", "--abort"),
+					"c": picker.GetPick("merge", "--continue"),
+					"s": picker.GetPick("merge", "--squash", m.Roller.Name),
+					"n": picker.GetPick("merge", "--no-commit", m.Roller.Name),
+				}
 			})
 
 		case env.Branches.Down.Msg, env.Branches.Down.AltMsg, env.Branches.Up.Msg, env.Branches.Up.AltMsg, env.Goto.Top.Msg, env.Branches.Bottom.Msg, env.Branches.Search.Msg:
