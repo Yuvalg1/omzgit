@@ -8,7 +8,9 @@ type branches struct {
 	DeleteForce   Option
 	Origin        Option
 	Rebase        Option
+	RebaseOptions Option
 	Merge         Option
+	MergeOptions  Option
 
 	Refresh Option
 	Search  Option
@@ -49,9 +51,17 @@ var Branches = branches{
 		Msg:         "r",
 		Description: "rebases to currently highlighted branch",
 	},
+	RebaseOptions: Option{
+		Msg:         "R",
+		Description: "more options for rebasing",
+	},
 	Merge: Option{
 		Msg:         "m",
 		Description: "merges to currently highlighted branch",
+	},
+	MergeOptions: Option{
+		Msg:         "M",
+		Description: "more options for merging",
 	},
 
 	Refresh: Refresh,

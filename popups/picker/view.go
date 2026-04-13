@@ -11,7 +11,7 @@ import (
 func (m Model) View() string {
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
-		Render(consts.PadTitle("reset", m.width) +
+		Render(consts.PadTitle("more options", m.width) +
 
 			lipgloss.NewStyle().
 				Background(bg.C[0]).

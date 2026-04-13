@@ -68,9 +68,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Commits.Reset.Msg:
 			return m, popups.Cmd("pick", "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), "choose a reset type for "+m.list.GetCurrent().Hash, func() map[string]picker.Pick {
 				return map[string]picker.Pick{
-					"s": getResetPick("--soft"),
-					"h": getResetPick("--hard"),
-					"m": getResetPick("--mixed"),
+					"s": picker.GetPick("reset", "--soft"),
+					"h": picker.GetPick("reset", "--hard"),
+					"m": picker.GetPick("reset", "--mixed"),
 				}
 			})
 

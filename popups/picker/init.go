@@ -1,6 +1,12 @@
 package picker
 
 import (
+	"strings"
+
+	"omzgit/git"
+	"omzgit/messages/refresh"
+	"omzgit/program/popups"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -42,4 +48,16 @@ func getWidth(width int) int {
 
 func (m Model) GetVisible() bool {
 	return m.visible
+}
+
+func GetPick(command ...string) Pick {
+	return Pick{
+		Desc: command[1], Callback: func(path string) tea.Cmd {
+			output, err := git.Exec(command...)
+			if err != nil {
+				return popups.Cmd("alert", command[0], strings.TrimSpace(output), func() {})
+			}
+			return refresh.Cmd()
+		},
+	}
 }
