@@ -92,6 +92,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return map[string]picker.Pick{
 					"a": picker.GetPick("rebase", "--abort"),
 					"c": picker.GetPick("rebase", "--continue"),
+					"s": picker.GetPick("rebase", "--skip"),
+					"q": picker.GetPick("rebase", "--quit"),
 				}
 			})
 
@@ -110,8 +112,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return map[string]picker.Pick{
 					"a": picker.GetPick("merge", "--abort"),
 					"c": picker.GetPick("merge", "--continue"),
+					"C": picker.GetPick("merge", "--no-commit", m.Roller.Name),
 					"s": picker.GetPick("merge", "--squash", m.Roller.Name),
-					"n": picker.GetPick("merge", "--no-commit", m.Roller.Name),
+					"V": picker.GetPick("merge", "--no-verify", m.Roller.Name),
 				}
 			})
 

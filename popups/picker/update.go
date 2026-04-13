@@ -23,7 +23,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		if pick, ok := m.options[msg.String()]; ok {
 			m.visible = false
-			return m, pick.Callback(m.name)
+			return m, pick.Callback()
 		}
 		switch keypress := msg.String(); keypress {
 		case "esc":

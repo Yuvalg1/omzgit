@@ -9,6 +9,7 @@ import (
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/popups/help"
+	"omzgit/popups/picker"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
 
@@ -100,14 +101,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return popups.Cmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
 			})
 
-		case env.Program.RebasePull.Msg:
-			return m, popups.Cmd("async", "", "rebase pulling", func() tea.Cmd {
-				output, err := git.Exec("pull", "--rebase")
-				if err == nil {
-					return nil
+		case env.Program.PullOptions.Msg:
+			current, _ := git.Exec("rev-parse", "--abbrev-ref", "HEAD")
+			return m, popups.Cmd("pick", current, "choose a pull option for "+strings.TrimSpace(current), func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"r": picker.GetPick("pull", "--rebase"),
+					"R": picker.GetPick("pull", "--no-rebase"),
+					"s": picker.GetPick("pull", "--squash"),
+					"V": picker.GetPick("pull", "--no-verify"),
 				}
-
-				return popups.Cmd("alert", "Rebase Pull Error", output, func() tea.Cmd { return nil })
 			})
 
 		case env.Program.Push.Msg:
