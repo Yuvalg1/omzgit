@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	"omzgit/env"
 	"omzgit/popups/conflict/chunk"
 	"omzgit/popups/conflict/content"
 
@@ -158,7 +159,10 @@ func (m *Model) getContent() {
 	m.theirs.Refresh()
 }
 
-func (m *Model) resolve(index int, ours bool) {
+func (m *Model) resolve(index int, command string) {
+	pickOurs := command == env.Conflict.Our.Msg || command == env.Conflict.Both.Msg
+	pickTheirs := command == env.Conflict.Their.Msg || command == env.Conflict.Both.Msg
+
 	file, err := os.Stat(m.path)
 	if err != nil {
 		return
@@ -217,11 +221,11 @@ func (m *Model) resolve(index int, ours bool) {
 			content += element + "\n"
 		}
 
-		if inOurs && (conflict != index || ours) {
+		if inOurs && (conflict != index || pickOurs) {
 			content += element + "\n"
 		}
 
-		if inTheirs && (conflict != index || !ours) {
+		if inTheirs && (conflict != index || pickTheirs) {
 			content += element + "\n"
 		}
 	}

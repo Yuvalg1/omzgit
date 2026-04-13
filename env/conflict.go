@@ -2,6 +2,8 @@ package env
 
 type conflict struct {
 	Back Option
+	Both Option
+
 	Our  Option
 	Ours Option
 
@@ -25,6 +27,11 @@ var Conflict = conflict{
 	Back: Option{
 		Msg:         "esc",
 		Description: "returns to files page",
+	},
+
+	Both: Option{
+		Msg:         "b",
+		Description: "saves both highlighted conflict changes in file",
 	},
 
 	Our: Option{

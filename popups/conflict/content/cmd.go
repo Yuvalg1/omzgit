@@ -3,15 +3,15 @@ package content
 import tea "github.com/charmbracelet/bubbletea"
 
 type Msg struct {
-	Index int
-	Ours  bool
+	Index   int
+	Command string
 }
 
-func Cmd(index int, ours bool) tea.Cmd {
+func Cmd(index int, command string) tea.Cmd {
 	return func() tea.Msg {
 		return Msg{
-			Index: index,
-			Ours:  ours,
+			Index:   index,
+			Command: command,
 		}
 	}
 }
