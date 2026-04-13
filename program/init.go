@@ -8,7 +8,7 @@ import (
 	"omzgit/popups/discard"
 	"omzgit/popups/help"
 	"omzgit/popups/input"
-	"omzgit/popups/reset"
+	"omzgit/popups/picker"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
 
@@ -49,8 +49,8 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialAsync := async.InitialModel(getWidth(width), getHeight(height), "fetching")
 	initialPopups.AddPopup("async", initialAsync)
 
-	initialReset := reset.InitialModel(getWidth(width), getHeight(height))
-	initialPopups.AddPopup("reset", initialReset)
+	initialPicker := picker.InitialModel(getWidth(width), getHeight(height))
+	initialPopups.AddPopup("pick", initialPicker)
 
 	initialConflict := conflict.InitialModel(getWidth(width), getHeight(height))
 	initialPopups.AddPopup("conflict", initialConflict)

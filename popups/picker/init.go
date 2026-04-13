@@ -1,27 +1,26 @@
-package reset
+package picker
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type Pick struct {
+	Desc     string
+	Callback func(path string) tea.Cmd
+}
+
 type Model struct {
 	name    string
-	hash    string
+	title   string
 	visible bool
-	options map[byte]string
+	options map[string]Pick
 
 	width  int
 	height int
 }
 
 func InitialModel(width int, height int) Model {
-	options := map[byte]string{}
-	options['s'] = "--soft"
-	options['h'] = "--hard"
-	options['m'] = "--mixed"
-
 	return Model{
-		options: options,
 		visible: false,
 
 		width:  getWidth(width),

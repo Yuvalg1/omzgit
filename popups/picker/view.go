@@ -1,4 +1,4 @@
-package reset
+package picker
 
 import (
 	"omzgit/consts"
@@ -9,8 +9,6 @@ import (
 )
 
 func (m Model) View() string {
-	title := "choose a reset type for " + m.hash
-
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
 		Render(consts.PadTitle("reset", m.width) +
@@ -21,24 +19,29 @@ func (m Model) View() string {
 				Border(lipgloss.NormalBorder(), false, true, true).
 				Height(m.height).
 				Width(m.width-2).
-				Render(title+"\n"+
-					m.renderOption('s')+"\n"+
-					m.renderOption('h')+"\n"+
-					m.renderOption('m')))
+				Render(m.title+m.renderOptions()))
 }
 
-func (m Model) renderOption(letter byte) string {
+func (m Model) renderOptions() string {
+	options := ""
+	for key := range m.options {
+		options += "\n" + m.renderOption(key)
+	}
+	return options
+}
+
+func (m Model) renderOption(letter string) string {
 	return m.renderLetter(letter) + m.renderTitle(letter)
 }
 
-func (m Model) renderLetter(letter byte) string {
+func (m Model) renderLetter(letter string) string {
 	return lipgloss.NewStyle().
 		Background(bg.C[0]).
 		Bold(true).
-		Foreground(colors.Yellow).
+		Foreground(colors.Aqua).
 		Render(string(letter) + " ")
 }
 
-func (m Model) renderTitle(letter byte) string {
-	return lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Purple).Render(m.options[letter])
+func (m Model) renderTitle(letter string) string {
+	return lipgloss.NewStyle().Background(bg.C[0]).Foreground(colors.Aqua).Render(m.options[letter].Desc)
 }

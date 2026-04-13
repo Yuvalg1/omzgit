@@ -8,6 +8,7 @@ import (
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
 	"omzgit/popups/help"
+	"omzgit/popups/picker"
 	"omzgit/program/commits/log"
 	"omzgit/program/popups"
 	"omzgit/roller"
@@ -65,7 +66,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch keypress := msg.String(); keypress {
 		case env.Commits.Reset.Msg:
-			return m, popups.Cmd("reset", m.list.GetCurrent().Hash, "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), func() {})
+			return m, popups.Cmd("pick", "HEAD~"+strconv.Itoa(m.list.ActiveRow+1), "choose a reset type for "+m.list.GetCurrent().Hash, func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"s": getResetPick("--soft"),
+					"h": getResetPick("--hard"),
+					"m": getResetPick("--mixed"),
+				}
+			})
 
 		case "?":
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
