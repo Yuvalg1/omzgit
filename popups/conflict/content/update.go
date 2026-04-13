@@ -53,8 +53,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Refresh()
 			return m, nil
 
-		case env.Conflict.Our.Msg, env.Conflict.Their.Msg:
-			return m, Cmd(m.index, m.ours)
+		case env.Conflict.Both.Msg, env.Conflict.Our.Msg, env.Conflict.Their.Msg:
+			return m, Cmd(m.index, keypress)
 
 		case env.Conflict.PgDown.Msg:
 			m.Content.PageDown()
