@@ -98,6 +98,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Files.DiscardAll.Msg:
 			return m, popups.Cmd("discard", "discard", "All Files", func() tea.Cmd {
 				git.Exec("reset", "--hard")
+				git.Exec("clean", "-fd")
 				return nil
 			})
 
