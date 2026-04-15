@@ -1,8 +1,6 @@
 package commits
 
 import (
-	"strconv"
-
 	"omzgit/env"
 	"omzgit/lib/list"
 	"omzgit/messages/mode"
@@ -66,9 +64,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch keypress := msg.String(); keypress {
 		case env.Commits.Reset.Msg:
-			current := "HEAD~" + strconv.Itoa(m.list.ActiveRow+1)
+			current := m.list.GetCurrent().Hash
 
-			return m, popups.Cmd("pick", current, "choose a reset type for "+m.list.GetCurrent().Hash, func() map[string]picker.Pick {
+			return m, popups.Cmd("pick", current, "choose a reset type for "+current, func() map[string]picker.Pick {
 				return map[string]picker.Pick{
 					"s": picker.GetPick("reset", "--soft", current),
 					"h": picker.GetPick("reset", "--hard", current),
