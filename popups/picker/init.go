@@ -8,6 +8,8 @@ import (
 	"omzgit/program/popups"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type Pick struct {
@@ -55,7 +57,7 @@ func GetPick(command ...string) Pick {
 		Desc: command[1], Callback: func() tea.Cmd {
 			output, err := git.Exec(command...)
 			if err != nil {
-				return popups.Cmd("alert", command[0], strings.TrimSpace(output), func() {})
+				return popups.Cmd("alert", cases.Title(language.Und).String(command[0])+" Error!", strings.TrimSpace(output), func() {})
 			}
 			return refresh.Cmd()
 		},
