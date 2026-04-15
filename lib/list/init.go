@@ -1,7 +1,10 @@
 package list
 
 import (
+	"strings"
 	"time"
+
+	"omzgit/git"
 
 	"github.com/bep/debounce"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -11,6 +14,7 @@ import (
 type Model[T tea.Model] struct {
 	Children  []T
 	ActiveRow int
+	basename  string
 
 	Page int
 
@@ -22,6 +26,7 @@ type Model[T tea.Model] struct {
 	mode      string
 
 	innerOffset int
+	width       int
 	height      int
 }
 
@@ -29,6 +34,10 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 	ti := textinput.New()
 	ti.CharLimit = 20
 	ti.Prompt = ""
+
+	repo, _ := git.Exec("rev-parse", "--show-toplevel")
+	parts := strings.Split(repo, "/")
+	basename := strings.TrimSpace(parts[len(parts)-1])
 
 	return Model[T]{
 		Children:  children,
@@ -40,6 +49,7 @@ func InitialModel[T tea.Model](height int, children []T, initialActive int, empt
 		debounceFn:    debounce.New(300 * time.Millisecond),
 		TextInput:     ti,
 		emptyMsg:      emptyMsg,
+		basename:      basename,
 
 		innerOffset: min(getHeight(height)-2, initialActive),
 		height:      getHeight(height),

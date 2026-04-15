@@ -34,12 +34,20 @@ func (m Model[T]) View() string {
 		mode = " " + mode + " " + endStyle.Render("")
 	}
 
-	return style.Bg.Height(m.height).Render(modeStyle.Render(mode) + style.Bg.Render(m.getTextInput()) + "\n" + fileStrings)
+	modeRender := modeStyle.Render(mode)
+
+	return style.Bg.Height(m.height).Render(modeRender + style.Bg.Render(m.getTextInput(m.width-lipgloss.Width(modeRender))) + "\n" + fileStrings)
 }
 
-func (m Model[T]) getTextInput() string {
+func (m Model[T]) getTextInput(width int) string {
 	if !m.TextInput.Focused() {
-		return ""
+		basename := lipgloss.NewStyle().Background(gray.C[2]).Foreground(bg.C[0]).Padding(0, 1).Render(m.basename)
+		connector := lipgloss.NewStyle().Background(bg.C[0]).Foreground(gray.C[2]).Render("")
+
+		return lipgloss.NewStyle().
+			AlignHorizontal(lipgloss.Right).
+			Width(width).
+			Render(connector + basename)
 	}
 
 	return " " + m.TextInput.View()

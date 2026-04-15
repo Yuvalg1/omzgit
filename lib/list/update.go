@@ -14,6 +14,7 @@ func (m Model[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		previousHeight := m.height
 		m.height = getHeight(msg.Height)
+		m.width = msg.Width
 
 		var cmds []tea.Cmd
 
