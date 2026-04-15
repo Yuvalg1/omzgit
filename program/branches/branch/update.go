@@ -37,7 +37,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg:
 			output, err := git.Exec("checkout", m.Roller.Name)
 			if err != nil {
-				return m, popups.Cmd("alert", "checkout error", output, func(name string) {})
+				return m, popups.Cmd("alert", "Checkout Error!", output, func(name string) {})
 			}
 
 			m.Active = true
@@ -50,7 +50,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, popups.Cmd("discard", "force checkout", m.Roller.Name, func() tea.Cmd {
 				output, err := git.Exec("checkout", "-f", m.Roller.Name)
 				if err != nil {
-					return popups.Cmd("alert", "checkout error", output, func(name string) {})
+					return popups.Cmd("alert", "Force Checkout Error!", output, func(name string) {})
 				}
 
 				m.Current = true
@@ -64,7 +64,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return popups.Cmd("alert", "Delete Error", output, func(name string) {})
+				return popups.Cmd("alert", "Delete Error!", output, func(name string) {})
 			})
 
 		case env.Branches.DeleteForce.Msg:
@@ -74,7 +74,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return popups.Cmd("alert", "Force Delete Error", output, func(name string) {})
+				return popups.Cmd("alert", "Force Delete Error!", output, func(name string) {})
 			})
 
 		case env.Branches.Rebase.Msg:
@@ -84,7 +84,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return popups.Cmd("alert", "Rebase Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Rebase Error!", output, func() tea.Cmd { return nil })
 			})
 
 		case env.Branches.RebaseOptions.Msg:
@@ -104,7 +104,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return popups.Cmd("alert", "Merge Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Merge Error!", output, func() tea.Cmd { return nil })
 			})
 
 		case env.Branches.MergeOptions.Msg:

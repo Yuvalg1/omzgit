@@ -85,7 +85,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return popups.Cmd("alert", "Fetch Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Fetch Error!", output, func() tea.Cmd { return nil })
 			})
 
 		case env.Program.Goto.Msg:
@@ -98,7 +98,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return nil
 				}
 
-				return popups.Cmd("alert", "Pull Error", output, func() tea.Cmd { return nil })
+				return popups.Cmd("alert", "Pull Error!", output, func() tea.Cmd { return nil })
 			})
 
 		case env.Program.PullOptions.Msg:
@@ -129,7 +129,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						if err == nil {
 							return nil
 						}
-						return popups.Cmd("alert", "Upstream Error", strings.TrimSpace(output), func() tea.Cmd { return nil })
+						return popups.Cmd("alert", "Upstream Error!", strings.TrimSpace(output), func() tea.Cmd { return nil })
 					})
 				})
 			})
@@ -144,7 +144,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						return nil
 					}
 
-					return popups.Cmd("alert", "Force Push Error", strings.TrimSpace(output), func() tea.Cmd {
+					return popups.Cmd("alert", "Force Push Error!", strings.TrimSpace(output), func() tea.Cmd {
 						return nil
 					})
 				})

@@ -36,7 +36,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Commits.Checkout.Msg:
 			output, err := git.Exec("checkout", m.Hash)
 			if err != nil {
-				return m, popups.Cmd("alert", "Alert!", output, func(name string) {})
+				return m, popups.Cmd("alert", "Checkout Error!", output, func(name string) {})
 			}
 
 			m.Current = true
@@ -46,7 +46,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, popups.Cmd("discard", "force checkout", m.Hash, func() tea.Cmd {
 				output, err := git.Exec("checkout", "-f", m.Hash)
 				if err != nil {
-					return popups.Cmd("alert", "checkout error", output, func(name string) {})
+					return popups.Cmd("alert", "Force Checkout Error!", output, func(name string) {})
 				}
 
 				m.Current = true
@@ -68,7 +68,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Commits.CherryPick.Msg:
 			output, err := git.Exec("cherry-pick", m.Hash)
 			if err != nil {
-				popups.Cmd("alert", "cherry pick error", output, func() {})
+				popups.Cmd("alert", "Cherry Pick Error!", output, func() {})
 			}
 			return m, refresh.Cmd()
 
