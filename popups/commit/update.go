@@ -56,7 +56,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				if m.options['a'] != "" {
 					return m, popups.Cmd("async", "", "amend committing", func() tea.Cmd {
-						git.ExecNoOutput(m.getCommitString()...)
+						git.Exec(m.getCommitString()...)
 						return popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return refresh.Cmd() })
 					})
 				}
@@ -118,8 +118,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			if m.options['a'] != "" {
-				git.ExecNoOutput(m.getCommitString()...)
-				return m, refresh.Cmd()
+				return m, popups.Cmd("async", "", "amend committing", func() tea.Cmd {
+					output, err := git.Exec(m.getCommitString()...)
+					if err != nil {
+						return popups.Cmd("alert", "Commit Error!", output, func() tea.Cmd { return nil })
+					}
+					return popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return refresh.Cmd() })
+				})
 			}
 
 			output, err := git.Exec(m.getCommitString()...)
