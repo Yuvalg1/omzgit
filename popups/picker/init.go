@@ -55,11 +55,13 @@ func (m Model) GetVisible() bool {
 func GetPick(command ...string) Pick {
 	return Pick{
 		Desc: command[1], Callback: func() tea.Cmd {
-			output, err := git.Exec(command...)
-			if err != nil {
-				return popups.Cmd("alert", cases.Title(language.Und).String(command[0])+" Error!", strings.TrimSpace(output), func() {})
-			}
-			return refresh.Cmd()
+			return popups.Cmd("async", "", command[1], func() tea.Cmd {
+				output, err := git.Exec(command...)
+				if err != nil {
+					return popups.Cmd("alert", cases.Title(language.Und).String(command[0])+" Error!", strings.TrimSpace(output), func() {})
+				}
+				return refresh.Cmd()
+			})
 		},
 	}
 }
