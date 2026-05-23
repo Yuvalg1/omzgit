@@ -61,6 +61,11 @@ func getStaged(fileStr string) bool {
 }
 
 func getPath(fileStr string) string {
+	if strings.Contains(fileStr, " -> ") {
+		parts := strings.Split(fileStr, " -> ")
+		return parts[len(parts)-1]
+	}
+
 	return strings.Split(fileStr[2:], " ")[1]
 }
 

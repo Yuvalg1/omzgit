@@ -110,7 +110,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				_, err := git.Exec("reset", "--", m.Roller.Name)
 				m.Staged = err != nil
 			}
-			return m, nil
+			return m, refresh.Cmd()
 
 		case env.Files.ResetAll.Msg:
 			m.Staged = false

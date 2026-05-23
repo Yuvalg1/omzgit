@@ -90,7 +90,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				})
 			}
 
-			return m, tea.Batch(m.updateChildren(msg), m.CokeCmd())
+			return m, tea.Batch(m.updateChildren(msg), m.CokeCmd(), refresh.Cmd())
 
 		case env.Files.Commit.Msg:
 			return m, popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
@@ -111,7 +111,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			res2, cmd2 := m.diff.Update(msg)
 			m.diff = res2.(diff.Model)
 
-			return m, tea.Batch(cmd1, cmd2)
+			return m, tea.Batch(cmd1, cmd2, refresh.Cmd())
 
 		case env.Files.Refresh.Msg, env.Files.Search.Msg:
 			m.list.SetContent(GetFilesChanged(m.getSnapshot()))
