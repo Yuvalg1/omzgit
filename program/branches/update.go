@@ -75,7 +75,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				git.Exec("checkout", "-b", name)
 			})
 
-		case env.Branches.Checkout.Msg, env.Branches.CheckoutForce.Msg:
+		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg, env.Branches.CheckoutForce.Msg:
 			index := slices.IndexFunc(m.list.Children, func(branch branch.Model) bool { return branch.Current })
 
 			res, cmd := m.list.Update(msg)
