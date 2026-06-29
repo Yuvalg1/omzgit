@@ -17,8 +17,8 @@ func (m Model) View() string {
 		Border(lipgloss.NormalBorder(), false, true, true).
 		BorderBackground(bg.C[0]).
 		BorderForeground(colors.Green).
-		Width(m.width - 2)
+		Width(m.width)
 
-	return titleStyle.Render(consts.PadTitle("help", m.width) +
+	return titleStyle.Render(consts.PadTitle("help", m.width+2) +
 		borderStyle.Render(m.list.View()))
 }

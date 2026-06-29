@@ -50,7 +50,7 @@ func getHeight(height int) int {
 }
 
 func getWidth(width int) int {
-	return width
+	return width - 2
 }
 
 func (m Model) GetVisible() bool {
