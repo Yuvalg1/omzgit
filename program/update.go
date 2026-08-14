@@ -12,6 +12,7 @@ import (
 	"omzgit/popups/picker"
 	"omzgit/program/cokeline"
 	"omzgit/program/popups"
+	"omzgit/suspend"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -39,6 +40,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		return m, tea.Batch(cmds...)
+
+	case suspend.Msg:
+		m.command <- msg.Command
+		m.page <- m.ActiveTab
+		return m, tea.Batch(refresh.Cmd(), tea.Quit)
 
 	case cokeline.Msg:
 		res, cmd := m.cokeline.Update(msg)

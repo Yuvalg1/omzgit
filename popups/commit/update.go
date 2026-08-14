@@ -56,7 +56,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				if m.options['a'] != "" {
 					return m, popups.Cmd("async", "", "amend committing", func() tea.Cmd {
-						git.Exec(m.getCommitString()...)
+						_, _ = git.Exec(m.getCommitString()...)
 						return popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return refresh.Cmd() })
 					})
 				}

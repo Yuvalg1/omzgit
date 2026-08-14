@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"os"
+	"os/exec"
 
 	"omzgit/program"
 	"omzgit/program/branches"
@@ -16,20 +16,37 @@ import (
 func main() {
 	width, height, _ := term.GetSize(os.Stdout.Fd())
 
-	m := program.InitialModel(
-		[]program.ExtendedModel{
-			{Title: "Files", Tab: files.InitialModel(width, height)},
-			{Title: "Branches", Tab: branches.InitialModel(width, height, "Branches")},
-			{Title: "Commits", Tab: commits.InitialModel(width, height, "Commits")},
-		},
-		width,
-		height,
-	)
+	command := make(chan []string, 1)
+	page := make(chan string, 1)
+	page <- "Files"
 
-	p := tea.NewProgram(m)
+	for len(command) == 0 {
+		m := program.InitialModel(
+			[]program.ExtendedModel{
+				{Title: "Files", Tab: files.InitialModel(width, height)},
+				{Title: "Branches", Tab: branches.InitialModel(width, height, "Branches")},
+				{Title: "Commits", Tab: commits.InitialModel(width, height, "Commits")},
+			},
+			width,
+			height,
+			command,
+			page,
+		)
 
-	if _, err := p.Run(); err != nil {
-		fmt.Printf("Alas, there's been an error: %v", err)
-		os.Exit(1)
+		p := tea.NewProgram(m)
+
+		_, _ = p.Run()
+
+		if len(command) == 0 {
+			break
+		}
+
+		command := <-command
+		cmd := exec.Command("git", command...)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		_ = cmd.Run()
 	}
 }

@@ -1,15 +1,10 @@
 package picker
 
 import (
-	"strings"
-
-	"omzgit/git"
-	"omzgit/messages/refresh"
 	"omzgit/program/popups"
+	"omzgit/suspend"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type Pick struct {
@@ -56,11 +51,7 @@ func GetPick(command ...string) Pick {
 	return Pick{
 		Desc: command[1], Callback: func() tea.Cmd {
 			return popups.Cmd("async", "", command[1], func() tea.Cmd {
-				output, err := git.Exec(command...)
-				if err != nil {
-					return popups.Cmd("alert", cases.Title(language.Und).String(command[0])+" Error!", strings.TrimSpace(output), func() {})
-				}
-				return refresh.Cmd()
+				return suspend.Cmd(command...)
 			})
 		},
 	}

@@ -54,7 +54,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.Conflict {
 				cmd = popups.Cmd("discard", "add", m.Roller.Name, func() tea.Cmd {
-					git.Exec("add", m.Roller.Name)
+					_, _ = git.Exec("add", m.Roller.Name)
 					m.Active = true
 					return nil
 				})
@@ -98,9 +98,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				_, err := git.Exec("ls-files", "--error-unmatch", m.Roller.Name)
 				if err == nil {
-					git.Exec("restore", m.Roller.Name)
+					_, _ = git.Exec("restore", m.Roller.Name)
 				} else {
-					git.Exec("clean", "-f", m.Roller.Name)
+					_, _ = git.Exec("clean", "-f", m.Roller.Name)
 				}
 				return nil
 			})
@@ -118,14 +118,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case env.Files.Ours.Msg:
 			if m.Conflict {
-				git.Exec("checkout", "--ours", m.Roller.Name)
+				_, _ = git.Exec("checkout", "--ours", m.Roller.Name)
 				return m, refresh.Cmd()
 			}
 			return m, nil
 
 		case env.Files.Theirs.Msg:
 			if m.Conflict {
-				git.Exec("checkout", "--theirs", m.Roller.Name)
+				_, _ = git.Exec("checkout", "--theirs", m.Roller.Name)
 				return m, refresh.Cmd()
 			}
 			return m, nil
