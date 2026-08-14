@@ -21,6 +21,8 @@ type Model struct {
 	Tabs      map[string]tea.Model
 	mode      string
 	Popup     popups.Model[popups.InnerModel]
+	command   chan []string
+	page      chan string
 
 	Height int
 	Width  int
@@ -31,7 +33,7 @@ type ExtendedModel struct {
 	Title string
 }
 
-func InitialModel(tabs []ExtendedModel, width int, height int) Model {
+func InitialModel(tabs []ExtendedModel, width int, height int, command chan []string, page chan string) Model {
 	initialPopups := popups.InitialModel[popups.InnerModel]("discard")
 
 	initialInput := input.InitialModel(func(name string) {}, getWidth(width), getHeight(height), true)
@@ -59,11 +61,13 @@ func InitialModel(tabs []ExtendedModel, width int, height int) Model {
 	initialPopups.AddPopup("help", initialHelp)
 
 	return Model{
-		ActiveTab: "Files",
+		ActiveTab: <-page,
 		cokeline:  cokeline.InitialModel(width, height, getCokes(tabs)),
 		Tabs:      getTabs(tabs),
 		Popup:     initialPopups,
 		mode:      "",
+		command:   command,
+		page:      page,
 
 		Width:  getWidth(width),
 		Height: getHeight(height),

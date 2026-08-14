@@ -25,5 +25,5 @@ func ExecNoOutput(args ...string) {
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 
-	cmd.Run()
+	_ = cmd.Run()
 }
