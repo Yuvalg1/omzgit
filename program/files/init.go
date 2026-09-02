@@ -6,6 +6,7 @@ import (
 
 	"omzgit/git"
 	"omzgit/lib/list"
+	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/program/cokeline"
 	"omzgit/program/files/diff"
@@ -59,9 +60,7 @@ func InitialModel(width int, height int) Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	cmds := []tea.Cmd{tick.Cmd(0), func() tea.Msg {
-		return tea.KeyMsg{Type: tea.KeyEsc, Runes: []rune{'\x1b'}}
-	}}
+	cmds := []tea.Cmd{tick.Cmd(0), refresh.Cmd()}
 
 	if len(m.list.Children) > 0 {
 		cmds = append(cmds, m.list.Children[m.list.ActiveRow].Init(), m.CokeCmd())

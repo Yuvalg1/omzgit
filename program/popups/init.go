@@ -30,7 +30,7 @@ func InitialModel[T InnerModel](current string) Model[InnerModel] {
 }
 
 func (m Model[T]) Init() tea.Cmd {
-	return nil
+	return m.Popups[m.current].Init()
 }
 
 func (m *Model[T]) AddPopup(name string, popup T) {

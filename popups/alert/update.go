@@ -5,6 +5,7 @@ import (
 
 	"omzgit/clipboard"
 	"omzgit/env"
+	"omzgit/messages/refresh"
 	"omzgit/popups/help"
 	"omzgit/program/popups"
 
@@ -29,8 +30,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, nil
 
+	case refresh.Msg:
+		return m, nil
+
 	case popups.Msg:
-		m.error = msg.Name[:len(msg.Name)-1]
+		m.error = strings.Trim(msg.Name, "\n")
 		error := m.getContentStyle().
 			Render(m.error)
 

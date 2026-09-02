@@ -1,6 +1,8 @@
 package alert
 
 import (
+	"omzgit/program/popups"
+
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -14,20 +16,26 @@ type Model struct {
 	maxHeight int
 }
 
-func InitialModel(width int, height int) Model {
+func InitialModel(width int, height int, error chan string) Model {
 	viewport := viewport.New(getWidth(width), getHeight(height))
+	value := <-error
+	visible := value != ""
 
 	return Model{
-		error:    "",
+		error:    value,
 		viewport: viewport,
-		visible:  false,
-		verb:     "",
+		visible:  visible,
+		verb:     "Error!",
 
 		maxHeight: getHeight(height),
 	}
 }
 
 func (m Model) Init() tea.Cmd {
+	if m.error != "" {
+		return popups.Cmd("alert", m.verb, m.error, func(name string) {})
+	}
+
 	return nil
 }
 
