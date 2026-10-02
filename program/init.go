@@ -33,8 +33,8 @@ type ExtendedModel struct {
 	Title string
 }
 
-func InitialModel(tabs []ExtendedModel, width int, height int, command chan []string, page chan string) Model {
-	initialPopups := popups.InitialModel[popups.InnerModel]("discard")
+func InitialModel(tabs []ExtendedModel, width int, height int, command chan []string, page chan string, error chan string) Model {
+	initialPopups := popups.InitialModel[popups.InnerModel]("alert")
 
 	initialInput := input.InitialModel(func(name string) {}, getWidth(width), getHeight(height), true)
 	initialPopups.AddPopup("input", initialInput)
@@ -42,7 +42,7 @@ func InitialModel(tabs []ExtendedModel, width int, height int, command chan []st
 	initialDiscard := discard.InitialModel(func() tea.Cmd { return nil }, getWidth(width), getHeight(height))
 	initialPopups.AddPopup("discard", initialDiscard)
 
-	initialAlert := alert.InitialModel(getWidth(width), getHeight(height))
+	initialAlert := alert.InitialModel(getWidth(width), getHeight(height), error)
 	initialPopups.AddPopup("alert", initialAlert)
 
 	initialCommit := commit.InitialModel(getWidth(width), getHeight(height), "commit")

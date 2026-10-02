@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"os/exec"
+	"strings"
 
 	"omzgit/program"
 	"omzgit/program/branches"
@@ -19,6 +22,8 @@ func main() {
 	command := make(chan []string, 1)
 	page := make(chan string, 1)
 	page <- "Files"
+	error := make(chan string, 1)
+	error <- ""
 
 	for len(command) == 0 {
 		m := program.InitialModel(
@@ -31,6 +36,7 @@ func main() {
 			height,
 			command,
 			page,
+			error,
 		)
 
 		p := tea.NewProgram(m)
@@ -41,12 +47,15 @@ func main() {
 			break
 		}
 
+		var stderr bytes.Buffer
+
 		command := <-command
 		cmd := exec.Command("git", command...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
+		cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
 
 		_ = cmd.Run()
+		error <- strings.TrimSpace(stderr.String())
 	}
 }
