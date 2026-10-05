@@ -9,7 +9,10 @@ require (
 	github.com/muesli/reflow v0.3.0
 )
 
-require github.com/clipperhouse/displaywidth v0.11.0 // indirect
+require (
+	github.com/clipperhouse/displaywidth v0.11.0 // indirect
+	github.com/sahilm/fuzzy v0.1.3 // indirect
+)
 
 require (
 	github.com/atotto/clipboard v0.1.4 // indirect

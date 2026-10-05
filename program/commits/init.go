@@ -61,23 +61,42 @@ func getCommitLogs(m snapshot) []log.Model {
 	var logs []log.Model
 	commits := strings.Split(output, "\n")
 
+	commitTexts := []string{}
 	index := 0
+	for index < len(commits) {
+		hash := commits[index]
 
-	for len(logs) < m.listNewSize && index < len(commits) {
 		branchesStr := commits[index+1]
 		branchesStr = strings.TrimPrefix(branchesStr, "HEAD -> ")
 
-		hash := commits[index]
 		branches := []string{}
 		if len(branchesStr) > 0 {
 			branches = strings.Split(branchesStr, ", ")
 		}
-		desc := commits[index+2]
 
-		if filterFn(hash, desc, m.listTextInputValue) {
-			logs = append(logs, log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head)))
-		}
+		desc := commits[index+2]
+		branchStrings := strings.Join(branches, "\n")
+
+		commitTexts = append(commitTexts, strings.Join([]string{hash, desc, branchStrings}, "\n"))
 		index += 3
+	}
+
+	input := list.FormatInput(m.listTextInputValue)
+	finds := commitTexts
+
+	if len(input) != 0 {
+		finds = list.Filter(commitTexts, input)
+	}
+
+	index = 0
+
+	for len(logs) < m.listNewSize && index < len(finds) {
+		parts := strings.Split(finds[index], "\n")
+		hash := parts[0]
+		desc := parts[1]
+		branches := parts[2:]
+		logs = append(logs, log.InitialModel(m.width, hash, branches, desc, strings.TrimSpace(head)))
+		index++
 	}
 
 	if len(logs) == 0 {
