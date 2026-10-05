@@ -1,18 +1,18 @@
 ## omzgit
 
-A __GUI__ app is like cruising with a fancy dashboard and auto-pilot. It looks great and gets you there with minimal effort.
+I had a problem I was using almost the exact same git commands every single time. I used the ```cli```, though excellent I was only using a handful of commands. Sometimes, I even used the ```VSCode``` UI where I was only opening it to commit, stage and look at the git graph nicely.
 
-The __CLI__? That’s like riding a manual motorcycle: raw, fast, and thrilling, but only if you know what you’re doing.
+I was looking for other options, and a friend of mine told me about [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh). He told me it has a git cheat sheet exactly for my requirements. Around the same time I also found out about [lazygit](https://github.com/jesseduffield/lazygit). I started diving into list of available options at my disposal and it was great, although a bit daunting. At the time I was only using a handful of commands, and I learned a thing or two about designing a tiny bit of UI, and I thought to myself why not create a project much smaller than either of them, fit exactly to my needs.
 
-what about __omzgit?__
+I scanned the cheat sheet trying to find patterns and I wanted to create the program to fit it as best as I could. Then I had the realization that I can use pages. Then, it fits great and I can reuse the same letters. Separate it into multiple pages for better readability, and give a visual feedback to each letter I type.
 
-Not too long ago, I found out about [lazygit](https://github.com/jesseduffield/lazygit) and [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh). Both projects are amazing and huge inspirations for this project. 
-
-lazygit is great, but I wanted it to look more like what I am used to seeing in VSCode git editor. VSCode is good, but when I started to learn Vim I wanted the functionality of shortucts and the feeling of not using a mouse. So when I looked at ohmyzsh, specifically about the git part documented in the git [cheat sheet](https://kapeli.com/cheat_sheets/Oh-My-Zsh_Git.docset/Contents/Resources/Documents/index), I had a vision.
-
-What if I make a terminal UI project which looks simplistic for a newbie like me, but holds the power of commands inspired by the Oh-My-Zsh Git Cheat Sheet? And that's when omzgit was born.
+And that's how the idea was born.
 
 ## Installation
+
+### Releases
+
+Simply download the latest available binaries and run them. In [Releases](https://github.com/Yuvalg1/omzgit/releases).
 
 ### Manual
 
@@ -28,6 +28,8 @@ go install
 
 ## Usage
 
+In any page, the following behavior is consistent:
+
 ```f``` - fetch changes
 
 ```l``` - pull changes from origin
@@ -38,58 +40,22 @@ go install
 
 ```/``` - open search filter
 
-### Pages
-
-There are currently two branches, ```Files``` and ```Branches```. (Stay tuned for Commits)
-
-To switch between pages, you use the prefix ```g```, meaning ```git``` or ```goto```.
-
-```gb``` - for ```Branches``` page.
-
-```gf``` - for ```Files``` page.
-
-This also refreshes the data in the page. If you want an easier way to refresh page data, simply press ```esc```.
-
-### Branches
-
-To move between branches, use the arrow keys or ```j/k```.
-
-```b``` - create a new branch
-
-```c``` - checkout to current selected branch
-
-```d``` - delete a branch 
-
-```D``` - force delete a branch
+```y``` - copies relevant information from current row
 
 ### Files
 
-```a``` - stage selected file
+Here you can stage, unstage, discard, and commit files. On the left are the files changed, and on the right is the diff.
 
-```A``` - stage all files
+<img width="1920" height="1080" alt="2026-10-06_00-17-06" src="https://github.com/user-attachments/assets/06a7737d-f7a7-4baf-86a6-c062e70c93e4" />
 
-```c``` - open commit popup
+### Branches
 
-```d``` - discard selected file
+Here you can checkout, delete, merge, rebase, and switch branches. On the left are the branch names, and on the right of the current row is the behind|ahead the the last changed time difference.
 
-```D``` - discard all files
+<img width="1920" height="1080" alt="2026-10-06_00-28-54" src="https://github.com/user-attachments/assets/8f70d69e-12ad-41f2-bada-1b7fe5b5ca0a" />
 
-### Commit Popup
+### Commits
 
-```F``` - take a commit message from the file name
+Here you can checkout, reset and look through all of the commits.
 
-```m``` - enter a commit message
-
-```o``` - toggle options menu
-
-#### Commit Options
-
-```a``` - --amend
-
-```e``` - --edit
-
-```E``` - --no-edit
-
-```n``` - --no-verify
-
-```y``` - --allow-empty
+<img width="1920" height="1080" alt="2026-10-06_00-15-08" src="https://github.com/user-attachments/assets/15c5f65e-a6dd-4350-9058-554534ea7449" />
