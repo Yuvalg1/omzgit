@@ -106,11 +106,6 @@ func getCommitLogs(m snapshot) []log.Model {
 	return logs
 }
 
-func filterFn(hash string, desc string, text string) bool {
-	return strings.Contains(strings.ToLower(hash), strings.ToLower(text)) ||
-		strings.Contains(strings.ToLower(desc), strings.ToLower(text))
-}
-
 func getWidth(width int) int {
 	return width
 }
