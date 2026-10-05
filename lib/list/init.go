@@ -1,6 +1,7 @@
 package list
 
 import (
+	"regexp"
 	"strings"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/bep/debounce"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/sahilm/fuzzy"
 )
 
 type Model[T tea.Model] struct {
@@ -111,4 +113,31 @@ func (m Model[T]) debounceCmd(msg tea.Msg) tea.Cmd {
 		})
 		return <-channel
 	}
+}
+
+func Filter(items []string, search string) []string {
+	exp, err := regexp.Compile(search)
+	quoted := regexp.QuoteMeta(search)
+	result := []string{}
+
+	if err != nil || search == quoted {
+		matches := fuzzy.Find(search, items)
+		for i := range matches {
+			result = append(result, matches[i].Str)
+		}
+
+		return result
+	}
+
+	for _, element := range items {
+		if exp.MatchString(element[2:]) {
+			result = append(result, element)
+		}
+	}
+
+	return result
+}
+
+func FormatInput(search string) string {
+	return strings.ReplaceAll(search, " ", "")
 }

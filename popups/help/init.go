@@ -60,13 +60,23 @@ func (m Model) GetVisible() bool {
 func (m *Model) getOptions() []option.Model {
 	index := 0
 
-	var options []option.Model
-	for len(options) < m.list.NewSize() && index < len(m.defaultOptions) {
-		option := option.InitialModel(m.width, m.defaultOptions[index])
+	defaultOptions := []string{}
+	for _, element := range m.defaultOptions {
+		defaultOptions = append(defaultOptions, element.Msg+"\n"+element.AltMsg+"\n"+element.Description)
+	}
 
-		if filterFn(option, m.list.TextInput.Value()) {
-			options = append(options, option)
-		}
+	input := list.FormatInput(m.list.TextInput.Value())
+	finds := defaultOptions
+
+	if len(input) != 0 {
+		finds = list.Filter(defaultOptions, input)
+	}
+
+	var options []option.Model
+	for len(options) < m.list.NewSize() && index < len(finds) {
+		parts := strings.Split(finds[index], "\n")
+		option := option.InitialModel(m.width, env.Option{Msg: parts[0], AltMsg: parts[1], Description: parts[2]})
+		options = append(options, option)
 
 		index++
 	}
@@ -76,11 +86,6 @@ func (m *Model) getOptions() []option.Model {
 	}
 
 	return options
-}
-
-func filterFn(option option.Model, text string) bool {
-	return strings.Contains(strings.ToLower(option.Roller.Name), strings.ToLower(text)) ||
-		strings.Contains(option.Msg, text)
 }
 
 func GetEnvOptions(configuration any) []env.Option {

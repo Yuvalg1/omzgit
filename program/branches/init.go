@@ -80,14 +80,18 @@ func getBranches(m snapshot) []branch.Model {
 	branches := strings.Split(output, "\n")
 	branches = branches[:len(branches)-1]
 
+	input := list.FormatInput(m.listTextInputValue)
+	finds := branches
+
+	if len(input) != 0 {
+		finds = list.Filter(branches, input)
+	}
+
 	index := 0
 
 	var models []branch.Model
-	for len(models) < m.listNewSize && index < len(branches) {
-		if filterFn(branches[index][2:], m.listTextInputValue) {
-			models = append(models, branch.InitialModel(m.width, branches[index], getDefaultBranch()))
-		}
-
+	for len(models) < m.listNewSize && index < len(finds) {
+		models = append(models, branch.InitialModel(m.width, finds[index], getDefaultBranch()))
 		index++
 	}
 
@@ -105,8 +109,4 @@ func getDefaultBranch() string {
 	}
 
 	return output[:len(output)-1]
-}
-
-func filterFn(branch string, text string) bool {
-	return strings.Contains(branch, strings.ToLower(text))
 }

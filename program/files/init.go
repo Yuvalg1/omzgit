@@ -97,27 +97,31 @@ func GetFilesChanged(m snapshot) []row.Model {
 		return []row.Model{row.EmptyInitialModel("a files error has occured", m.width)}
 	}
 
-	fileLogs := strings.Split(output, "\n")
-	fileLogs = fileLogs[:len(fileLogs)-1]
+	names := strings.Split(output, "\n")
+	names = names[:len(names)-1]
 
-	if len(fileLogs) == 0 {
+	if len(names) == 0 {
 		return []row.Model{row.EmptyInitialModel("No Changes Made", m.width)}
+	}
+
+	input := list.FormatInput(m.listTextInputValue)
+	finds := names
+
+	if len(input) != 0 {
+		finds = list.Filter(names, input)
 	}
 
 	rows := []row.Model{}
 	modified := []row.Model{}
 	index := 0
 
-	for len(rows) < m.listNewSize && index < len(fileLogs) {
-		path := getPath(fileLogs[index])
+	for len(rows) < m.listNewSize && index < len(finds) {
+		rows = append(rows, row.InitialModel(finds[index], m.width))
 
-		if filterFn(path, m.listTextInputValue) {
-			rows = append(rows, row.InitialModel(fileLogs[index], m.width))
+		if finds[index][0] != ' ' && finds[index][1] == 'M' {
+			modified = append(modified, row.InitialModel(" "+finds[index][1:], m.width))
 		}
 
-		if filterFn(path, m.listTextInputValue) && fileLogs[index][0] != ' ' && fileLogs[index][1] == 'M' {
-			modified = append(modified, row.InitialModel(" "+fileLogs[index][1:], m.width))
-		}
 		index++
 	}
 
@@ -131,12 +135,4 @@ func GetFilesChanged(m snapshot) []row.Model {
 
 func (m Model) getCurrentSplit() []string {
 	return strings.Split(m.list.GetCurrent().Roller.Name, "/")
-}
-
-func getPath(fileStr string) string {
-	return strings.Split(fileStr[2:], " ")[1]
-}
-
-func filterFn(path string, text string) bool {
-	return strings.Contains(path, strings.ToLower(text))
 }
