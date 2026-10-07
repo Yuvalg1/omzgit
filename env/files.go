@@ -1,17 +1,18 @@
 package env
 
 type files struct {
-	Add        Option
-	AddAll     Option
-	Commit     Option
-	Discard    Option
-	DiscardAll Option
-	Enter      Option
-	Reset      Option
-	ResetAll   Option
-	Yank       Option
-	Ours       Option
-	Theirs     Option
+	Add          Option
+	AddAll       Option
+	Commit       Option
+	Discard      Option
+	DiscardAll   Option
+	Enter        Option
+	Reset        Option
+	ResetAll     Option
+	Yank         Option
+	Ours         Option
+	Theirs       Option
+	StashOptions Option
 
 	Up     Option
 	Down   Option
@@ -67,6 +68,10 @@ var Files = files{
 	Theirs: Option{
 		Msg:         "T",
 		Description: "checkouts --theirs changes in case of conflict",
+	},
+	StashOptions: Option{
+		Msg:         "S",
+		Description: "shows stash options",
 	},
 
 	PgUp: Option{

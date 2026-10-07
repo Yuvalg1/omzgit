@@ -10,7 +10,7 @@ import (
 )
 
 type Model struct {
-	CallbackFn    func(string)
+	CallbackFn    func(string) tea.Cmd
 	Name          string
 	textinput     textinput.Model
 	visible       bool
@@ -20,7 +20,7 @@ type Model struct {
 	Height int
 }
 
-func InitialModel(fn func(string), width int, height int, withoutSpaces bool) Model {
+func InitialModel(fn func(string) tea.Cmd, width int, height int) Model {
 	ti := textinput.New()
 	ti.CharLimit = 50
 	ti.Focus()
@@ -33,7 +33,7 @@ func InitialModel(fn func(string), width int, height int, withoutSpaces bool) Mo
 		Name:          "",
 		textinput:     ti,
 		visible:       false,
-		withoutSpaces: withoutSpaces,
+		withoutSpaces: true,
 
 		Width:  getWidth(width),
 		Height: getHeight(height),
