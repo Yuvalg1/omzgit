@@ -71,8 +71,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch keypress := msg.String(); keypress {
 		case env.Branches.CheckoutB.Msg:
-			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) {
+			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) tea.Cmd {
 				_, _ = git.Exec("checkout", "-b", name)
+				return nil
 			})
 
 		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg, env.Branches.CheckoutForce.Msg:

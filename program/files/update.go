@@ -10,6 +10,7 @@ import (
 	"omzgit/messages/refresh"
 	"omzgit/messages/tick"
 	"omzgit/popups/help"
+	"omzgit/popups/picker"
 	"omzgit/program/files/diff"
 	"omzgit/program/files/row"
 	"omzgit/program/popups"
@@ -124,6 +125,76 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.diff = diff.InitialModel(*m.list.GetCurrent(), width, height)
 
 			return m, tea.Batch(cmd, m.CokeCmd())
+
+		case env.Files.StashOptions.Msg:
+			return m, popups.Cmd("pick", "Stash Options", "choose a stash option", func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"a": {Desc: "push -m", Callback: func() tea.Cmd {
+						return popups.Cmd("input", "Push", "enter a push message", func(message string) tea.Cmd {
+							output, err := git.Exec("stash", "push", "-m", message)
+							if err != nil {
+								return popups.Cmd("alert", "Stash Push Error!", output, func(name string) {})
+							}
+
+							return nil
+						})
+					}},
+					"A": {Desc: "apply", Callback: func() tea.Cmd {
+						return popups.Cmd("input", "Apply", "enter an apply number", func(message string) tea.Cmd {
+							if message == "" {
+								message = "0"
+							}
+							number := "stash@{" + message + "}"
+
+							output, err := git.Exec("stash", "apply", number)
+							if err != nil {
+								return popups.Cmd("alert", "Stash Apply Error!", output, func(name string) {})
+							}
+
+							return refresh.Cmd()
+						})
+					}},
+					"c": {Desc: "clear", Callback: func() tea.Cmd {
+						output, err := git.Exec("stash", "clear")
+						if err != nil {
+							return popups.Cmd("alert", "Stash Clear Error!", output, func(name string) {})
+						}
+
+						return nil
+					}},
+					"d": {Desc: "drop", Callback: func() tea.Cmd {
+						return popups.Cmd("input", "Drop", "enter an drop number", func(message string) tea.Cmd {
+							if message == "" {
+								message = "0"
+							}
+							number := "stash@{" + message + "}"
+
+							output, err := git.Exec("stash", "drop", number)
+							if err != nil {
+								return popups.Cmd("alert", "Stash Drop Error!", output, func(name string) {})
+							}
+
+							return refresh.Cmd()
+						})
+					}},
+					"l": {Desc: "list", Callback: func() tea.Cmd {
+						output, err := git.Exec("stash", "list")
+						if err != nil {
+							return popups.Cmd("alert", "Stash List Error!", output, func(name string) {})
+						}
+
+						return popups.Cmd("alert", "Stash List", output, func(name string) {})
+					}},
+					"p": {Desc: "pop", Callback: func() tea.Cmd {
+						output, err := git.Exec("stash", "pop")
+						if err != nil {
+							return popups.Cmd("alert", "Stash Pop Error!", output, func(name string) {})
+						}
+
+						return refresh.Cmd()
+					}},
+				}
+			})
 
 		case "?":
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
