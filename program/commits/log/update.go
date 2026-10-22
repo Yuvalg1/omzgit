@@ -5,6 +5,7 @@ import (
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
+	"omzgit/popups/picker"
 	"omzgit/program/popups"
 	"omzgit/roller"
 
@@ -51,6 +52,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				m.Current = true
 				return refresh.Cmd()
+			})
+
+		case env.Branches.RebaseOptions.Msg:
+			return m, popups.Cmd("pick", m.Hash, "choose a rebase option for "+m.Hash, func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"a": picker.GetPick("rebase", "--abort"),
+					"c": picker.GetPick("rebase", "--continue"),
+					"i": picker.GetPick("rebase", "--interactive", m.Hash),
+					"s": picker.GetPick("rebase", "--skip"),
+					"q": picker.GetPick("rebase", "--quit"),
+				}
 			})
 
 		case env.Commits.Up.Msg, env.Commits.Up.AltMsg, env.Commits.Down.Msg, env.Commits.Down.AltMsg, env.Goto.Top.Msg, env.Commits.Bottom.Msg, env.Commits.Search.Msg, env.Commits.Refresh.Msg:
