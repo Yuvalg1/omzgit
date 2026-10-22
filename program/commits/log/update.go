@@ -54,7 +54,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return refresh.Cmd()
 			})
 
-		case env.Branches.RebaseOptions.Msg:
+		case env.Commits.RebaseOptions.Msg:
 			return m, popups.Cmd("pick", m.Hash, "choose a rebase option for "+m.Hash, func() map[string]picker.Pick {
 				return map[string]picker.Pick{
 					"a": picker.GetPick("rebase", "--abort"),
