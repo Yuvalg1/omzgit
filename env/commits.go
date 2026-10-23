@@ -34,7 +34,7 @@ var Commits = commits{
 		Description: "opens menu to choose reset option for highlighted commit",
 	},
 	CherryPick: Option{
-		Msg:         "ctrl+p",
+		Msg:         "Y",
 		Description: "cherry picks highlighted commit",
 	},
 	Yank: Option{

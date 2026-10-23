@@ -77,13 +77,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			clipboard.Copy(m.Hash)
 			return m, nil
 
-		case env.Commits.CherryPick.Msg:
-			output, err := git.Exec("cherry-pick", m.Hash)
-			if err != nil {
-				popups.Cmd("alert", "Cherry Pick Error!", output, func() {})
-			}
-			return m, refresh.Cmd()
-
 		default:
 			return m, nil
 		}

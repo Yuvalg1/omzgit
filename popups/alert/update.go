@@ -53,7 +53,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Alert.CtrlC.Msg, env.Alert.Quit.Msg:
 			return m, tea.Quit
 
-		case "?":
+		case env.Program.Help.Msg, env.Program.Help.AltMsg:
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
 				return help.GetEnvOptions(env.Alert),
 					func() tea.Cmd {

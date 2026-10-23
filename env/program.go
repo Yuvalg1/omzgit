@@ -4,6 +4,7 @@ type program struct {
 	Esc         Option
 	Fetch       Option
 	Goto        Option
+	Help        Option
 	Pull        Option
 	PullOptions Option
 	Push        Option
@@ -20,6 +21,11 @@ var Program = program{
 	Goto: Option{
 		Msg:         "g",
 		Description: "goto/git",
+	},
+	Help: Option{
+		Msg:         "h",
+		AltMsg:      "?",
+		Description: "shows current available actions",
 	},
 	Pull: Option{
 		Msg:         "l",

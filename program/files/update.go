@@ -196,7 +196,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			})
 
-		case "?":
+		case env.Program.Help.Msg, env.Program.Help.AltMsg:
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
 				return append(help.GetEnvOptions(env.Files), help.GetEnvOptions(env.Program)...),
 					func() tea.Cmd {

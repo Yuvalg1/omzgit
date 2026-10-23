@@ -239,7 +239,7 @@ func pickTab(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return mode.Cmd("")
 		})
 
-	case "?":
+	case env.Program.Help.Msg, env.Program.Help.AltMsg:
 		return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
 			return help.GetEnvOptions(env.Goto),
 				func() tea.Cmd {
