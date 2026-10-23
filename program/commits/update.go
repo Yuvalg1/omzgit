@@ -2,6 +2,7 @@ package commits
 
 import (
 	"omzgit/env"
+	"omzgit/git"
 	"omzgit/lib/list"
 	"omzgit/messages/mode"
 	"omzgit/messages/refresh"
@@ -74,7 +75,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			})
 
-		case "?":
+		case env.Program.Help.Msg, env.Program.Help.AltMsg:
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
 				return append(help.GetEnvOptions(env.Commits), help.GetEnvOptions(env.Program)...),
 					func() tea.Cmd {
@@ -90,6 +91,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list = res.(list.Model[log.Model])
 
 			return m, tea.Batch(cmd, m.CokeCmd())
+
+		case env.Commits.CherryPick.Msg:
+			return m, popups.Cmd("pick", "Cherry Pick Options", "choose a cherry-pick option", func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"p": {Desc: "cherry-pick", Callback: func() tea.Cmd {
+						return popups.Cmd("input", "Cherry Pick", "enter a cherry pick message", func(message string) tea.Cmd {
+							output, err := git.Exec("cherry-pick", message)
+							if err != nil {
+								return popups.Cmd("alert", "Cherry Pick Error!", output, func(name string) {})
+							}
+
+							return nil
+						})
+					}},
+					"a": picker.GetPick("cherry-pick", "--abort"),
+					"c": picker.GetPick("cherry-pick", "--continue"),
+					"s": picker.GetPick("cherry-pick", "--skip"),
+					"q": picker.GetPick("cherry-pick", "--quit"),
+				}
+			})
 
 		default:
 			res, cmd := m.list.Update(msg)
