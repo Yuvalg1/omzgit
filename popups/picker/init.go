@@ -1,6 +1,8 @@
 package picker
 
 import (
+	"strings"
+
 	"omzgit/program/popups"
 	"omzgit/suspend"
 
@@ -48,9 +50,10 @@ func (m Model) GetVisible() bool {
 }
 
 func GetPick(command ...string) Pick {
+	name := strings.Join(command[1:], " ")
 	return Pick{
-		Desc: command[1], Callback: func() tea.Cmd {
-			return popups.Cmd("async", "", command[1], func() tea.Cmd {
+		Desc: name, Callback: func() tea.Cmd {
+			return popups.Cmd("async", "", name, func() tea.Cmd {
 				return suspend.Cmd(command...)
 			})
 		},
