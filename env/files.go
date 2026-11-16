@@ -1,18 +1,19 @@
 package env
 
 type files struct {
-	Add          Option
-	AddAll       Option
-	Commit       Option
-	Discard      Option
-	DiscardAll   Option
-	Enter        Option
-	Reset        Option
-	ResetAll     Option
-	Yank         Option
-	Ours         Option
-	Theirs       Option
-	StashOptions Option
+	Add           Option
+	AddAll        Option
+	Commit        Option
+	CommitOptions Option
+	Discard       Option
+	DiscardAll    Option
+	Enter         Option
+	Reset         Option
+	ResetAll      Option
+	Yank          Option
+	Ours          Option
+	Theirs        Option
+	StashOptions  Option
 
 	Up     Option
 	Down   Option
@@ -36,6 +37,10 @@ var Files = files{
 	Commit: Option{
 		Msg:         "c",
 		Description: "opens commit menu",
+	},
+	CommitOptions: Option{
+		Msg:         "C",
+		Description: "opens commit options menu",
 	},
 	Discard: Option{
 		Msg:         "d",

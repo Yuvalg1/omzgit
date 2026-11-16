@@ -96,6 +96,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Files.Commit.Msg:
 			return m, popups.Cmd("commit", "Commit", "Commit Message	", func() tea.Cmd { return nil })
 
+		case env.Files.CommitOptions.Msg:
+			return m, popups.Cmd("pick", "commit", "choose a commit option ", func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"a": picker.GetPick("commit", "--amend"),
+					"n": picker.GetPick("commit", "--amend", "--no-edit"),
+					"m": picker.GetPick("commit", "--allow-empty-message"),
+				}
+			})
+
 		case env.Files.DiscardAll.Msg:
 			return m, popups.Cmd("discard", "discard", "All Files", func() tea.Cmd {
 				git.Exec("reset", "--hard")
