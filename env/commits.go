@@ -3,6 +3,7 @@ package env
 type commits struct {
 	Checkout      Option
 	CheckoutForce Option
+	RebaseOptions Option
 	Reset         Option
 	CherryPick    Option
 	Yank          Option
@@ -24,12 +25,16 @@ var Commits = commits{
 		Msg:         "C",
 		Description: "forces checkout to highlighted commit",
 	},
+	RebaseOptions: Option{
+		Msg:         "R",
+		Description: "opens rebase options menu",
+	},
 	Reset: Option{
 		Msg:         "r",
 		Description: "opens menu to choose reset option for highlighted commit",
 	},
 	CherryPick: Option{
-		Msg:         "ctrl+p",
+		Msg:         "Y",
 		Description: "cherry picks highlighted commit",
 	},
 	Yank: Option{

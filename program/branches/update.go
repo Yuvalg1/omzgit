@@ -71,8 +71,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch keypress := msg.String(); keypress {
 		case env.Branches.CheckoutB.Msg:
-			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) {
+			return m, popups.Cmd("input", "Name", "Enter A new Branch Name", func(name string) tea.Cmd {
 				_, _ = git.Exec("checkout", "-b", name)
+				return nil
 			})
 
 		case env.Branches.Checkout.Msg, env.Branches.Checkout.AltMsg, env.Branches.CheckoutForce.Msg:
@@ -97,7 +98,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			snapshot := m.getSnapshot()
 			return m, list.Cmd(func() []branch.Model { return getBranches(snapshot) }, m.list.ActiveRow, msg, m.CokeCmd())
 
-		case "?":
+		case env.Program.Help.Msg, env.Program.Help.AltMsg:
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
 				return append(help.GetEnvOptions(env.Branches), help.GetEnvOptions(env.Program)...),
 					func() tea.Cmd {

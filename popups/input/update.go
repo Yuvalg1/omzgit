@@ -18,10 +18,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case popups.Msg:
 		m.textinput.SetValue("")
-		m.CallbackFn = msg.Fn.(func(string))
+		m.CallbackFn = msg.Fn.(func(string) tea.Cmd)
 		m.Name = msg.Name
 		m.visible = true
 		m.textinput.Placeholder = msg.Verb
+		m.withoutSpaces = msg.Verb == "Name"
 		return m, nil
 
 	case tea.KeyMsg:
@@ -53,6 +54,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				return m, cmd
 			}
+			res, cmd := m.textinput.Update(msg)
+			m.textinput = res
+			return m, cmd
 
 		case " ":
 			if m.withoutSpaces {
@@ -61,6 +65,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				return m, cmd
 			}
+			res, cmd := m.textinput.Update(msg)
+			m.textinput = res
+			return m, cmd
 
 		default:
 			res, cmd := m.textinput.Update(msg)

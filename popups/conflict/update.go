@@ -77,7 +77,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.theirs = res.(content.Model)
 			return m, cmd
 
-		case "?":
+		case env.Program.Help.Msg, env.Program.Help.AltMsg:
 			return m, popups.Cmd("help", "", "", func() ([]env.Option, func() tea.Cmd) {
 				return help.GetEnvOptions(env.Conflict),
 					func() tea.Cmd {

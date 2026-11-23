@@ -36,7 +36,7 @@ type ExtendedModel struct {
 func InitialModel(tabs []ExtendedModel, width int, height int, command chan []string, page chan string, error chan string) Model {
 	initialPopups := popups.InitialModel[popups.InnerModel]("alert")
 
-	initialInput := input.InitialModel(func(name string) {}, getWidth(width), getHeight(height), true)
+	initialInput := input.InitialModel(func(name string) tea.Cmd { return nil }, getWidth(width), getHeight(height))
 	initialPopups.AddPopup("input", initialInput)
 
 	initialDiscard := discard.InitialModel(func() tea.Cmd { return nil }, getWidth(width), getHeight(height))

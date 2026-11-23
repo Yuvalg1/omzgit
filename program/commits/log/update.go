@@ -5,6 +5,7 @@ import (
 	"omzgit/env"
 	"omzgit/git"
 	"omzgit/messages/refresh"
+	"omzgit/popups/picker"
 	"omzgit/program/popups"
 	"omzgit/roller"
 
@@ -53,6 +54,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return refresh.Cmd()
 			})
 
+		case env.Commits.RebaseOptions.Msg:
+			return m, popups.Cmd("pick", m.Hash, "choose a rebase option for "+m.Hash, func() map[string]picker.Pick {
+				return map[string]picker.Pick{
+					"a": picker.GetPick("rebase", "--abort"),
+					"c": picker.GetPick("rebase", "--continue"),
+					"i": picker.GetPick("rebase", "--interactive", m.Hash),
+					"s": picker.GetPick("rebase", "--skip"),
+					"q": picker.GetPick("rebase", "--quit"),
+				}
+			})
+
 		case env.Commits.Up.Msg, env.Commits.Up.AltMsg, env.Commits.Down.Msg, env.Commits.Down.AltMsg, env.Goto.Top.Msg, env.Commits.Bottom.Msg, env.Commits.Search.Msg, env.Commits.Refresh.Msg:
 			m.Active = !m.Active
 			res, cmd := m.Desc.Update(msg)
@@ -64,13 +76,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case env.Commits.Yank.Msg:
 			clipboard.Copy(m.Hash)
 			return m, nil
-
-		case env.Commits.CherryPick.Msg:
-			output, err := git.Exec("cherry-pick", m.Hash)
-			if err != nil {
-				popups.Cmd("alert", "Cherry Pick Error!", output, func() {})
-			}
-			return m, refresh.Cmd()
 
 		default:
 			return m, nil
