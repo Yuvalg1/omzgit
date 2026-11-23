@@ -28,6 +28,12 @@ go install
 
 ## Usage
 
+To enter ```omzgit```, call it in your terminal inside a git repository:
+
+```go
+$ omzgit
+```
+
 In any page, the following behavior is consistent:
 
 ```f``` - fetch changes
@@ -40,22 +46,22 @@ In any page, the following behavior is consistent:
 
 ```/``` - open search filter
 
-```y``` - copies relevant information from current row
+```y``` - yanks relevant information from current row
 
 ### Files
 
 Here you can stage, unstage, discard, and commit files. On the left are the files changed, and on the right is the diff.
 
-<img width="1920" height="1080" alt="2026-10-06_00-17-06" src="https://github.com/user-attachments/assets/06a7737d-f7a7-4baf-86a6-c062e70c93e4" />
+https://github.com/user-attachments/assets/7cfd2b71-78af-4454-bb46-2233ae79563c
 
 ### Branches
 
 Here you can checkout, delete, merge, rebase, and switch branches. On the left are the branch names, and on the right of the current row is the behind|ahead the the last changed time difference.
 
-<img width="1920" height="1080" alt="2026-10-06_00-28-54" src="https://github.com/user-attachments/assets/8f70d69e-12ad-41f2-bada-1b7fe5b5ca0a" />
+https://github.com/user-attachments/assets/19af9335-b887-4494-a267-f4f00da9fa5c
 
 ### Commits
 
 Here you can checkout, reset and look through all of the commits.
 
-<img width="1920" height="1080" alt="2026-10-06_00-15-08" src="https://github.com/user-attachments/assets/15c5f65e-a6dd-4350-9058-554534ea7449" />
+https://github.com/user-attachments/assets/3e31cedf-e81b-46e4-9ceb-bd5740980c19
